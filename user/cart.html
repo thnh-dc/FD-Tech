@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng Của Bạn - FD Tech</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .empty-cart-container {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .empty-cart-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .empty-cart-title {
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: var(--text-xl);
+        }
+        .empty-cart-desc {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-size: var(--text-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="section-block">
+            <h1 class="page-title">Giỏ Hàng Của Bạn</h1>
+            <div class="card shadow-card">
+                
+                <table class="data-table" id="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-body">
+                        </tbody>
+                </table>
+                
+                <div class="cart-summary">
+                    <p class="summary-text">Tổng thanh toán: <span id="cart-total" class="price-highlight">0₫</span></p>
+                    <a href="checkout.php"><button class="btn btn-primary btn-large">Tiến Hành Đặt Hàng</button></a>
+                </div>
+
+                <div class="empty-cart-container">
+                    <svg class="empty-cart-icon" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <h2 class="empty-cart-title">Giỏ hàng trống</h2>
+                    <p class="empty-cart-desc">Không có sản phẩm nào trong giỏ hàng</p>
+                    
+                    <a href="index.php"><button class="btn btn-primary btn-large">Về trang chủ</button></a>
+                </div>
+
+                </div>
+        </section>
+    </div>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>
