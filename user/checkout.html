@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán - FD Tech</title>
+    <link rel="stylesheet" href="../assets/css/style_chung.css">
+    <link rel="stylesheet" href="../assets/css/style_checkout.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-light-area">
+    <div class="container checkout-layout">
+        
+        <form action="process_checkout.php" method="POST" id="checkout-form">
+            
+            <div class="checkout-section delivery-trigger" id="btn-open-delivery">
+                <div class="section-heading" style="border:none; margin:0; padding:0; display:flex; justify-content:space-between;">
+                    <span>📍 Thông tin nhận hàng</span>
+                    <span style="color:var(--primary); font-size:var(--text-sm);">Thay đổi</span>
+                </div>
+                <div id="display-delivery" class="delivery-info-display" style="margin-top: 12px;">
+                    <p style="color: var(--danger);">* Vui lòng nhấp vào đây để nhập thông tin nhận hàng</p>
+                </div>
+            </div>
+
+            <div class="modal-overlay" id="deliveryModal">
+                <div class="modal-content" id="modal-content-box">
+                    <span class="modal-close" id="btn-close-modal">&times;</span>
+                    <h3 style="margin-bottom: 20px; text-align: center;">Thông tin giao hàng</h3>
+                    
+                    <div class="form-group">
+                        <label>Họ và tên người nhận (*)</label>
+                        <input type="text" name="fullname" id="input-fullname" class="form-control" placeholder="Ví dụ: Nguyễn Văn A" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại (*)</label>
+                        <input type="tel" name="phone" id="input-phone" class="form-control" placeholder="Ví dụ: 0988xxxxxx" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ nhận hàng chi tiết (*)</label>
+                        <textarea name="address" id="input-address" class="form-control" rows="3" placeholder="Số nhà, tên đường, phường/xã, quận/huyện..." required></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary btn-full" id="btn-confirm-delivery">Xác nhận thông tin</button>
+                </div>
+            </div>
+
+            <div class="checkout-section">
+                <h3 class="section-heading">🛒 Sản phẩm trong đơn</h3>
+                
+                <div class="checkout-item">
+                    <div class="item-details">
+                        <span class="item-name"></span>
+                        <span class="item-qty">Số lượng: </span>
+                    </div>
+                    <span class="item-price"></span>
+                </div>
+                <p class="text-muted" style="text-align: center; padding: 10px 0;">Không có sản phẩm nào để thanh toán.</p>
+            </div>
+
+            <div class="checkout-section">
+                <h3 class="section-heading">🏷️ Khuyến mãi</h3>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" name="voucher_code" class="form-control" placeholder="Nhập mã giảm giá (nếu có)">
+                    <button type="button" class="btn btn-secondary">Áp dụng</button>
+                </div>
+            </div>
+
+            <div class="checkout-section">
+                <h3 class="section-heading">💳 Hình thức thanh toán</h3>
+                <label class="payment-method">
+                    <input type="radio" name="payment_method" value="cod" checked>
+                    <span>Thanh toán tiền mặt khi nhận hàng (COD)</span>
+                </label>
+                <label class="payment-method">
+                    <input type="radio" name="payment_method" value="bank_transfer">
+                    <span>Chuyển khoản ngân hàng</span>
+                </label>
+            </div>
+
+            <div class="checkout-section">
+                <div class="summary-row">
+                    <span>Tổng tiền sản phẩm:</span>
+                    <span></span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span></span>
+                </div>
+                <div class="summary-row summary-total">
+                    <span>Tổng thanh toán:</span>
+                    <span></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large btn-full">XÁC NHẬN ĐẶT HÀNG</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById('deliveryModal');
+            const btnOpen = document.getElementById('btn-open-delivery');
+            const btnClose = document.getElementById('btn-close-modal');
+            const btnConfirm = document.getElementById('btn-confirm-delivery');
+            const displayBox = document.getElementById('display-delivery');
+            const modalContent = document.getElementById('modal-content-box');
+
+            // 1. Click vào khung Giao hàng -> Mở Modal
+            if (btnOpen) {
+                btnOpen.addEventListener('click', () => {
+                    modal.style.display = 'flex';
+                });
+            }
+
+            // 2. Click dấu X -> Đóng Modal
+            if (btnClose) {
+                btnClose.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+            }
+
+            // 3. Click ra ngoài viền đen -> Đóng Modal
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Ngăn việc click vào bên trong modal bị đóng
+            if (modalContent) {
+                modalContent.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+
+            // 4. Click nút Xác nhận thông tin
+            if (btnConfirm) {
+                btnConfirm.addEventListener('click', () => {
+                    const name = document.getElementById('input-fullname').value;
+                    const phone = document.getElementById('input-phone').value;
+                    const address = document.getElementById('input-address').value;
+
+                    // Kiểm tra xem đã nhập đủ chưa
+                    if(name.trim() !== '' && phone.trim() !== '' && address.trim() !== '') {
+                        // In thông tin ra ngoài màn hình chính
+                        displayBox.innerHTML = `
+                            <p style="color: var(--text-dark); margin-bottom: 5px;"><strong>Người nhận:</strong> ${name} - ${phone}</p>
+                            <p style="color: var(--text-dark);"><strong>Giao đến:</strong> ${address}</p>
+                        `;
+                        // Ẩn modal đi
+                        modal.style.display = 'none';
+                    } else {
+                        alert("Vui lòng nhập đầy đủ Họ tên, Số điện thoại và Địa chỉ!");
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
