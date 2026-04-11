@@ -1,0 +1,140 @@
+/* Áp dụng Color System từ Design System */
+:root {
+    --primary: #0B2A4A;    /* Màu chủ đạo cho Navbar, Footer */
+    --secondary: #23B5D3;  /* Nút bấm phụ, hiệu ứng Hover */
+    --bg-main: #FFFFFF;    /* Nền trang web chung */
+    --bg-light: #F4F6F9;   /* Nền phân cách các section */
+    --text-dark: #333333;  /* Chữ văn bản chính */
+    --text-muted: #6C757D; /* Chữ phụ, mô tả ngắn */
+    --radius-sm: 4px;      /* Bo góc cho ô input */
+    --radius-md: 8px;      /* Bo góc cho nút bấm, thẻ sản phẩm */
+}
+
+/* Reset căn lề & Font chữ Inter */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Inter', sans-serif; /* Font family chính theo yêu cầu */
+}
+
+.container { 
+    max-width: 1200px; /* Độ rộng tối đa theo Design System */
+    margin: 0 auto; 
+    padding: 0 15px; 
+}
+
+.header-flex { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+}
+
+/* Tầng 1: Top Bar */
+.top-bar { 
+    background: var(--bg-light); /* Màu nền phân cách #F4F6F9 */
+    padding: 8px 0; 
+    font-size: 12px; /* text-xs: 12px cho thông báo nhỏ */
+    border-bottom: 1px solid #eee; 
+    color: var(--text-muted); /* Màu chữ phụ #6C757D */
+}
+
+.top-right { display: flex; gap: 15px; }
+.top-right a { color: var(--text-muted); text-decoration: none; }
+
+/* Tầng 2: Main Header (Logo, Menu, Hotline) */
+.main-header { 
+    padding: 15px 0; 
+    background: var(--bg-main); /* Nền trắng #FFFFFF */
+}
+
+.main-menu { display: flex; list-style: none; gap: 20px; }
+.main-menu a { 
+    text-decoration: none; 
+    color: var(--text-dark); /* Màu chữ chính #333333 */
+    font-weight: 600; /* Semi-bold cho menu */
+    font-size: 14px; /* text-sm: 14px */
+}
+
+.main-menu a:hover {
+    color: var(--secondary); /* Hiệu ứng Hover màu xanh nhạt #23B5D3 */
+}
+
+.header-contact { display: flex; align-items: center; gap: 10px; }
+.header-contact i { 
+    font-size: 30px; 
+    color: var(--secondary); /* Icon dùng màu secondary */
+}
+
+/* Tầng 3: Thanh màu sắc FD Tech (Thay cho màu Gearshop) */
+.bottom-header { 
+    background: var(--primary); /* Màu chủ đạo xanh đậm #0B2A4A */
+    color: #fff; 
+    padding: 10px 0; 
+}
+
+.category-toggle { 
+    background: rgba(255, 255, 255, 0.1); /* Làm sáng nhẹ nền danh mục */
+    padding: 10px 20px; 
+    font-weight: 700; /* Bold: 700 */
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    border-radius: var(--radius-sm); /* Bo góc 4px */
+}
+
+.search-box { flex: 1; margin: 0 30px; position: relative; display: flex; }
+.search-box input { 
+    width: 100%; 
+    padding: 8px 15px; 
+    border-radius: var(--radius-sm); /* Bo góc ô nhập liệu 4px */
+    border: none; 
+    outline: none; 
+    font-size: 14px; 
+}
+
+.search-box button { 
+    position: absolute; 
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    color: var(--text-muted);
+}
+
+.header-icons { display: flex; gap: 20px; align-items: center; }
+.header-icons a { color: #fff; text-decoration: none; font-size: 18px; }
+
+.cart-icon .count {
+    background: var(--secondary); /* Màu badge giỏ hàng #23B5D3 */
+    color: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 10px;
+}
+.site-header {
+    background-color: var(--primary);
+    padding: 10px 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.logo img {
+    max-height: 100px;
+    width: auto;
+    /* Nếu ảnh có nền trắng mà bạn muốn nó hòa vào header, hãy dùng lệnh dưới */
+    mix-blend-mode: multiply; 
+}
+
+.main-header {
+    background-color: #ffffff; /* --bg-main theo Design System */
+    border-bottom: 1px solid #eee;
+}
+
+
