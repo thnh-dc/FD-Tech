@@ -23,11 +23,10 @@ body {
 
 /* ===== TOP BAR ===== */
 .footer-top {
-  background: #0ea5b7;
+  background: #0B2A4A;
   padding: 15px 0;
   color: white;
 }
-
 .top-flex {
   display: flex;
   justify-content: space-between;
