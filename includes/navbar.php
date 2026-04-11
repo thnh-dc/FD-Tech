@@ -1,20 +1,24 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FD Tech</title>
-    <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/navbar.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body>
 <?php
-    $brand_name = "FD"; // Tên thương hiệu
-    $cart_count = 3;   // Số lượng sản phẩm trong giỏ (giả lập)
+$categories = [
+    ['name' => 'Khuyến mãi',       'icon' => false, 'bg' => '#f4f4f4'],
+    ['name' => 'Sản phẩm bán chạy', 'icon' => false],
+    ['name' => 'Xây dựng cấu hình', 'icon' => false],
+    ['name' => 'Gearshop PC',      'icon' => false],
+    ['name' => 'MÀN HÌNH MÁY TÍNH', 'icon' => true],
+    ['name' => 'BÀN GAMING',       'icon' => true],
+    ['name' => 'GHẾ CÔNG THÁI HỌC', 'icon' => true],
+    ['name' => 'BÀN PHÍM CUSTOM',   'icon' => true],
+    ['name' => 'GHẾ GAMING',       'icon' => true],
+    ['name' => 'PHỤ KIỆN KHÁC',    'icon' => true],
+    ['name' => 'LINH KIỆN PC',     'icon' => true],
+    ['name' => 'LOA - TAI NGHE',   'icon' => true],
+    ['name' => 'BÀN PHÍM CƠ',      'icon' => true],
+    ['name' => 'CHUỘT',            'icon' => true],
+];
+?>
+<?php
+    $brand_name = "FD"; 
+    $cart_count = 3; // Giả lập số lượng giỏ hàng
 ?>
 
 <nav class="site-header">
@@ -32,14 +36,14 @@
     <div class="main-header">
         <div class="container header-flex">
             <div class="logo">
-                <a href="index.php">
-                    <img src="../assets/images/logo-fd.jpg" alt="FD TECH" style="height: 50px;"> 
-                    <span style="font-size: 24px; font-weight: bold; color: #333;">FD<span style="color: #00a8ff;">TECH.VN</span></span>
+                <a href="../index.php">
+                    <img src="../assets/images/logo-fd.jpg" alt="FD TECH" style="height: 50px; vertical-align: middle;"> 
+                    <span style="font-size: 24px; font-weight: bold; color: #333; vertical-align: middle;">FD<span style="color: #00a8ff;">TECH.VN</span></span>
                 </a>
             </div>
 
             <ul class="main-menu">
-                <li><a href="index.php">Trang chủ</a></li>
+                <li><a href="../index.php">Trang chủ</a></li>
                 <li class="has-child">
                     <a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a>
                 </li>
@@ -49,10 +53,10 @@
             </ul>
 
             <div class="header-contact">
-                <i class="fas fa-headset"></i>
+                <i class="fas fa-headset" style="font-size: 25px; color: var(--secondary);"></i>
                 <div class="contact-info">
-                    <span class="p">0.888.000.112</span>
-                    <span class="e">fdtechchannel@gmail.com</span>
+                    <span class="p" style="display: block; font-weight: bold;">0.888.000.112</span>
+                    <span class="e" style="font-size: 11px; color: var(--text-muted);">fdtechchannel@gmail.com</span>
                 </div>
             </div>
         </div>
@@ -71,8 +75,8 @@
                 <a href="#"><i class="far fa-heart"></i></a>
                 <a href="cart.php" class="cart-icon">
                     <i class="fas fa-shopping-bag"></i>
-                    <span class="count">0</span>
-                    <span>Giỏ hàng</span>
+                    <span class="count"><?php echo isset($cart_count) ? $cart_count : 0; ?></span>
+                    <span style="font-size: 14px; margin-left: 5px;">Giỏ hàng</span>
                 </a>
             </div>
         </div>
