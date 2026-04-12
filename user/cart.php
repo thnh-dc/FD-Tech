@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <?php include '../includes/header.php';?>
     <div class="container">
         <section class="section-block">
             <h1 class="page-title">Giỏ Hàng Của Bạn</h1>
@@ -45,9 +46,10 @@
                     <a href="index.php"><button class="btn btn-primary btn-large">Về trang chủ</button></a>
                 </div>
 
-                </div>
+            </div>
         </section>
     </div>
+    <?php include '../includes/footer.php';?>
     <script src="../assets/js/script_cart.js"></script>
 </body>
 </html>

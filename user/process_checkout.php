@@ -1,10 +1,6 @@
 <?php
-session_start(); 
-
-// Hàm kết nối PDO mẫu (để bạn dễ hình dung)
-$host = 'localhost'; $dbname = 'fd_tech'; $user = 'root'; $pass = '';
-$pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+session_start();
+require_once '../config/database.php';
 
 // Kiểm tra xem có gửi form và giỏ hàng có đồ không
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['cart'])) {
