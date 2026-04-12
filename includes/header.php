@@ -106,28 +106,3 @@
         </div>
     </div>
 </nav>
-<script>
-(function() {
-    const toggle = document.querySelector('.category-toggle');
-    const dropdown = document.querySelector('.category-dropdown');
-
-    if (!toggle || !dropdown) {
-        console.error('Elements not found');
-        return;
-    }
-
-    toggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropdown.classList.toggle('active');
-    });
-
-    // Đóng dropdown khi click bên ngoài
-    document.addEventListener('click', function(e) {
-        const isClickInside = dropdown.contains(e.target) || toggle.contains(e.target);
-        if (!isClickInside) {
-            dropdown.classList.remove('active');
-        }
-    });
-})();
-</script>
