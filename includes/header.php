@@ -60,9 +60,37 @@
 
     <div class="bottom-header">
         <div class="container header-flex">
-            <div class="category-toggle">
+             <div class="category-toggle">
                 <i class="fas fa-bars"></i> Danh mục sản phẩm <i class="fas fa-chevron-down"></i>
             </div>
+
+            <div class="category-dropdown">
+                <div class="category-list">
+                    <?php 
+                    $categories = [
+                        ['id' => 'khuyen-mai', 'name' => 'Khuyến mãi'],
+                        ['id' => 'san-pham-ban-chay', 'name' => 'Sản phẩm bán chạy'],
+                        ['id' => 'xay-dung-cau-hinh', 'name' => 'Xây dựng cấu hình'],
+                        ['id' => 'gearshop-pc', 'name' => 'Gearshop PC'],
+                        ['id' => 'man-hinh-may-tinh', 'name' => 'MÀN HÌNH MÁY TÍNH'],
+                        ['id' => 'ban-gaming', 'name' => 'BÀN GAMING'],
+                        ['id' => 'ghe-cong-thai-hoc', 'name' => 'GHẾ CÔNG THÁI HỌC'],
+                        ['id' => 'ban-phim-custom', 'name' => 'BÀN PHÍM CUSTOM'],
+                        ['id' => 'ghe-gaming', 'name' => 'GHẾ GAMING'],
+                        ['id' => 'phu-kien-khac', 'name' => 'PHỤ KIỆN KHÁC'],
+                        ['id' => 'linh-kien-pc', 'name' => 'LINH KIỆN PC'],
+                        ['id' => 'loa-tai-nghe', 'name' => 'LOA - TAI NGHE'],
+                        ['id' => 'ban-phim-co', 'name' => 'BÀN PHÍM CƠ'],
+                        ['id' => 'chuot', 'name' => 'CHUỘT'],
+                    ];
+                    foreach ($categories as $category): ?>
+                        <a href="products.php?category=<?php echo $category['id']; ?>" class="category-item">
+                            <span><?php echo $category['name']; ?></span>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            
             <div class="search-box">
                 <input type="text" placeholder="Nội dung tìm kiếm">
                 <button><i class="fas fa-search"></i></button>
@@ -78,3 +106,28 @@
         </div>
     </div>
 </nav>
+<script>
+(function() {
+    const toggle = document.querySelector('.category-toggle');
+    const dropdown = document.querySelector('.category-dropdown');
+
+    if (!toggle || !dropdown) {
+        console.error('Elements not found');
+        return;
+    }
+
+    toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropdown.classList.toggle('active');
+    });
+
+    // Đóng dropdown khi click bên ngoài
+    document.addEventListener('click', function(e) {
+        const isClickInside = dropdown.contains(e.target) || toggle.contains(e.target);
+        if (!isClickInside) {
+            dropdown.classList.remove('active');
+        }
+    });
+})();
+</script>

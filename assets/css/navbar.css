@@ -1,25 +1,23 @@
-/* Áp dụng Color System từ Design System */
 :root {
-    --primary: #0B2A4A;    /* Màu chủ đạo cho Navbar, Footer */
-    --secondary: #23B5D3;  /* Nút bấm phụ, hiệu ứng Hover */
-    --bg-main: #FFFFFF;    /* Nền trang web chung */
-    --bg-light: #F4F6F9;   /* Nền phân cách các section */
-    --text-dark: #333333;  /* Chữ văn bản chính */
-    --text-muted: #6C757D; /* Chữ phụ, mô tả ngắn */
-    --radius-sm: 4px;      /* Bo góc cho ô input */
-    --radius-md: 8px;      /* Bo góc cho nút bấm, thẻ sản phẩm */
+    --primary: #0B2A4A;
+    --secondary: #23B5D3;
+    --bg-main: #FFFFFF;
+    --bg-light: #F4F6F9;
+    --text-dark: #333333;
+    --text-muted: #6C757D;
+    --radius-sm: 4px;
+    --radius-md: 8px;
 }
 
-/* Reset căn lề & Font chữ Inter */
 * { 
     margin: 0; 
     padding: 0; 
     box-sizing: border-box; 
-    font-family: 'Inter', sans-serif; /* Font family chính theo yêu cầu */
+    font-family: 'Inter', sans-serif;
 }
 
 .container { 
-    max-width: 1200px; /* Độ rộng tối đa theo Design System */
+    max-width: 1200px;
     margin: 0 auto; 
     padding: 0 15px; 
 }
@@ -30,67 +28,138 @@
     justify-content: space-between; 
 }
 
-/* Tầng 1: Top Bar */
+/* ===== TOP BAR ===== */
 .top-bar { 
-    background: var(--bg-light); /* Màu nền phân cách #F4F6F9 */
+    background: var(--bg-light);
     padding: 8px 0; 
-    font-size: 12px; /* text-xs: 12px cho thông báo nhỏ */
+    font-size: 12px;
     border-bottom: 1px solid #eee; 
-    color: var(--text-muted); /* Màu chữ phụ #6C757D */
+    color: var(--text-muted);
 }
 
-.top-right { display: flex; gap: 15px; }
-.top-right a { color: var(--text-muted); text-decoration: none; }
+.top-right { 
+    display: flex; 
+    gap: 15px; 
+}
 
-/* Tầng 2: Main Header (Logo, Menu, Hotline) */
+.top-right a { 
+    color: var(--text-muted); 
+    text-decoration: none; 
+}
+
+/* ===== MAIN HEADER ===== */
+.site-header {
+    background-color: var(--primary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
 .main-header { 
     padding: 15px 0; 
-    background: var(--bg-main); /* Nền trắng #FFFFFF */
+    background: var(--bg-main);
+    border-bottom: 1px solid #eee;
 }
 
-.main-menu { display: flex; list-style: none; gap: 20px; }
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.logo img {
+    max-height: 100px;
+    width: auto;
+    mix-blend-mode: multiply;
+}
+
+.main-menu { 
+    display: flex; 
+    list-style: none; 
+    gap: 20px; 
+}
+
 .main-menu a { 
     text-decoration: none; 
-    color: var(--text-dark); /* Màu chữ chính #333333 */
-    font-weight: 600; /* Semi-bold cho menu */
-    font-size: 14px; /* text-sm: 14px */
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .main-menu a:hover {
-    color: var(--secondary); /* Hiệu ứng Hover màu xanh nhạt #23B5D3 */
+    color: var(--secondary);
 }
 
-.header-contact { display: flex; align-items: center; gap: 10px; }
+.header-contact { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+
 .header-contact i { 
     font-size: 30px; 
-    color: var(--secondary); /* Icon dùng màu secondary */
+    color: var(--secondary);
 }
 
-/* Tầng 3: Thanh màu sắc FD Tech (Thay cho màu Gearshop) */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-info .p {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.contact-info .e {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ===== BOTTOM HEADER ===== */
 .bottom-header { 
-    background: var(--primary); /* Màu chủ đạo xanh đậm #0B2A4A */
+    background: var(--primary);
     color: #fff; 
-    padding: 10px 0; 
+    padding: 10px 0;
+}
+
+.bottom-header .container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .category-toggle { 
-    background: rgba(255, 255, 255, 0.1); /* Làm sáng nhẹ nền danh mục */
+    background: rgba(255, 255, 255, 0.1);
     padding: 10px 20px; 
-    font-weight: 700; /* Bold: 700 */
+    font-weight: 700;
     display: flex; 
     align-items: center; 
     gap: 8px; 
-    border-radius: var(--radius-sm); /* Bo góc 4px */
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: 0.3s;
+    color: white;
 }
 
-.search-box { flex: 1; margin: 0 30px; position: relative; display: flex; }
+.category-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== SEARCH BOX ===== */
+.search-box { 
+    flex: 1; 
+    margin: 0 20px;
+    position: relative; 
+    display: flex;
+}
+
 .search-box input { 
     width: 100%; 
-    padding: 8px 15px; 
-    border-radius: var(--radius-sm); /* Bo góc ô nhập liệu 4px */
+    padding: 10px 15px; 
+    border-radius: var(--radius-sm);
     border: none; 
     outline: none; 
-    font-size: 14px; 
+    font-size: 14px;
 }
 
 .search-box button { 
@@ -104,37 +173,152 @@
     color: var(--text-muted);
 }
 
-.header-icons { display: flex; gap: 20px; align-items: center; }
-.header-icons a { color: #fff; text-decoration: none; font-size: 18px; }
+/* ===== HEADER ICONS ===== */
+.header-icons { 
+    display: flex; 
+    gap: 20px; 
+    align-items: center;
+}
 
-.cart-icon .count {
-    background: var(--secondary); /* Màu badge giỏ hàng #23B5D3 */
-    color: white;
-    padding: 2px 6px;
-    border-radius: 50%;
-    font-size: 10px;
+.header-icons a { 
+    color: #fff; 
+    text-decoration: none; 
+    font-size: 18px;
+    transition: 0.3s;
 }
-.site-header {
-    background-color: var(--primary);
-    padding: 10px 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+.header-icons a:hover {
+    color: var(--secondary);
 }
-.logo {
+
+.cart-icon {
+    position: relative;
     display: flex;
     align-items: center;
-    padding: 5px 0;
+    gap: 8px;
 }
 
-.logo img {
-    max-height: 100px;
-    width: auto;
-    /* Nếu ảnh có nền trắng mà bạn muốn nó hòa vào header, hãy dùng lệnh dưới */
-    mix-blend-mode: multiply; 
+.cart-icon .count {
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
 }
 
-.main-header {
-    background-color: #ffffff; /* --bg-main theo Design System */
-    border-bottom: 1px solid #eee;
+/* ===== CATEGORY DROPDOWN ===== */
+.category-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 350px;
+    margin-top: 8px;
 }
 
+.category-dropdown.active {
+    display: block;
+}
 
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    color: var(--text-dark);
+    text-decoration: none;
+    border-bottom: 1px solid #f0f0f0;
+    transition: 0.3s;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.category-item:hover {
+    background-color: #f9f9f9;
+    color: var(--secondary);
+    padding-left: 24px;
+}
+
+.category-item:last-child {
+    border-bottom: none;
+}
+
+.category-item i {
+    font-size: 10px;
+    color: #ccc;
+}
+.category-dropdown {
+    display: none;  /* ← THÊM DÒNG NÀY */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 350px;
+    margin-top: 8px;
+}
+
+.category-dropdown.active {
+    display: block;
+}
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: white; /* Nền trắng toàn bộ thanh */
+    border-radius: 20px;     /* Bo tròn thanh tìm kiếm */
+    overflow: hidden;        /* Giữ nút bấm không bị tràn ra khỏi bo tròn */
+    height: 38px;            /* Chiều cao của thanh search */
+    width: 100%;             /* Hoặc độ rộng bạn muốn */
+    max-width: 500px;
+}
+
+.search-box input {
+    flex: 1;                 /* Ô input chiếm hết khoảng trống bên trái */
+    border: none;            /* Xóa viền của input */
+    padding: 0 15px;         /* Khoảng cách chữ bên trong */
+    outline: none;           /* Xóa viền khi click vào */
+    height: 100%;
+}
+
+.search-box button {
+    background-color: #333f48; /* Màu xám đen của nút bấm giống mẫu */
+    color: white;              /* Màu của icon kính lúp */
+    border: none;              /* Xóa viền mặc định của nút */
+    width: 50px;               /* Độ rộng của nút bấm */
+    height: 100%;              /* Cao bằng thanh search */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.search-box button:hover {
+    background-color: #000000; /* Đổi màu khi di chuột vào */
+}
+.search-button {
+    background-color: #1a1a1a;
+    border-top-right-radius: 25px;    /* Bo góc trên bên phải */
+    border-bottom-right-radius: 25px; /* Bo góc dưới bên phải */
+    padding: 10px 20px;
+    border: none;
+}

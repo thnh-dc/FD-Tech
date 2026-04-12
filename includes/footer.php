@@ -4,7 +4,7 @@
   <div class="footer-top">
     <div class="container top-flex">
       <div class="top-text">
-        ✈️ Gear Shop - Thế Giới Mua Bán Đồ Chơi Công Nghệ, Phụ Kiện Chơi Game
+        ✈️ FD Tech - Thế Giới Mua Bán Đồ Chơi Công Nghệ, Phụ Kiện Chơi Game
       </div>
 
       <div class="subscribe">
