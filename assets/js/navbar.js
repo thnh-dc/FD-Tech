@@ -1,16 +1,25 @@
-const toggle = document.querySelector('.category-toggle');
-const dropdown = document.querySelector('.category-dropdown');
+// assets/js/navbar.js
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('menuToggle');
+    const dropdown = document.getElementById('categoryDropdown');
 
-if (toggle && dropdown) {
-    toggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropdown.classList.toggle('active');
-    });
+    if (btn && dropdown) {
+        // Log để kiểm tra trong Console (F12) xem code có chạy tới đây không
+        console.log("Menu JS đã sẵn sàng!");
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.category-toggle') && !e.target.closest('.category-dropdown')) {
-            dropdown.classList.remove('active');
-        }
-    });
-}
+        btn.addEventListener('click', function(e) {
+            dropdown.classList.toggle('active');
+            console.log("Đã bấm nút danh mục");
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', function(e) {
+            // Nếu click ra ngoài thì đóng menu
+            if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    } else {
+        console.error("Không tìm thấy ID menuToggle hoặc categoryDropdown!");
+    }
+});

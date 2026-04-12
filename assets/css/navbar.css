@@ -22,12 +22,6 @@
     padding: 0 15px; 
 }
 
-.header-flex { 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-}
-
 /* ===== TOP BAR ===== */
 .top-bar { 
     background: var(--bg-light);
@@ -37,82 +31,30 @@
     color: var(--text-muted);
 }
 
-.top-right { 
+.header-flex { 
     display: flex; 
-    gap: 15px; 
-}
-
-.top-right a { 
-    color: var(--text-muted); 
-    text-decoration: none; 
+    align-items: center; 
+    justify-content: space-between; 
 }
 
 /* ===== MAIN HEADER ===== */
-.site-header {
-    background-color: var(--primary);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
 .main-header { 
     padding: 15px 0; 
     background: var(--bg-main);
     border-bottom: 1px solid #eee;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    padding: 5px 0;
-}
+.logo { display: flex; align-items: center; }
+.logo img { max-height: 50px; width: auto; }
 
-.logo img {
-    max-height: 100px;
-    width: auto;
-    mix-blend-mode: multiply;
-}
-
-.main-menu { 
-    display: flex; 
-    list-style: none; 
-    gap: 20px; 
-}
-
+.main-menu { display: flex; list-style: none; gap: 20px; }
 .main-menu a { 
     text-decoration: none; 
     color: var(--text-dark);
     font-weight: 600;
     font-size: 14px;
 }
-
-.main-menu a:hover {
-    color: var(--secondary);
-}
-
-.header-contact { 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-}
-
-.header-contact i { 
-    font-size: 30px; 
-    color: var(--secondary);
-}
-
-.contact-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.contact-info .p {
-    font-weight: 600;
-    color: var(--text-dark);
-}
-
-.contact-info .e {
-    font-size: 12px;
-    color: var(--text-muted);
-}
+.main-menu a:hover { color: var(--secondary); }
 
 /* ===== BOTTOM HEADER ===== */
 .bottom-header { 
@@ -121,204 +63,240 @@
     padding: 10px 0;
 }
 
-.bottom-header .container {
+/* ===== CATEGORY MENU ===== */
+.category-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    width: 260px;
 }
-
+.main-menu a:hover {
+    color: var(--secondary) !important;
+}
 .category-toggle { 
     background: rgba(255, 255, 255, 0.1);
-    padding: 10px 20px; 
+    padding: 10px 15px; 
     font-weight: 700;
     display: flex; 
     align-items: center; 
-    gap: 8px; 
+    justify-content: space-between;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: 0.3s;
     color: white;
+    font-size: 13px;
 }
 
-.category-toggle:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* ===== SEARCH BOX ===== */
-.search-box { 
-    flex: 1; 
-    margin: 0 20px;
-    position: relative; 
-    display: flex;
-}
-
-.search-box input { 
-    width: 100%; 
-    padding: 10px 15px; 
-    border-radius: var(--radius-sm);
-    border: none; 
-    outline: none; 
-    font-size: 14px;
-}
-
-.search-box button { 
-    position: absolute; 
-    right: 10px; 
-    top: 50%; 
-    transform: translateY(-50%); 
-    background: none; 
-    border: none; 
-    cursor: pointer; 
-    color: var(--text-muted);
-}
-
-/* ===== HEADER ICONS ===== */
-.header-icons { 
-    display: flex; 
-    gap: 20px; 
-    align-items: center;
-}
-
-.header-icons a { 
-    color: #fff; 
-    text-decoration: none; 
-    font-size: 18px;
-    transition: 0.3s;
-}
-
-.header-icons a:hover {
-    color: var(--secondary);
-}
-
-.cart-icon {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.cart-icon .count {
-    background: #ff4444;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
-}
-
-/* ===== CATEGORY DROPDOWN ===== */
 .category-dropdown {
-    display: none;
+    display: none; /* Ẩn mặc định */
     position: absolute;
-    top: 100%;
+    top: calc(100% + 5px);
     left: 0;
     background: white;
     border: 1px solid #ddd;
     border-radius: var(--radius-md);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 1000;
-    min-width: 350px;
-    margin-top: 8px;
+    width: 100%;
 }
 
-.category-dropdown.active {
-    display: block;
-}
-
-.category-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+.category-dropdown.active { display: block; }
 
 .category-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 20px;
+    padding: 12px 15px;
     color: var(--text-dark);
     text-decoration: none;
     border-bottom: 1px solid #f0f0f0;
-    transition: 0.3s;
-    font-size: 13px;
+    font-size: 12px;
     text-transform: uppercase;
 }
+.category-item:hover { background: #f9f9f9; color: var(--secondary); }
 
-.category-item:hover {
-    background-color: #f9f9f9;
-    color: var(--secondary);
-    padding-left: 24px;
-}
-
-.category-item:last-child {
-    border-bottom: none;
-}
-
-.category-item i {
-    font-size: 10px;
-    color: #ccc;
-}
-.category-dropdown {
-    display: none;  /* ← THÊM DÒNG NÀY */
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    min-width: 350px;
-    margin-top: 8px;
-}
-
-.category-dropdown.active {
-    display: block;
-}
+/* ===== SEARCH BOX (CHUẨN GEARSHOP) ===== */
 .search-box {
+    flex: 1;
     display: flex;
     align-items: center;
-    background-color: white; /* Nền trắng toàn bộ thanh */
-    border-radius: 20px;     /* Bo tròn thanh tìm kiếm */
-    overflow: hidden;        /* Giữ nút bấm không bị tràn ra khỏi bo tròn */
-    height: 38px;            /* Chiều cao của thanh search */
-    width: 100%;             /* Hoặc độ rộng bạn muốn */
+    background-color: white; 
+    border-radius: 25px;      /* Bo tròn cực mượt */
+    overflow: hidden;         /* CẮT nút bấm lòi ra ngoài */
+    height: 40px;            
     max-width: 500px;
+    border: 1px solid #ddd;
+    margin: 0 20px;
 }
 
 .search-box input {
-    flex: 1;                 /* Ô input chiếm hết khoảng trống bên trái */
-    border: none;            /* Xóa viền của input */
-    padding: 0 15px;         /* Khoảng cách chữ bên trong */
-    outline: none;           /* Xóa viền khi click vào */
+    flex: 1;                 
+    border: none;            
+    padding: 0 20px;         
+    outline: none;           
     height: 100%;
+    font-size: 14px;
 }
 
 .search-box button {
-    background-color: #333f48; /* Màu xám đen của nút bấm giống mẫu */
-    color: white;              /* Màu của icon kính lúp */
-    border: none;              /* Xóa viền mặc định của nút */
-    width: 50px;               /* Độ rộng của nút bấm */
-    height: 100%;              /* Cao bằng thanh search */
+    background-color: #333f48; 
+    color: white;              
+    border: none;              
+    width: 60px;               
+    height: 100%;              
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 0;          /* Quan trọng: Để 0 để ăn theo độ bo của cha */
+    transition: 0.3s;
+}
+.search-box button:hover {
+    background-color: #1a9bb8; /* Màu sẽ đổi khi bạn rà chuột qua */
+    cursor: pointer;           /* Biến con trỏ thành hình bàn tay */
+}
+/* ===== ICONS ===== */
+.header-icons { display: flex; gap: 20px; align-items: center; }
+.header-icons a { color: #fff; text-decoration: none; font-size: 18px; }
+
+.cart-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: white !important; /* Hiện chữ Giỏ hàng màu trắng */
+    position: relative;
+}
+.cart-icon i {
+    font-size: 20px;
+    color: white !important; /* Hiện icon màu trắng */
+}
+
+.cart-icon .count {
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+}
+/* Vòng tròn đỏ thông báo số lượng */
+.cart-icon .count {
+    background-color: #ff4444; /* Màu đỏ nổi bật */
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    border: 2px solid var(--primary); /* Tạo viền để tách biệt với nền xanh */
+}
+
+.cart-text {
+    font-size: 14px;
+    font-weight: 600;
+}
+.header-icons a:hover {
+    color: #23B5D3 !important; /* Màu xanh thương hiệu khi rê chuột vào */
+    transform: translateY(-2px); /* Hiệu ứng nhích nhẹ lên trên cho sinh động */
+    transition: all 0.3s ease;
+}
+
+/* Đảm bảo icon bên trong cũng đổi màu theo */
+.header-icons a:hover i {
+    color: #23B5D3 !important;
+}
+
+/*  "Giỏ hàng"  */
+.cart-icon:hover .cart-text {
+    color: #23B5D3 !important;
+}
+.header-contact i { 
+    font-size: 30px; 
+    color: var(--secondary) !important; /* Đảm bảo luôn hiện màu xanh #23B5D3 */
+}
+
+/* --- Cụm liên hệ: Tai nghe + SĐT + Email --- */
+.header-contact {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Icon tai nghe luôn hiện màu xanh */
+.header-contact i {
+    font-size: 28px;
+    color: var(--secondary) !important; /* Màu xanh #23B5D3 */
     transition: 0.3s;
 }
 
-.search-box button:hover {
-    background-color: #000000; /* Đổi màu khi di chuột vào */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
 }
-.search-button {
-    background-color: #1a1a1a;
-    border-top-right-radius: 25px;    /* Bo góc trên bên phải */
-    border-bottom-right-radius: 25px; /* Bo góc dưới bên phải */
-    padding: 10px 20px;
-    border: none;
+
+.contact-info .p {
+    font-weight: 700;
+    color: #333; /* Màu mặc định số điện thoại */
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.contact-info .e {
+    font-size: 11px;
+    color: #777; /* Màu mặc định email */
+    transition: 0.3s;
+}
+
+/* Hiệu ứng khi rê chuột vào cả cụm liên hệ */
+.header-contact:hover .p,
+.header-contact:hover .e {
+    color: var(--secondary) !important; /* Chữ hiện xanh khi hover */
+}
+
+/* --- Cụm Icon: Trái tim + Giỏ hàng --- */
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-icons a {
+    color: #fff; /* Màu mặc định của icon khi ở trên nền tối */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+}
+
+/* Khi rê chuột vào Icon trái tim hoặc Giỏ hàng */
+.header-icons a:hover,
+.header-icons a:hover i,
+.header-icons a:hover .cart-text {
+    color: var(--secondary) !important; /* Hiện màu xanh sáng */
+}
+
+/* Giữ nguyên hình dáng số lượng giỏ hàng */
+.cart-icon .count {
+    background: #ff4444;
+    color: white !important;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
 }

@@ -7,10 +7,11 @@
         ✈️ FD Tech - Thế Giới Mua Bán Đồ Chơi Công Nghệ, Phụ Kiện Chơi Game
       </div>
 
-      <div class="subscribe">
-        <input type="email" placeholder="Nhập email của bạn">
-        <button>Đăng ký</button>
-      </div>
+     <div class="subscribe">
+    <input type="email" placeholder="Nhập email của bạn">
+    <button type="button">
+        Đăng ký </button>
+</div>
     </div>
   </div>
 
@@ -68,7 +69,7 @@
   <!-- BOTTOM -->
   <div class="footer-bottom">
     <div class="container bottom-flex">
-      <p>© Gearshop.vn - All Rights Reserved</p>
+      <p>©FD-Techshop.vn - All Rights Reserved</p>
       <p>VNPAY</p>
     </div>
   </div>

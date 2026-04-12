@@ -3,7 +3,7 @@
 body { font-family: 'Inter', Arial, sans-serif; line-height: 1.6; }
 
 /* FOOTER STYLES */
-.footer-top { background: #0B2A4A; padding: 20px 0; color: white; }
+.footer-top { background: #0B2A4A; padding: 12px 0; color: white; }
 .top-flex { display: flex; justify-content: space-between; align-items: center; }
 
 .subscribe { 
@@ -22,6 +22,10 @@ body { font-family: 'Inter', Arial, sans-serif; line-height: 1.6; }
     cursor: pointer;
     font-weight: bold;
 }
+.subscribe button:hover {
+    background-color: #1a9bb8; /* Xanh đậm hơn khi di chuột vào */
+    color: #fff;
+}
 
 .footer-main { display: flex; padding: 40px 0; gap: 50px; }
 .footer-left { flex: 1; }
@@ -34,3 +38,44 @@ body { font-family: 'Inter', Arial, sans-serif; line-height: 1.6; }
 .support .icon { font-size: 30px; color: #00a8ff; }
 
 .footer-bottom { text-align: center; padding: 20px 0; border-top: 1px solid #eee; color: #999; font-size: 13px; }
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: white; 
+    border-radius: 25px;     /* Tăng độ bo tròn cho mượt hơn */
+    overflow: hidden;        /* Quan trọng: Để nút bấm không bị lòi góc */
+    height: 40px;            
+    width: 100%;             
+    max-width: 500px;
+    border: 1px solid #ddd;  /* Thêm viền nhẹ cho rõ khối */
+}
+
+.search-box input {
+    flex: 1;                 
+    border: none;            
+    padding: 0 20px;         /* Tăng padding trái cho thoáng chữ */
+    outline: none;           
+    height: 100%;
+    font-size: 14px;
+}
+
+.search-box button {
+    background-color: #333f48; 
+    color: white;              
+    border: none;              
+    width: 60px;               /* Tăng độ rộng nút một chút nhìn sẽ cân đối hơn */
+    height: 100%;              
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.search-box button:hover {
+    background-color: #00a8ff; /* Đổi màu xanh cho đồng bộ FD-Tech khi hover */
+}
+
+.search-box button i {
+    font-size: 16px;           /* Chỉnh icon kính lúp to rõ hơn */
+}
