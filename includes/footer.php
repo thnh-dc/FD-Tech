@@ -26,7 +26,7 @@
         <div class="icon">🎧</div>
         <div>
           <p>Hỗ trợ trực tuyến</p>
-          <h3>0888.000.112</h3>
+          <h3>22052005</h3>
         </div>
       </div>
 

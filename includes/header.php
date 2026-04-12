@@ -48,8 +48,8 @@
             <div class="header-contact">
                 <i class="fas fa-headset"></i>
                 <div class="contact-info">
-                    <span class="p">0.888.000.112</span>
-                    <span class="e">fdtechchannel@gmail.com</span>
+                    <span class="p">220522005</span>
+                    <span class="e">fdtechshop@gmail.com</span>
                 </div>
             </div>
         </div>
