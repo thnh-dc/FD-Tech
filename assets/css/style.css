@@ -1,0 +1,160 @@
+
+/* --- Layout Danh Sách Sản Phẩm --- */
+.layout-with-sidebar {
+    display: flex;
+    gap: var(--spacing-32, 32px);
+    margin-top: 24px;
+    align-items: flex-start;
+}
+
+/* Sidebar dính (Sticky) khi cuộn */
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--bg-main);
+    padding: 24px;
+    border: 1px solid var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    position: sticky;
+    top: 80px; /* Dính lại khi cuộn chuột */
+}
+.sidebar-title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--bg-light);
+}
+
+/* Custom Input & Radio Box Đẹp Mắt */
+.search-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--text-muted);
+    border-radius: var(--radius-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: var(--text-sm);
+    transition: border-color 0.3s;
+}
+.search-input:focus {
+    outline: none;
+    border-color: var(--secondary);
+}
+.custom-radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: var(--text-sm);
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.custom-radio:hover { color: var(--secondary); }
+.custom-radio input[type="radio"] {
+    accent-color: var(--secondary);
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+/* --- Thẻ Sản Phẩm (Product Card) Nâng Cao --- */
+.product-card {
+    background: var(--bg-main);
+    border: 1px solid var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+}
+.product-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-5px);
+    border-color: var(--secondary);
+}
+.product-img-wrap {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+.product-img-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+}
+.product-card:hover .product-img-wrap img {
+    transform: scale(1.1); /* Hiệu ứng zoom nhẹ khi hover thẻ */
+}
+
+/* --- UI Chi Tiết Sản Phẩm --- */
+.product-detail-layout {
+    display: flex;
+    gap: 40px;
+    background: var(--bg-main);
+    padding: 32px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    margin-top: 24px;
+}
+.product-detail-info { flex: 1; min-width: 300px; }
+
+/* Zoom Wrapper theo yêu cầu */
+.zoom-wrapper {
+    flex: 1;
+    min-width: 300px;
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+    cursor: crosshair;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.zoom-img {
+    width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    transition: transform 0.1s ease-out;
+}
+
+/* Form Đặt hàng Đẹp */
+.qty-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--text-muted);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    width: max-content;
+}
+.qty-btn {
+    background: var(--bg-main);
+    border: none;
+    padding: 12px 16px;
+    font-size: var(--text-base);
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: background 0.2s;
+}
+.qty-btn:hover { background: var(--bg-light); color: var(--secondary); }
+.qty-input {
+    width: 50px;
+    border: none;
+    text-align: center;
+    font-size: var(--text-base);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    pointer-events: none;
+}
+done 
