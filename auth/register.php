@@ -1,9 +1,9 @@
 <?php include '../includes/header.php'; ?>
 
 <style>
-    /* CSS dành riêng cho khu vực Đăng nhập kiểu Shopee */
+    /* Dùng chung style với trang Đăng nhập để đồng bộ */
     .login-wrapper {
-        background-color: var(--primary); /* Sử dụng màu xanh đen chủ đạo */
+        background-color: var(--primary); 
         min-height: 600px;
         display: flex;
         align-items: center;
@@ -15,7 +15,7 @@
         display: flex;
         width: 100%;
         max-width: 1040px;
-        margin: 0 auto; /* Căn giữa toàn bộ cụm đăng nhập */
+        margin: 0 auto; /* Căn giữa toàn bộ cụm đăng nhập/đăng ký */
         align-items: center;
         justify-content: space-between; /* Đẩy Logo kịch trái, Form kịch phải */
     }
@@ -27,8 +27,8 @@
     }
 
     .login-branding img {
-        width: 250px; /* Chỉnh kích thước logo vừa phải */
-        border-radius: 20px; /* Bo góc logo cho mượt vì ảnh logo của bạn có nền */
+        width: 250px; 
+        border-radius: 20px; 
         margin-bottom: 25px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
@@ -53,10 +53,7 @@
     }
 
     .form-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
+        margin-bottom: 25px;
     }
 
     .form-title {
@@ -66,14 +63,8 @@
         margin: 0;
     }
 
-    .qr-login {
-        color: var(--secondary);
-        font-size: 24px;
-        cursor: pointer;
-    }
-
     .input-group {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         position: relative;
     }
 
@@ -94,7 +85,7 @@
     .btn-login {
         width: 100%;
         padding: 14px;
-        background: var(--secondary); /* Màu xanh dương sáng */
+        background: var(--secondary); 
         color: white;
         border: none;
         border-radius: 4px;
@@ -103,6 +94,7 @@
         cursor: pointer;
         text-transform: uppercase;
         margin-bottom: 15px;
+        margin-top: 10px;
         transition: background-color 0.3s;
     }
 
@@ -110,13 +102,18 @@
         background: #1a9bb8;
     }
 
-    .forgot-pw {
-        text-align: left;
-        font-size: 13px;
+    .terms-text {
+        font-size: 12px;
+        color: #777;
+        text-align: center;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .terms-text a {
         color: var(--secondary);
         text-decoration: none;
-        display: inline-block;
-        margin-bottom: 20px;
+        font-weight: 600;
     }
 
     .divider {
@@ -185,7 +182,7 @@
             gap: 40px;
         }
         .login-branding {
-            display: none; /* Ẩn logo to trên điện thoại để tiết kiệm diện tích */
+            display: none; 
         }
         .login-form-box {
             width: 100%;
@@ -204,24 +201,31 @@
 
         <div class="login-form-box">
             <div class="form-header">
-                <h2 class="form-title">Đăng nhập</h2>
-                <div class="qr-login" title="Đăng nhập bằng mã QR">
-                    <i class="fas fa-qrcode"></i>
-                </div>
+                <h2 class="form-title">Đăng ký</h2>
             </div>
 
             <form action="#" method="POST">
                 <div class="input-group">
-                    <input type="text" placeholder="Email/Số điện thoại/Tên đăng nhập" required>
+                    <input type="text" placeholder="Họ và tên" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" placeholder="Email hoặc Số điện thoại" required>
                 </div>
                 
                 <div class="input-group">
                     <input type="password" placeholder="Mật khẩu" required>
                 </div>
 
-                <button type="submit" class="btn-login">Đăng nhập</button>
+                <div class="input-group">
+                    <input type="password" placeholder="Xác nhận mật khẩu" required>
+                </div>
 
-                <a href="#" class="forgot-pw">Quên mật khẩu</a>
+                <button type="submit" class="btn-login">ĐĂNG KÝ</button>
+
+                <div class="terms-text">
+                    Bằng việc đăng ký, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> & <a href="#">Chính sách bảo mật</a> của FD Tech
+                </div>
 
                 <div class="divider">HOẶC</div>
 
@@ -242,7 +246,7 @@
                 </div>
 
                 <div class="register-link">
-                    Bạn mới biết đến FD Tech? <a href="register.php">Đăng ký</a>
+                    Bạn đã có tài khoản? <a href="login.php">Đăng nhập</a>
                 </div>
             </form>
         </div>
