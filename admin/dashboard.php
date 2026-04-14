@@ -1,4 +1,4 @@
-<?php include('../../includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
 <div class="admin-wrapper" style="display: flex; min-height: 100vh;">
     <aside style="width: 260px; background: var(--primary); color: white; padding: 20px;">
         <h2 style="font-size: var(--text-xl); margin-bottom: 30px;">FD TECH ADMIN</h2>
