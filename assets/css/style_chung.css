@@ -56,9 +56,16 @@ body {
     padding: var(--space-xl) var(--space-md);
 }
 
-.section-block { margin-bottom: 48px; }
-.page-title { font-size: var(--text-2xl); font-weight: 700; color: var(--primary); margin-bottom: var(--space-lg); }
-.text-muted { color: var(--text-muted); font-size: var(--text-sm); }
+.section-block { 
+    margin-bottom: 48px; }
+.page-title { 
+    font-size: var(--text-2xl); 
+    font-weight: 700; 
+    color: var(--primary); 
+    margin-bottom: var(--space-lg); }
+.text-muted { 
+    color: var(--text-muted); 
+    font-size: var(--text-sm); }
 
 /* Buttons */
 .btn {
@@ -72,17 +79,34 @@ body {
     transition: all 0.3s ease;
 }
 
-.btn:hover { opacity: 0.85; }
-.btn-primary { background-color: var(--primary); color: var(--bg-main); }
-.btn-secondary { background-color: var(--secondary); color: var(--bg-main); }
-.btn-success { background-color: var(--success); color: var(--bg-main); }
-.btn-danger { background-color: var(--danger); color: var(--bg-main); }
-.btn-large { font-size: var(--text-base); padding: 12px var(--space-lg); }
+.btn:hover { 
+    opacity: 0.85; }
+.btn-primary { 
+    background-color: var(--primary); 
+    color: var(--bg-main); }
+.btn-secondary { 
+    background-color: var(--secondary); 
+    color: var(--bg-main); }
+.btn-success { 
+    background-color: var(--success); 
+    color: var(--bg-main); }
+.btn-danger { 
+    background-color: var(--danger); 
+    color: var(--bg-main); }
+.btn-large { 
+    font-size: var(--text-base); 
+    padding: 12px var(--space-lg); }
 
 /* Forms */
-.form-container { max-width: 600px; }
-.form-group { margin-bottom: var(--space-md); }
-.form-group label { display: block; margin-bottom: var(--space-sm); font-weight: 600; font-size: var(--text-sm); }
+.form-container { 
+    max-width: 600px; }
+.form-group { 
+    margin-bottom: var(--space-md); }
+.form-group label { 
+    display: block; 
+    margin-bottom: var(--space-sm); 
+    font-weight: 600; 
+    font-size: var(--text-sm); }
 .form-control {
     width: 100%;
     padding: 10px var(--space-md);
