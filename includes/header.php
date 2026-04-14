@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FD Tech</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/navbar.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css?v=1.1">
+    <link rel="stylesheet" href="../assets/css/footer.css">
 </head>
 <body>
 
@@ -29,28 +30,29 @@
     </div>
 
     <div class="main-header">
-        <div class="container header-flex">
-            <div class="logo">
-                <a href="index.php">
-                    <img src="../assets/images/logo-fd.jpg" alt="FD TECH" style="height: 50px;"> 
-                    <span style="font-size: 24px; font-weight: bold; color: #333;">FD<span style="color: #00a8ff;">TECH.VN</span></span>
+    <div class="container header-flex">
+        <div class="logo">
+            <a href="index.php">
+                <img src="../assets/images/logo-fd.jpg" alt="FD TECH" style="height: 50px;"> 
+                <span style="font-size: 24px; font-weight: bold; color: #333;">FD<span style="color: #00a8ff;">TECH.VN</span></span>
+            </a>
+        </div>
+
+        <ul class="main-menu">
+            <li><a href="index.php">Trang chủ</a></li>
+            <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
+            <li><a href="#">Tin tức</a></li>
+            <li><a href="#">Khuyến mãi</a></li>
+            <li><a href="#lien-he">Liên hệ</a></li>
+        </ul>
+
+        <div class="header-right-action">
+            <div class="header-auth">
+                <a href="login.php" class="auth-link">
+                    <i class="fas fa-user-circle"></i> Đăng nhập
                 </a>
-            </div>
-
-            <ul class="main-menu">
-                <li><a href="index.php">Trang chủ</a></li>
-                <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
-                <li><a href="#">Tin tức</a></li>
-                <li><a href="#">Khuyến mãi</a></li>
-                <li><a href="#">Liên hệ</a></li>
-            </ul>
-
-            <div class="header-contact">
-                <i class="fas fa-headset"></i>
-                <div class="contact-info">
-                    <span class="p">220522005</span>
-                    <span class="e">fdtechshop@gmail.com</span>
-                </div>
+                <span class="divider">|</span>
+                <a href="register.php" class="auth-link">Đăng ký</a>
             </div>
         </div>
     </div>

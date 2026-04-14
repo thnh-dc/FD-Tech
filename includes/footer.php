@@ -2,18 +2,12 @@
 
   <!-- TOP BAR -->
   <div class="footer-top">
-    <div class="container top-flex">
-      <div class="top-text">
-        ✈️ FD Tech - Thế Giới Mua Bán Đồ Chơi Công Nghệ, Phụ Kiện Chơi Game
-      </div>
-
-     <div class="subscribe">
-    <input type="email" placeholder="Nhập email của bạn">
-    <button type="button">
-        Đăng ký </button>
-</div>
+    <div class="container">
+        <div class="top-text">
+            ✈️ FD Tech - Thế Giới Mua Bán Đồ Chơi Công Nghệ, Phụ Kiện Chơi Game
+        </div>
     </div>
-  </div>
+</div>  
 
   <!-- MAIN -->
   <div class="footer-main container">
@@ -74,4 +68,7 @@
     </div>
   </div>
 
+  <class="footer" id="lien-he">
+   ... nội dung footer của bạn ...
+</class=>
 </footer>
