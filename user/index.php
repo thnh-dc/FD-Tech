@@ -1,5 +1,4 @@
 <?php 
-    // Đường dẫn này trỏ đến file header nằm trong thư mục includes
     include '../includes/header.php'; 
 ?>
 

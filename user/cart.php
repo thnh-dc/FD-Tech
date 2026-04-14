@@ -2,7 +2,6 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ Hàng Của Bạn - FD Tech</title>
     <link rel="stylesheet" href="../assets/css/style_chung.css">
     <link rel="stylesheet" href="../assets/css/style_cart.css">
@@ -31,7 +30,7 @@
                 
                 <div class="cart-summary">
                     <p class="summary-text">Tổng thanh toán: <span id="cart-total" class="price-highlight">0₫</span></p>
-                    <a href="checkout.php"><button class="btn btn-primary btn-large">Tiến Hành Đặt Hàng</button></a>
+                    <a href="product_list.php"><button class="btn btn-primary btn-large">Tiến Hành Đặt Hàng</button></a>
                 </div>
 
                 <div class="empty-cart-container">
