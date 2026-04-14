@@ -1,113 +1,89 @@
-<?php
-require_once '../../config/database.php';
-
-$error = ""; $success = "";
-// Lấy danh mục để hiện trong thẻ select
-$categories = $conn->query("SELECT * FROM categories")->fetchAll();
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $price = $_POST['price'];
-    $stock = $_POST['stock'];
-    $cat_id = $_POST['category_id'];
-    $desc = $_POST['description'];
-    
-    // Bắt lỗi nhập số âm
-    if ($price < 0 || $stock < 0) {
-        $error = "Giá tiền và số lượng không được âm!";
-    } else {
-        // Xử lý Upload file
-        $file = $_FILES['image'];
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'png', 'jpeg'];
+<?php include('../../includes/header.php'); ?>
+<div class="admin-wrapper" style="padding: 40px; background: var(--bg-light); min-height: 100vh;">
+    <div style="max-width: 1000px; margin: 0 auto;">
         
-        if (!in_array($ext, $allowed)) {
-            $error = "Chỉ chấp nhận file ảnh JPG, PNG.";
-        } else {
-            $new_name = time() . "_" . uniqid() . "." . $ext; // Chống trùng tên file
-            if (move_uploaded_file($file['tmp_name'], "../../assets/images/" . $new_name)) {
-                $sql = "INSERT INTO products (name, category_id, price, stock_quantity, image_url, description) VALUES (?,?,?,?,?,?)";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute([$name, $cat_id, $price, $stock, $new_name, $desc]);
-                $success = "Thêm sản phẩm thành công!";
-            } else {
-                $error = "Không thể tải ảnh lên server.";
-            }
-        }
-    }
-}
-?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Thêm sản phẩm mới</title>
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #F4F6F9; padding: 50px; }
-        .form-card { max-width: 700px; margin: auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #0B2A4A; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        .btn-save { background: #0B2A4A; color: white; border: none; padding: 15px 30px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 16px; }
-        #preview { width: 100%; max-width: 200px; margin-top: 10px; display: none; border-radius: 8px; }
-        .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; }
-        .alert-danger { background: #f8d7da; color: #721c24; }
-        .alert-success { background: #d4edda; color: #155724; }
-    </style>
-</head>
-<body>
-    <div class="form-card">
-        <h2>Thêm sản phẩm mới</h2>
-        <?php if($error) echo "<div class='alert alert-danger'>$error</div>"; ?>
-        <?php if($success) echo "<div class='alert alert-success'>$success</div>"; ?>
-        
-        <form method="POST" enctype="multipart/form-data">
-            <div class="group">
-                <label>Tên sản phẩm</label>
-                <input type="text" name="name" required placeholder="Ví dụ: Tai nghe Gaming Razer">
-            </div>
-            <div class="group" style="display: flex; gap: 20px;">
-                <div style="flex: 1;">
-                    <label>Giá bán (VNĐ)</label>
-                    <input type="number" name="price" required>
+        <header style="margin-bottom: 30px;">
+            <a href="list.php" style="text-decoration: none; color: var(--text-muted); font-size: 14px;">← Quay lại danh sách</a>
+            <h1 style="margin-top: 10px; color: var(--primary);">Thêm sản phẩm mới</h1>
+        </header>
+
+        <form action="" method="POST" enctype="multipart/form-data">
+            <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 25px;">
+                
+                <div style="display: flex; flex-direction: column; gap: 25px;">
+                    <section class="card">
+                        <h3 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">Thông tin cơ bản</h3>
+                        <div class="form-group">
+                            <label class="form-label" style="font-weight: 600;">Tên sản phẩm *</label>
+                            <input type="text" name="name" class="form-control" placeholder="Nhập tên sản phẩm (Ví dụ: iPhone 15 Pro Max 256GB)">
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label" style="font-weight: 600;">Mô tả chi tiết sản phẩm</label>
+                            <textarea name="description" class="form-control" rows="12" placeholder="Nội dung mô tả, thông số kỹ thuật..."></textarea>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h3 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">Dữ liệu bán hàng</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Giá bán lẻ (VNĐ) *</label>
+                                <input type="number" name="price" class="form-control" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Giá khuyến mãi (Nếu có)</label>
+                                <input type="number" name="sale_price" class="form-control" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Số lượng nhập kho *</label>
+                                <input type="number" name="stock" class="form-control" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mã SKU (Tự định nghĩa)</label>
+                                <input type="text" name="sku" class="form-control" placeholder="ABC-123">
+                            </div>
+                        </div>
+                    </section>
                 </div>
-                <div style="flex: 1;">
-                    <label>Số lượng kho</label>
-                    <input type="number" name="stock" required>
+
+                <div style="display: flex; flex-direction: column; gap: 25px;">
+                    <section class="card">
+                        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px;">Phân loại</h3>
+                        <div class="form-group">
+                            <label class="form-label">Danh mục sản phẩm</label>
+                            <select name="category_id" class="form-control">
+                                <option value="">-- Chọn danh mục --</option>
+                                <option>Laptop</option>
+                                <option>Bàn phím</option>
+                                <option>Chuột</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px;">Hình ảnh sản phẩm</h3>
+                        <div style="border: 2px dashed var(--secondary); padding: 30px; text-align: center; border-radius: var(--radius-md); background: #f0faff;">
+                            <span style="font-size: 40px; display: block; margin-bottom: 10px;">🖼️</span>
+                            <input type="file" name="image" style="font-size: 12px; margin-bottom: 10px;">
+                            <p style="font-size: 11px; color: var(--text-muted);">Dung lượng tối đa 2MB (JPG, PNG, WEBP)</p>
+                        </div>
+                        <div id="preview-box" style="margin-top: 15px; text-align: center; display: none;">
+                            <img id="img-preview" src="#" style="max-width: 100%; border-radius: 8px; border: 1px solid #ddd;">
+                        </div>
+                    </section>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="padding: 18px; font-size: 16px; font-weight: 700; width: 100%;">
+                            XÁC NHẬN ĐĂNG BÀI
+                        </button>
+                        <button type="reset" class="btn" style="background: #e0e0e0; color: #666; padding: 12px; width: 100%;">
+                            Hủy & Nhập lại
+                        </button>
+                    </div>
                 </div>
+
             </div>
-            <div class="group">
-                <label>Danh mục sản phẩm</label>
-                <select name="category_id">
-                    <?php foreach($categories as $c): ?>
-                        <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="group">
-                <label>Ảnh minh họa</label>
-                <input type="file" name="image" id="imgFile" accept="image/*" required>
-                <img id="preview" src="">
-            </div>
-            <div class="group">
-                <label>Mô tả chi tiết</label>
-                <textarea name="description" rows="5"></textarea>
-            </div>
-            <button type="submit" class="btn-save">Xác nhận thêm sản phẩm</button>
-            <p style="text-align: center;"><a href="list.php">Quay lại danh sách</a></p>
         </form>
     </div>
-
-    <script>
-        // Preview ảnh trước khi upload
-        document.getElementById('imgFile').onchange = e => {
-            const [file] = e.target.files;
-            if (file) {
-                const pre = document.getElementById('preview');
-                pre.src = URL.createObjectURL(file);
-                pre.style.display = 'block';
-            }
-        }
-    </script>
-</body>
-</html>
+</div>
+<?php include('../../includes/footer.php'); ?>

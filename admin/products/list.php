@@ -1,68 +1,96 @@
-<?php
-require_once '../../config/database.php';
-// Lấy danh sách sản phẩm kèm tên danh mục
-$query = "SELECT p.*, c.name as category_name 
-          FROM products p 
-          LEFT JOIN categories c ON p.category_id = c.id 
-          ORDER BY p.id DESC";
-$products = $conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
-?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Danh sách sản phẩm - Admin</title>
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #F4F6F9; padding: 30px; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .flex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .btn { padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; cursor: pointer; border: none; }
-        .btn-add { background: #0B2A4A; color: white; }
-        .btn-edit { background: #FFC107; color: #333; font-size: 12px; }
-        .btn-delete { background: #DC3545; color: white; font-size: 12px; }
+<?php include('../../includes/header.php'); ?>
+<div class="admin-wrapper" style="padding: 40px; background: var(--bg-light); min-height: 100vh;">
+    <div style="max-width: 1200px; margin: 0 auto;">
         
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: #F8F9FA; text-align: left; padding: 15px; border-bottom: 2px solid #dee2e6; color: #6C757D; }
-        td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
-        .img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
-        .badge { background: #E2E8F0; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="flex-header">
-            <h2>Quản lý kho hàng</h2>
-            <a href="add.php" class="btn btn-add">+ Thêm sản phẩm</a>
+        <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+            <div>
+                <nav style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">QUẢN LÝ / SẢN PHẨM</nav>
+                <h1 style="margin: 0; font-size: var(--text-2xl); color: var(--primary);">Kho hàng sản phẩm</h1>
+            </div>
+            <a href="add.php" class="btn btn-primary" style="padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 10px rgba(11, 42, 74, 0.2);">
+                + THÊM SẢN PHẨM MỚI
+            </a>
+        </header>
+
+        <div class="card" style="display: flex; gap: 15px; align-items: center; margin-bottom: 25px; padding: 20px;">
+            <div style="flex: 2; position: relative;">
+                <input type="text" class="form-control" placeholder="Tìm theo tên sản phẩm hoặc mã SKU..." style="padding-left: 35px;">
+                <span style="position: absolute; left: 12px; top: 10px; color: var(--text-muted);">🔍</span>
+            </div>
+            <select class="form-control" style="flex: 1;">
+                <option>Tất cả danh mục</option>
+                <option>Laptop & Macbook</option>
+                <option>Linh kiện PC</option>
+                <option>Thiết bị ngoại vi</option>
+            </select>
+            <select class="form-control" style="flex: 1;">
+                <option>Sắp xếp: Mới nhất</option>
+                <option>Giá: Thấp đến Cao</option>
+                <option>Giá: Cao đến Thấp</option>
+            </select>
+            <button class="btn btn-secondary" style="padding: 10px 20px;">Lọc</button>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Ảnh</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Danh mục</th>
-                    <th>Giá bán</th>
-                    <th>Tồn kho</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($products as $p): ?>
-                <tr>
-                    <td>#<?= $p['id'] ?></td>
-                    <td><img src="../../assets/images/<?= htmlspecialchars($p['image_url']) ?>" class="img-thumb"></td>
-                    <td><strong><?= htmlspecialchars($p['name']) ?></strong></td>
-                    <td><span class="badge"><?= htmlspecialchars($p['category_name']) ?></span></td>
-                    <td><?= number_format($p['price']) ?>đ</td>
-                    <td><?= $p['stock_quantity'] ?></td>
-                    <td>
-                        <a href="edit.php?id=<?= $p['id'] ?>" class="btn btn-edit">Sửa</a>
-                        <a href="delete.php?id=<?= $p['id'] ?>" class="btn btn-delete" onclick="return confirm('Xóa sản phẩm này?')">Xóa</a>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <table class="admin-table" style="border-collapse: collapse;">
+                <thead style="background: #fcfcfc; border-bottom: 2px solid #f0f0f0;">
+                    <tr style="text-align: left; color: var(--text-muted); font-size: 13px;">
+                        <th style="padding: 20px;">SẢN PHẨM</th>
+                        <th>DANH MỤC</th>
+                        <th>GIÁ NIÊM YẾT</th>
+                        <th>TỒN KHO</th>
+                        <th>TRẠNG THÁI</th>
+                        <th style="text-align: right; padding-right: 20px;">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #f9f9f9;">
+                        <td style="padding: 15px 20px; display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; background: #eee; border-radius: 8px;"></div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-dark);">Laptop Asus ROG Strix G15</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">SKU: ASUS-7790-G15</div>
+                            </div>
+                        </td>
+                        <td>Gaming Laptop</td>
+                        <td style="font-weight: 700; color: var(--danger);">28.500.000 đ</td>
+                        <td>15 chiếc</td>
+                        <td><span style="color: var(--success); font-weight: 600; font-size: 13px;">● Đang bán</span></td>
+                        <td style="text-align: right; padding-right: 20px;">
+                            <a href="edit.php?id=1" style="text-decoration: none; color: var(--secondary); margin-right: 15px; font-weight: 600;">Sửa</a>
+                            <a href="#" style="text-decoration: none; color: var(--danger); font-weight: 600;">Xóa</a>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f9f9f9;">
+                        <td style="padding: 15px 20px; display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; background: #eee; border-radius: 8px;"></div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-dark);">Chuột Logitech G Pro X</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">SKU: LOGI-GPX-W</div>
+                            </div>
+                        </td>
+                        <td>Phụ kiện</td>
+                        <td style="font-weight: 700; color: var(--danger);">3.200.000 đ</td>
+                        <td>08 chiếc</td>
+                        <td><span style="color: var(--warning); font-weight: 600; font-size: 13px;">● Sắp hết</span></td>
+                        <td style="text-align: right; padding-right: 20px;">
+                            <a href="edit.php?id=2" style="text-decoration: none; color: var(--secondary); margin-right: 15px; font-weight: 600;">Sửa</a>
+                            <a href="#" style="text-decoration: none; color: var(--danger); font-weight: 600;">Xóa</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="padding: 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 13px; color: var(--text-muted);">Hiển thị 1 đến 10 trong số 142 sản phẩm</span>
+                <div style="display: flex; gap: 5px;">
+                    <button style="padding: 5px 12px; border: 1px solid #ddd; background: white; border-radius: 4px;">Trước</button>
+                    <button style="padding: 5px 12px; background: var(--primary); color: white; border: none; border-radius: 4px;">1</button>
+                    <button style="padding: 5px 12px; border: 1px solid #ddd; background: white; border-radius: 4px;">2</button>
+                    <button style="padding: 5px 12px; border: 1px solid #ddd; background: white; border-radius: 4px;">Sau</button>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
+<?php include('../../includes/footer.php'); ?>
