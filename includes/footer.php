@@ -1,4 +1,4 @@
-<footer class="footer">
+<footer class="footer" id="footer-contact">
 
   <!-- TOP BAR -->
   <div class="footer-top">
@@ -6,12 +6,6 @@
       <div class="top-text">
         ✈️ FD Tech - Thế Giới Thiết Bị, Phụ Kiện Công Nghệ
       </div>
-
-     <div class="subscribe">
-    <input type="email" placeholder="Nhập email của bạn">
-    <button type="button">
-        Đăng ký </button>
-</div>
     </div>
   </div>
 
@@ -26,10 +20,12 @@
         <div class="icon">🎧</div>
         <div>
           <p>Hỗ trợ trực tuyến</p>
-          <h3>1900 10 00</h3>
+          <h3>22052005</h3>
         </div>
       </div>
-
+      <div class="address">
+        <strong>FD-TECH@gmail.com</strong>
+      </div>
       <div class="address">
         <strong>Địa chỉ</strong>
         <p>Trường Đại học Quy Nhơn </p>
@@ -74,4 +70,4 @@
     </div>
   </div>
 
-</footer>
+</footer
