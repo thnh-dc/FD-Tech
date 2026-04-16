@@ -2,12 +2,18 @@
 
   <!-- TOP BAR -->
   <div class="footer-top">
-    <div class="container">
-        <div class="top-text">
-            ✈️ FD Tech - Thế Giới Mua Bán Đồ Chơi Công Nghệ, Phụ Kiện Chơi Game
-        </div>
+    <div class="container top-flex">
+      <div class="top-text">
+        ✈️ FD Tech - Thế Giới Thiết Bị, Phụ Kiện Công Nghệ
+      </div>
+
+     <div class="subscribe">
+    <input type="email" placeholder="Nhập email của bạn">
+    <button type="button">
+        Đăng ký </button>
+</div>
     </div>
-</div>  
+  </div>
 
   <!-- MAIN -->
   <div class="footer-main container">
@@ -20,13 +26,13 @@
         <div class="icon">🎧</div>
         <div>
           <p>Hỗ trợ trực tuyến</p>
-          <h3>22052005</h3>
+          <h3>1900 10 00</h3>
         </div>
       </div>
 
       <div class="address">
         <strong>Địa chỉ</strong>
-        <p>An Nhơn, Bình Định</p>
+        <p>Trường Đại học Quy Nhơn </p>
       </div>
     </div>
 
@@ -68,7 +74,4 @@
     </div>
   </div>
 
-  <class="footer" id="lien-he">
-   ... nội dung footer của bạn ...
-</class=>
 </footer>

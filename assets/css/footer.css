@@ -1,152 +1,71 @@
-/* ==========================================================================
-   1. RESET & ĐỊNH DẠNG CHUNG
-   ========================================================================== */
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-}
-html {
-    scroll-behavior: smooth;
-}
-body { 
-    font-family: 'Inter', Arial, sans-serif; 
-    line-height: 1.6; 
-}
-
-/* Container dùng chung để căn giữa nội dung (Nên thêm vào) */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-/* ==========================================================================
-   2. FOOTER - PHẦN TRÊN (Thanh xanh navy)
-   ========================================================================== */
-.footer-top {
-    background: #0B2A4A; /* Màu xanh navy */
-    padding: 12px 0;
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    display: flex;          /* Kích hoạt Flexbox */
-    justify-content: center; /* Căn giữa theo chiều ngang (trái-phải) */
-    align-items: center;    /* Căn giữa theo chiều dọc (trên-dưới) */
-    width: 100%;
-}
-
+/* FOOTER STYLES */
+.footer-top { 
+    background: var(--primary);
+    padding: 12px 0; 
+    color: white; }
 .top-flex { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: center; }
 
-/* ==========================================================================
-   3. FOOTER - PHẦN CHÍNH (Thông tin & Cột liên kết)
-   ========================================================================== */
+.subscribe { 
+    display: flex; 
+    background: white; 
+    border-radius: 30px; 
+    overflow: hidden; 
+    height: 40px; }
+.subscribe input { 
+    border: none; 
+    padding: 0 20px; 
+    outline: none; 
+    width: 200px; }
+.subscribe button { 
+    background: #333f48; 
+    color: white; 
+    border: none; 
+    padding: 0 20px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    transition: background 0.3s;
+}
+.subscribe button:hover { background-color: var(--secondary); }
+
 .footer-main { 
     display: flex; 
     padding: 40px 0; 
-    gap: 50px; 
-}
-
-.footer-left { flex: 1; }
-
+    gap: 50px; }
+.footer-left { 
+    flex: 1; }
 .footer-right { 
     flex: 2; 
     display: flex; 
-    justify-content: space-between; 
-}
-
-/* Tiêu đề các cột trong Footer */
+    justify-content: space-between; }
 .footer-right .col h4 { 
     margin-bottom: 20px; 
-    color: #0B2A4A; 
-    text-transform: uppercase; 
-    font-weight: 700; /* In đậm tiêu đề */
-}
-
-/* Các đường link trong Footer */
+    color: var(--primary); 
+    text-transform: uppercase; }
 .footer-right .col a { 
     display: block; 
     text-decoration: none; 
     color: #666; 
     margin-bottom: 10px; 
     font-size: 14px; 
-    font-weight: 600; /* In đậm chữ cho rõ hơn */
-}
-
+    transition: color 0.3s; }
 .footer-right .col a:hover { 
-    color: #00a8ff; 
-    padding-left: 5px; /* Hiệu ứng nhẹ khi rê chuột */
-    transition: 0.3s;
-}
+    color: var(--secondary); }
 
-/* Phần Hỗ trợ trực tuyến */
 .support { 
     display: flex; 
     align-items: center; 
     gap: 15px; 
-    margin: 20px 0; 
-}
+    margin: 20px 0; }
+.support .icon { 
+    font-size: 30px; 
+    color: var(--secondary); }
 
-.support .icon { font-size: 30px; color: #00a8ff; }
-
-.support h3 {
-    font-weight: 700;
-    color: #00a8ff;
-}
-
-/* ==========================================================================
-   4. Ô TÌM KIẾM (SEARCH BOX) - Dùng chung cho Header/Footer
-   ========================================================================== */
-.search-box {
-    display: flex;
-    align-items: center;
-    background-color: white; 
-    border-radius: 25px;
-    overflow: hidden;
-    height: 40px;
-    width: 100%;
-    max-width: 500px;
-    border: 1px solid #ddd;
-}
-
-.search-box input {
-    flex: 1;
-    border: none;
-    padding: 0 20px;
-    outline: none;
-    font-size: 14px;
-    font-weight: 600; /* In đậm chữ trong ô tìm kiếm */
-}
-
-.search-box button {
-    background-color: #333f48; 
-    color: white;
-    border: none;
-    width: 60px;
-    height: 100%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
-}
-
-.search-box button:hover {
-    background-color: #00a8ff; 
-}
-
-/* ==========================================================================
-   5. FOOTER - PHẦN BẢN QUYỀN (BOTTOM)
-   ========================================================================== */
 .footer-bottom { 
     text-align: center; 
     padding: 20px 0; 
     border-top: 1px solid #eee; 
-    color: #333; /* Chỉnh màu tối lại chút cho rõ */
-    font-size: 13px; 
-    font-weight: 700; /* In đậm dòng Copyright */
-}   
+    color: #999; 
+    font-size: 13px; }
