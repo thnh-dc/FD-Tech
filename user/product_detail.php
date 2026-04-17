@@ -1,62 +1,63 @@
-<?php
-require_once '../config/database.php';
-// ... (GIỮ NGUYÊN TOÀN BỘ ĐOẠN PHP XỬ LÝ TRUY VẤN Ở TRÊN CÙNG) ...
-?>
-
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo htmlspecialchars($product['name']); ?> - FD Tech</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - FD Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/pages/product_detail.css">
-    <link rel="stylesheet" href="../assets/css/components/product_card.css">
 </head>
-<body>
-    <?php include '../includes/header.php'; ?>
+<body style="background-color: #FFFFFF; font-family: 'Inter', sans-serif;">
 
-    <div class="container" style="margin-bottom: 64px;">
-        <div style="padding: 16px 0; font-size: var(--text-sm); color: var(--text-muted);">
-            <a href="index.php" style="color: var(--primary); font-weight: 600;">Trang chủ</a> / 
-            <a href="product_list.php?category=<?php echo $product['category_id']; ?>" style="color: var(--primary); font-weight: 600;"><?php echo htmlspecialchars($product['category_name']); ?></a> / 
-            <span style="color: var(--text-dark);"><?php echo htmlspecialchars($product['name']); ?></span>
+    <div style="background: #0B2A4A; padding: 20px; color: white; text-align: center; font-size: 24px; font-weight: bold;">FD TECH - HEADER MẪU</div>
+
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 16px; margin-bottom: 64px;">
+        
+        <div style="padding: 16px 0; font-size: 14px; color: #6C757D;">
+            <a href="index.php" style="color: #0B2A4A; font-weight: 600; text-decoration: none;">Trang chủ</a> / 
+            <a href="product_lis.php" style="color: #0B2A4A; font-weight: 600; text-decoration: none;">Sản phẩm</a> / 
+            <span style="color: #333333;">Bàn phím cơ Light God Game</span>
         </div>
 
-        <div class="product-detail-layout">
-            <div class="zoom-wrapper" id="zoomContainer">
-                <img src="../assets/images/<?php echo htmlspecialchars($product['image_url'] ?: 'default.jpg'); ?>" class="zoom-img" id="zoomImage">
+        <div style="display: flex; gap: 40px; margin-top: 24px;">
+            
+            <div id="zoomContainer" style="flex: 1; background: #F4F6F9; border-radius: 8px; display: flex; justify-content: center; align-items: center; height: 400px; cursor: crosshair; overflow: hidden; position: relative;">
+                <div id="zoomImage" style="width: 100%; height: 100%; background: #ddd; display: flex; align-items: center; justify-content: center; transition: transform 0.1s ease-out;">Ảnh Bàn Phím To</div>
             </div>
             
-            <div class="product-detail-info">
-                <span style="background: var(--bg-light); color: var(--secondary); padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase;">
-                    <?php echo htmlspecialchars($product['category_name']); ?>
-                </span>
-                <h1 style="font-size: 32px; margin: 16px 0; line-height: 1.4; color: var(--text-dark);"><?php echo htmlspecialchars($product['name']); ?></h1>
-                <div style="font-size: 40px; color: var(--primary); font-weight: 900; margin-bottom: 24px; border-bottom: 1px solid var(--bg-light); padding-bottom: 24px;">
-                    <?php echo number_format($product['price'], 0, ',', '.'); ?> ₫
+            <div style="flex: 1;">
+                <span style="background: #F4F6F9; color: #23B5D3; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold;">KEYBOARDS</span>
+                
+                <h1 style="font-size: 32px; color: #333333; margin: 16px 0;">Bàn phím cơ Light God Game FD 37</h1>
+                
+                <div style="font-size: 40px; color: #0B2A4A; font-weight: 900; margin-bottom: 24px; border-bottom: 1px solid #F4F6F9; padding-bottom: 24px;">
+                    1.460.000 ₫
                 </div>
+                
+                <div style="margin-bottom: 24px; font-size: 16px;">
+                    Tình trạng kho: <span style="color: #28A745; font-weight: bold;">Còn hàng (Mockup)</span>
                 </div>
+
+                <p style="color: #6C757D; line-height: 1.6; margin-bottom: 32px;">
+                    - Bàn phím cơ full-size dành cho game thủ.<br>
+                    - Switch quang học siêu bền.<br>
+                    - LED RGB 16.8 triệu màu.
+                </p>
+                
+                <form action="#" style="display: flex; gap: 16px;">
+                    <div style="display: flex; border: 1px solid #6C757D; border-radius: 4px;">
+                        <button type="button" id="btnMinus" style="padding: 10px 15px; background: #F4F6F9; border: none; cursor: pointer;">-</button>
+                        <input type="text" id="qtyInput" value="1" style="width: 50px; text-align: center; border: none; font-weight: bold;" readonly>
+                        <button type="button" id="btnPlus" style="padding: 10px 15px; background: #F4F6F9; border: none; cursor: pointer;">+</button>
+                    </div>
+                    <button type="button" style="flex: 1; background: #23B5D3; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;">THÊM VÀO GIỎ HÀNG</button>
+                </form>
+            </div>
         </div>
-
-        <?php include '../includes/components/product_tabs.php'; ?>
-
-        <?php if(count($related_products) > 0): ?>
-        <h2 style="font-size: 24px; color: var(--primary); margin: 64px 0 24px;">SẢN PHẨM CÙNG DANH MỤC</h2>
-        <div class="product-grid">
-            <?php foreach($related_products as $rel): ?>
-                <?php 
-                    // Gán biến $item thành $rel để dùng chung file product_card.php
-                    $item = $rel; 
-                    include '../includes/components/product_card.php'; 
-                ?>
-            <?php endforeach; ?>
-        </div>
-        <?php endif; ?>
-
     </div>
 
-    <?php include '../includes/footer.php'; ?>
-    <script src="../assets/js/main.js"></script>
     <script src="../assets/js/product.js"></script>
 </body>
 </html>
