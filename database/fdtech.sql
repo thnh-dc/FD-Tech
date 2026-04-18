@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS ecommerce_db;
-USE ecommerce_db;
+CREATE DATABASE IF NOT EXISTS fd-tech;
+USE fd-tech;
 
 -- 1. Bảng Users
 CREATE TABLE users (
@@ -12,13 +12,13 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Bảng Danh mục sản phẩm
+-- 2. Bảng Categories (Danh mục sản phẩm)
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
 
--- 3. Bảng Sản phẩm
+-- 3. Bảng Products (Sản phẩm)
 CREATE TABLE products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT,
@@ -32,7 +32,7 @@ CREATE TABLE products (
         ON UPDATE CASCADE
 );
 
--- 4. Bảng Đơn hàng
+-- 4. Bảng Orders (Đơn hàng)
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE orders (
         ON UPDATE CASCADE
 );
 
--- 5. Bảng Chi tiết đơn hàng
+-- 5. Bảng Order_items (Chi tiết đơn hàng)
 CREATE TABLE order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
@@ -58,4 +58,25 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(id) 
         ON DELETE RESTRICT 
         ON UPDATE CASCADE
+);
+-- 6. Bảng Cart_items (Giỏ hàng của người dùng)
+CREATE TABLE cart_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- 7. Bảng Payments (Lịch sử & trạng thái thanh toán)
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    payment_method ENUM('cod', 'bank_transfer', 'momo', 'vnpay') NOT NULL,
+    payment_status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
+    transaction_code VARCHAR(100), -- Lưu mã giao dịch trả về từ ví điện tử/ngân hàng
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
