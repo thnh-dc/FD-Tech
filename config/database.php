@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'fd_tech';
+$dbname = 'fd-tech';
 $user = 'root';
 $pass = '';
 
@@ -8,6 +8,7 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Lỗi kết nối CSDL: " . $e->getMessage());
+    error_log($e->getMessage());
+    die("Lỗi kết nối database!");
 }
 ?>
