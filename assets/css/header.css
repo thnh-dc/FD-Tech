@@ -19,6 +19,9 @@
 .logo { 
     display: flex; 
     align-items: center; }
+.logo a {
+    text-decoration: none !important;
+}
 .logo img { 
     max-height: 50px; 
     width: auto; }
@@ -30,8 +33,8 @@
 .main-menu a { 
     text-decoration: none; 
     color: var(--text-dark); 
-    font-weight: 600; 
-    font-size: 14px; 
+    font-weight: 700; 
+    font-size: 16px!important; 
     transition: color 0.3s; }
 .main-menu a:hover { 
     color: var(--secondary); }
@@ -190,3 +193,24 @@
     color: #777; 
     transition: color 0.3s; }
 .header-contact:hover .p, .header-contact:hover .e { color: var(--secondary); }
+/* ===== CHỈNH CỤM ĐĂNG NHẬP | ĐĂNG KÝ ===== */
+.header-auth {
+    display: flex !important;
+    align-items: center;
+    gap: 10px; 
+}
+.auth-link {
+    color: #333333 !important;     
+    text-decoration: none !important; 
+    font-weight: 700;
+    font-size: 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 5px;                       
+}
+.auth-link:hover {
+    color: var(--secondary) !important; 
+}
+.header-auth .divider {
+    color: #ccc !important;       
+}
