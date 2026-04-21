@@ -9,30 +9,21 @@
     <link rel="stylesheet" href="/FD-Tech/assets/css/header.css">
     <link rel="stylesheet" href="/FD-Tech/assets/css/footer.css">
     <link rel="stylesheet" href="/FD-Tech/assets/css/style_chung.css">
+    <?php
+        if (isset($custom_css)) {
+            echo $custom_css;
+        }
+    ?>
 </head>
 <body>
-
 <?php
     $brand_name = "FD"; 
     $cart_count = 0;   
 ?>
-
-<nav class="site-header">
-    <div class="top-bar">
-        <div class="container header-flex">
-            <div class="top-left">Chào mừng bạn đến với FD-Tech.vn</div>
-            <div class="top-right">
-                <span><i class="fas fa-desktop"></i> Tuyển dụng</span>
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <<div class="main-header">
+    <div class="main-header">
     <div class="container header-flex">
         <div class="logo">
-            <a href="index.php">
+            <a href="http://localhost/FD-Tech/user/index.php">
                 <img src="../assets/images/logo-fd.jpg" alt="FD TECH" style="height: 50px;"> 
                 <span style="font-size: 24px; font-weight: bold; color: #333;">FD<span style="color: #00a8ff;">TECH</span></span>
             </a>
@@ -47,11 +38,11 @@
         </ul>
 
         <div class="header-auth">
-            <a href="login.php" class="auth-link">
+            <a href="http://localhost/FD-Tech/auth/login.php" class="auth-link">
                 <i class="fas fa-user-circle"></i> Đăng nhập
             </a>
             <span class="divider">|</span>
-            <a href="register.php" class="auth-link">Đăng ký</a>
+            <a href="http://localhost/FD-Tech/auth/register.php" class="auth-link">Đăng ký</a>
         </div>
     </div>
 </div>
@@ -72,17 +63,11 @@
                             ['id' => 'khuyen-mai', 'name' => 'Khuyến mãi'],
                             ['id' => 'san-pham-ban-chay', 'name' => 'Sản phẩm bán chạy'],
                             ['id' => 'xay-dung-cau-hinh', 'name' => 'Xây dựng cấu hình'],
-                            ['id' => 'gearshop-pc', 'name' => 'Gearshop PC'],
                             ['id' => 'man-hinh-may-tinh', 'name' => 'MÀN HÌNH MÁY TÍNH'],
-                            ['id' => 'ban-gaming', 'name' => 'BÀN GAMING'],
-                            ['id' => 'ghe-cong-thai-hoc', 'name' => 'GHẾ CÔNG THÁI HỌC'],
-                            ['id' => 'ban-phim-custom', 'name' => 'BÀN PHÍM CUSTOM'],
-                            ['id' => 'ghe-gaming', 'name' => 'GHẾ GAMING'],
-                            ['id' => 'phu-kien-khac', 'name' => 'PHỤ KIỆN KHÁC'],
-                            ['id' => 'linh-kien-pc', 'name' => 'LINH KIỆN PC'],
                             ['id' => 'loa-tai-nghe', 'name' => 'LOA - TAI NGHE'],
                             ['id' => 'ban-phim-co', 'name' => 'BÀN PHÍM CƠ'],
                             ['id' => 'chuot', 'name' => 'CHUỘT'],
+                            ['id' => 'phu-kien-khac', 'name' => 'PHỤ KIỆN KHÁC'],
                         ];
                         foreach ($categories as $category): ?>
                             <a href="products.php?category=<?php echo $category['id']; ?>" class="category-item">
