@@ -1,24 +1,26 @@
 <?php 
-    session_start();
-    $id = $_SESSION['id'] ?? 0; //Lấy user
-    
+    require_once '../config/database.php';
+
     $custom_css='
         <link rel="stylesheet" href="../assets/css/style_cart.css">';
     include '../includes/header.php';
-    require_once '../config/database.php'; // config database
-    
-    $stmt = $pdo->prepare("SELECT * FROM cart_items WHERE user_id = ?");
-    $stmt->execute([$id]);
-    $cartItems = $stmt->fetchAll();//Hiện sản phẩm trong giỏ hàng từ user
 
+    $stmt = $pdo->prepare("
+        SELECT c.id, c.quantity, p.name, p.price
+        FROM cart_items c
+        JOIN products p ON c.product_id = p.id
+        WHERE c.user_id = ?
+    ");
+
+    $stmt->execute([$id=1302]); //user test
+    $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total = 0;
-    if(isset($cartItems)){
-        foreach($cartItems as $item){
-            $total += $item['price'] * $item['quantity'];
-        }
-    }//Tính tổng
+    foreach($cartItems as $item){
+        $total += $item['price'] * $item['quantity'];
+    }
 ?>
-<style> /*fix layout card*/
+
+<style> /* fix layout cart - important*/
     .data-table {
         width: 100%;
         border-collapse: collapse;
@@ -70,7 +72,7 @@
             </table>
             <div class="cart-summary">
                 <p class="summary-text">
-                    Tổng thanh toán: 
+                    <b>Tổng thanh toán: </b>
                     <span class="price-highlight"><?= number_format($total) ?>vn₫</span>
                 </p>
                     
