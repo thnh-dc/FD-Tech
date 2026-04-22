@@ -1,16 +1,20 @@
 <?php
-session_start();
-include '../includes/header.php';
 include '../config/database.php';
 
-$user_id = $_SESSION['user_id'] ?? 0;// lấy user
+$custom_css='<link rel="stylesheet" href="/FD-Tech/assets/css/style_checkout.css">';
+include '../includes/header.php';
 
-$stmt = $pdo->prepare("SELECT * FROM cart_items WHERE user_id = ?");//lấy giỏ hàng
-$stmt->execute([$user_id]);
-$cartItems = $stmt->fetchAll();
+$stmt = $pdo->prepare("
+    SELECT c.quantity, p.name, p.price
+    FROM cart_items c
+    JOIN products p ON c.product_id = p.id
+    WHERE c.user_id = ?
+");
+$stmt->execute([$id = 1302]); //user test
 
-$cartItems = $stmt->fetchAll();
+$cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+//Tính tổng
 $total = 0;
 foreach($cartItems as $row){
     $total += $row['price'] * $row['quantity'];
@@ -21,7 +25,7 @@ foreach($cartItems as $row){
 
 <?php if(isset($_GET['status']) && $_GET['status'] == 'success'): ?>
 
-    <!-- ===== SUCCESS ===== -->
+    <!-- success -->
     <div class="success-page-wrapper">
         <div class="success-card">
             <h1 class="success-title">Đặt hàng thành công!</h1>
@@ -35,7 +39,7 @@ foreach($cartItems as $row){
 
 <?php elseif(count($cartItems) > 0): ?>
 
-    <!-- ===== CHECKOUT ===== -->
+    <!-- checkout -->
     <div class="checkout-layout">
 
     <form action="process_checkout.php" method="POST">
@@ -49,7 +53,7 @@ foreach($cartItems as $row){
             <textarea name="address" placeholder="Địa chỉ" required></textarea>
         </div>
 
-        <!-- SẢN PHẨM -->
+        <!-- sản phẩm -->
         <div class="checkout-section">
             <h3>📦 Sản phẩm</h3>
 
@@ -62,7 +66,7 @@ foreach($cartItems as $row){
 
         </div>
 
-        <!-- THANH TOÁN -->
+        <!-- thanh toán -->
         <div class="checkout-section">
             <h3>💳 Thanh toán</h3>
 
@@ -77,7 +81,7 @@ foreach($cartItems as $row){
             </label>
         </div>
 
-        <!-- TỔNG -->
+        <!-- tổng -->
         <div class="checkout-section">
 
             <p>Tổng tiền: 
@@ -96,7 +100,7 @@ foreach($cartItems as $row){
 
 <?php else: ?>
 
-    <!-- ===== GIỎ TRỐNG ===== -->
+    <!-- Nếu chưa có sản phẩm thì ... -->
     <div class="empty-cart-container">
         <h2>Oppss, bạn chưa có sản phẩm để thanh toán.</h2>
         <a href="cart.php" class="btn btn-primary">Quay lại giỏ hàng</a>
