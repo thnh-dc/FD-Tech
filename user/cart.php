@@ -19,6 +19,25 @@
     }//Tính tổng
 ?>
 
+<style> /*fix layout card*/
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th,
+    .data-table td {
+        display: table-cell !important;
+        padding: 12px 20px;
+        text-align: left;
+    }
+
+    .data-table th {
+        font-weight: 600;
+        background: #f5f5f5;
+    }
+</style>
+
 <div class="container">
     <section class="section-block">
         <h1 class="page-title">Giỏ Hàng Của Bạn</h1>
@@ -40,9 +59,9 @@
                 <?php foreach($cartItems as $item): ?>
                     <tr class="cart-item"> 
                         <td><?= $item['name'] ?></td>
-                        <td class="item-price"><?= $item['price'] ?></td>
+                        <td class="item-price"><?= number_format($item['price']) ?> vn₫</td>
                         <td class="item-quantity"><?= $item['quantity'] ?></td>
-                        <td class="item-subtotal"><?= $item['price'] * $item['quantity'] ?>₫</td>
+                        <td class="item-subtotal"><?=number_format( $item['price'] * $item['quantity'])?>vn₫</td>
                         <td>
                             <button class="btn btn-danger btn-delete" data-id="<?= $item['id'] ?>">Xóa</button>
                         </td>
@@ -53,10 +72,10 @@
             <div class="cart-summary">
                 <p class="summary-text">
                     Tổng thanh toán: 
-                    <span class="price-highlight"><?= $total ?>₫</span>
+                    <span class="price-highlight"><?= number_format($total) ?>vn₫</span>
                 </p>
-
-                <a href="product_list.php">
+                    
+                <a href="checkout.php">
                     <button class="btn btn-primary btn-large">
                         Tiến Hành Đặt Hàng
                     </button>
@@ -87,5 +106,5 @@
         </div>
     </section>
 </div>
-<script src="../assets/js/script_cart.js"></script>
+<script src="/FD-Tech/assets/js/script_cart.js" ></script>
 <?php include '../includes/footer.php'; ?>
