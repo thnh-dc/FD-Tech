@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/FD-Tech/assets/css/header.css">
     <link rel="stylesheet" href="/FD-Tech/assets/css/footer.css">
     <link rel="stylesheet" href="/FD-Tech/assets/css/style_chung.css">
+    <link rel="stylesheet" href="/FD-Tech/assets/css/style_admin.css">
     <?php
         if (isset($custom_css)) {
             echo $custom_css;
