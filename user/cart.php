@@ -18,6 +18,24 @@
         }
     }//Tính tổng
 ?>
+<style> /*fix layout card*/
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th,
+    .data-table td {
+        display: table-cell !important;
+        padding: 12px 20px;
+        text-align: left;
+    }
+
+    .data-table th {
+        font-weight: 600;
+        background: #f5f5f5;
+    }
+</style>
 
 <div class="container">
     <section class="section-block">
@@ -38,13 +56,13 @@
 
                 <tbody>
                 <?php foreach($cartItems as $item): ?>
-                    <tr>
+                    <tr class="cart-item"> 
                         <td><?= $item['name'] ?></td>
-                        <td><?= $item['price'] ?></td>
-                        <td><?= $item['quantity'] ?></td>
-                        <td><?= $item['price'] * $item['quantity'] ?>₫</td>
+                        <td class="item-price"><?= number_format($item['price']) ?> vn₫</td>
+                        <td class="item-quantity"><?= $item['quantity'] ?></td>
+                        <td class="item-subtotal"><?=number_format( $item['price'] * $item['quantity'])?>vn₫</td>
                         <td>
-                            <button class="btn btn-danger">Xóa</button>
+                            <button class="btn btn-danger btn-delete" data-id="<?= $item['id'] ?>">Xóa</button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -53,10 +71,10 @@
             <div class="cart-summary">
                 <p class="summary-text">
                     Tổng thanh toán: 
-                    <span class="price-highlight"><?= $total ?>₫</span>
+                    <span class="price-highlight"><?= number_format($total) ?>vn₫</span>
                 </p>
-
-                <a href="product_list.php">
+                    
+                <a href="checkout.php">
                     <button class="btn btn-primary btn-large">
                         Tiến Hành Đặt Hàng
                     </button>
@@ -87,4 +105,5 @@
         </div>
     </section>
 </div>
+<script src="/FD-Tech/assets/js/script_cart.js" ></script>
 <?php include '../includes/footer.php'; ?>
