@@ -174,3 +174,36 @@ body {
     transition: 0.3s;
 }
 .upload-box:hover { border-color: var(--primary); background: #f0f4ff; }
+
+/* ẨN CÁC THÀNH PHẦN TRANG CHỦ KHI Ở ADMIN */
+header, 
+.header-top, 
+.main-menu, 
+footer, 
+.footer-bottom,
+.nav-bar { 
+    display: none !important; 
+}
+
+/* ĐẢM BẢO ADMIN-WRAPPER CHIẾM TOÀN MÀN HÌNH */
+.admin-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999; /* Đè lên trên mọi thứ */
+    overflow-y: auto; /* Cho phép cuộn bên trong nội dung */
+}
+
+/* Để Sidebar không bị che mất phần trên khi cuộn trang */
+.admin-sidebar {
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+/* Đảm bảo bảng đơn hàng không bị tràn trên màn hình nhỏ */
+.card {
+    overflow-x: auto;
+}
