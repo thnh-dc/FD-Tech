@@ -1,14 +1,14 @@
 <?php
-$host = 'localhost';
-$dbname = 'fd-tech';
-$user = 'root';
-$pass = '';
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "fd_tech";
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-    die("Lỗi kết nối database!");
+$conn = new mysqli($host, $user, $password, $database);
+
+if ($conn->connect_error) {
+    die("Lỗi kết nối database: " . $conn->connect_error);
 }
+
+$conn->set_charset("utf8");
 ?>
