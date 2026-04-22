@@ -1,86 +1,176 @@
-/* LAYOUT CHUNG */
+/* 1. KHAI BÁO BIẾN - Đảm bảo giao diện không bị mất màu */
+:root {
+    --primary: #4e73df;
+    --primary-dark: #2e59d9;
+    --secondary: #858796;
+    --success: #1cc88a;
+    --warning: #f6c23e;
+    --danger: #e74a3b;
+    --bg-light: #f8f9fc;
+    --text-main: #5a5c69;
+    --text-muted: #b7b9cc;
+    --radius-md: 8px;
+    --shadow-card: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+/* 2. RESET & LAYOUT CHUNG */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+}
+
 .admin-wrapper {
     display: flex;
     min-height: 100vh;
-    background: var(--bg-light);
 }
 
+/* 3. SIDEBAR - Cố định bên trái */
 .admin-sidebar {
     width: 260px;
-    background: var(--primary);
+    background: linear-gradient(180deg, var(--primary) 10%, var(--primary-dark) 100%);
     color: white;
-    padding: 20px;
+    padding: 20px 15px;
     position: sticky;
     top: 0;
     height: 100vh;
+    z-index: 1000;
 }
 
+.admin-sidebar h2 {
+    text-align: center;
+    font-size: 1.2rem;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: var(--radius-md);
+    transition: 0.3s;
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+/* 4. MAIN CONTENT AREA */
 .admin-main {
     flex: 1;
-    padding: 30px;
+    padding: 25px;
+    overflow-x: hidden;
 }
 
-/* COMPONENTS */
+/* 5. COMPONENTS: CARD & STATS */
 .card {
     background: white;
     border-radius: var(--radius-md);
     padding: 20px;
     box-shadow: var(--shadow-card);
     margin-bottom: 25px;
+    border: 1px solid #e3e6f0;
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
 }
 
 .stat-item {
+    border-left: 4px solid var(--primary);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 120px;
-    border-top: 4px solid var(--primary);
 }
 
-/* TABLES */
+.stat-item h2 {
+    font-size: 1.5rem;
+    margin: 5px 0;
+    color: #5a5c69;
+}
+
+/* 6. TABLES - Chuẩn Admin */
 .admin-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 15px;
 }
 
 .admin-table th {
+    background-color: #f8f9fc;
+    color: var(--text-main);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 15px;
     text-align: left;
-    color: var(--text-muted);
-    font-size: 13px;
-    padding: 15px 10px;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid #e3e6f0;
 }
 
 .admin-table td {
-    padding: 15px 10px;
-    border-bottom: 1px solid #f9f9f9;
+    padding: 15px;
+    border-bottom: 1px solid #e3e6f0;
+    vertical-align: middle;
 }
 
-/* BADGES */
+.admin-table tr:hover {
+    background-color: #f8f9fc;
+}
+
+/* 7. BADGES & BUTTONS */
 .badge {
-    padding: 4px 8px;
+    padding: 5px 10px;
     border-radius: 4px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
 }
-.badge-success { background: #e8f5e9; color: var(--success); }
-.badge-warning { background: #fff3e0; color: var(--warning); }
-.badge-danger { background: #ffebee; color: var(--danger); }
 
-/* FORMS */
+.btn {
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+
+/* 8. FORMS */
 .form-group { margin-bottom: 20px; }
-.form-label { display: block; font-weight: 600; margin-bottom: 8px; }
+.form-label { display: block; margin-bottom: 8px; font-weight: 700; color: #4e73df; }
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d3e2;
+    border-radius: 5px;
+    outline: none;
+}
+.form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 0.2rem rgba(78,115,223,0.25); }
+
 .upload-box {
-    border: 2px dashed var(--secondary);
+    border: 2px dashed #d1d3e2;
     padding: 30px;
     text-align: center;
     border-radius: var(--radius-md);
-    background: #f0faff;
+    background: #fafafa;
+    transition: 0.3s;
 }
+.upload-box:hover { border-color: var(--primary); background: #f0f4ff; }
