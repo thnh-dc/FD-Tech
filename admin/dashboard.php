@@ -1,17 +1,18 @@
 <?php 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/config/database.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/includes/header.php');
+require_once(__DIR__ . '/../config/database.php');
+include(__DIR__ . '/../includes/header.php');
 
 $type = $_GET['type'] ?? 'month';
 
+// DOANH THU
 if ($type === 'all') {
-    $stmt = $pdo->query("
+    $result = $conn->query("
         SELECT SUM(total_amount) as total 
         FROM orders 
         WHERE status = 'completed'
     ");
 } else {
-    $stmt = $pdo->query("
+    $result = $conn->query("
         SELECT SUM(total_amount) as total 
         FROM orders 
         WHERE status = 'completed'
@@ -20,20 +21,32 @@ if ($type === 'all') {
     ");
 }
 
-$row = $stmt->fetch();
-$revenue = isset($row['total']) ? $row['total'] : 0;
+$row = $result->fetch_assoc();
+$revenue = $row['total'] ? $row['total'] : 0;
 
-$new_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status='processing'")->fetchColumn();
-$total_products = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
-$low_stock = $pdo->query("SELECT COUNT(*) FROM products WHERE stock_quantity < 5")->fetchColumn();
+// THỐNG KÊ
+$new_orders = $conn->query("SELECT COUNT(*) as total FROM orders WHERE status='processing'")
+                   ->fetch_assoc()['total'];
 
-$recentOrders = $pdo->query("
+$total_products = $conn->query("SELECT COUNT(*) as total FROM products")
+                       ->fetch_assoc()['total'];
+
+$low_stock = $conn->query("SELECT COUNT(*) as total FROM products WHERE stock_quantity < 5")
+                  ->fetch_assoc()['total'];
+
+// ĐƠN GẦN ĐÂY
+$recentOrders = [];
+$result = $conn->query("
     SELECT o.*, u.username 
     FROM orders o
     JOIN users u ON o.user_id = u.id
     ORDER BY o.created_at DESC
     LIMIT 5
-")->fetchAll();
+");
+
+while ($row = $result->fetch_assoc()) {
+    $recentOrders[] = $row;
+}
 
 $statusMap = [
     'completed' => ['text'=>'Hoàn tất','class'=>'badge-success'],
@@ -75,4 +88,4 @@ $status = isset($statusMap[$o['status']]) ? $statusMap[$o['status']] : ['text'=>
 </div>
 </div>
 
-<?php include($_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/includes/footer.php'); ?>
+<?php include(__DIR__ . '/../includes/footer.php'); ?>
