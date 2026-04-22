@@ -1,86 +1,95 @@
-<?php include('../../includes/header.php'); ?>
+<?php
+require_once($_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/config/database.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/includes/header.php');
 
-<div class="admin-wrapper">
-    <div class="admin-main" style="max-width: 1000px; margin: 0 auto;">
-        
-        <header style="margin-bottom: 30px;">
-            <a href="list.php" style="text-decoration: none; color: var(--text-muted); font-size: 14px;">← Quay lại danh sách</a>
-            <h1 style="margin-top: 10px; color: var(--primary);">Thêm sản phẩm mới</h1>
-        </header>
+$categories = $pdo->query("SELECT * FROM categories")->fetchAll();
 
-        <form action="process_add.php" method="POST" enctype="multipart/form-data">
-            <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 25px;">
-                
-                <div style="display: flex; flex-direction: column; gap: 25px;">
-                    <section class="card">
-                        <h3 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">Thông tin cơ bản</h3>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Tên sản phẩm *</label>
-                            <input type="text" name="name" class="form-control" placeholder="Ví dụ: iPhone 15 Pro Max 256GB" required>
-                        </div>
+$error = '';
 
-                        <div class="form-group">
-                            <label class="form-label">Mô tả chi tiết sản phẩm</label>
-                            <textarea name="description" class="form-control" rows="10" placeholder="Nội dung mô tả, thông số kỹ thuật..."></textarea>
-                        </div>
-                    </section>
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-                    <section class="card">
-                        <h3 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">Dữ liệu bán hàng</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <div class="form-group">
-                                <label class="form-label">Giá bán lẻ (VNĐ) *</label>
-                                <input type="number" name="price" class="form-control" placeholder="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Giá khuyến mãi</label>
-                                <input type="number" name="sale_price" class="form-control" placeholder="0">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Số lượng nhập kho *</label>
-                                <input type="number" name="stock" class="form-control" value="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Mã SKU</label>
-                                <input type="text" name="sku" class="form-control" placeholder="ABC-123">
-                            </div>
-                        </div>
-                    </section>
-                </div>
+    $name = trim($_POST['name']);
+    $description = trim($_POST['description']) ?: '';
+    $price = (int)$_POST['price'];
+    $stock = (int)$_POST['stock'];
+    $category_id = (int)$_POST['category_id'];
 
-                <div style="display: flex; flex-direction: column; gap: 25px;">
-                    <section class="card">
-                        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px;">Phân loại</h3>
-                        <div class="form-group">
-                            <label class="form-label">Danh mục sản phẩm</label>
-                            <select name="category_id" class="form-control">
-                                <option value="">-- Chọn danh mục --</option>
-                                <option value="1">Laptop</option>
-                                <option value="2">Bàn phím</option>
-                                <option value="3">Chuột</option>
-                            </select>
-                        </div>
-                    </section>
+    // 🔥 CHECK TRÙNG TÊN
+    $check = $pdo->prepare("SELECT COUNT(*) FROM products WHERE name=?");
+    $check->execute([$name]);
+    $exists = $check->fetchColumn();
 
-                    <section class="card">
-                        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px;">Hình ảnh sản phẩm</h3>
-                        <div class="upload-box">
-                            <span style="font-size: 40px; display: block; margin-bottom: 10px;">🖼️</span>
-                            <input type="file" name="image" style="font-size: 12px; margin-bottom: 10px;">
-                            <p style="font-size: 11px; color: var(--text-muted);">Dung lượng tối đa 2MB</p>
-                        </div>
-                    </section>
+    if ($exists > 0) {
+        $error = "Tên sản phẩm đã tồn tại!";
+    }
+    elseif (!$name || $price < 0 || $stock < 0 || !$category_id) {
+        $error = "Dữ liệu không hợp lệ!";
+    } else {
 
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button type="submit" class="btn btn-primary" style="padding: 15px; font-weight: 700;">XÁC NHẬN THÊM</button>
-                        <button type="reset" class="btn" style="background: #e0e0e0; color: #666; padding: 10px;">Hủy & Nhập lại</button>
-                    </div>
-                </div>
+        $imageName = null;
 
-            </div>
-        </form>
-    </div>
+        if (!empty($_FILES['image']['name'])) {
+            $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+            $allowed = ['jpg','jpeg','png','webp'];
+
+            if (!in_array($ext, $allowed)) {
+                $error = "Ảnh không hợp lệ!";
+            } else {
+                $imageName = uniqid('prod_') . '.' . $ext;
+
+                move_uploaded_file(
+                    $_FILES['image']['tmp_name'],
+                    $_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/assets/images/' . $imageName
+                );
+            }
+        }
+
+        if (!$error) {
+            $stmt = $pdo->prepare("
+                INSERT INTO products (name, description, price, stock_quantity, category_id, image)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+
+            $stmt->execute([$name,$description,$price,$stock,$category_id,$imageName]);
+
+            header("Location: list.php?msg=Thêm thành công");
+            exit;
+        }
+    }
+}
+?>
+
+<div class="admin-main">
+<h1>Thêm sản phẩm</h1>
+
+<?php if($error): ?>
+<div class="card" style="background:#f8d7da;padding:10px;">
+<?= $error ?>
+</div>
+<?php endif; ?>
+
+<form method="POST" enctype="multipart/form-data" class="card">
+
+<input type="text" name="name" required class="form-control" placeholder="Tên"><br>
+
+<input type="number" name="price" required class="form-control" placeholder="Giá"><br>
+
+<input type="number" name="stock" required class="form-control" placeholder="Tồn kho"><br>
+
+<select name="category_id" required class="form-control">
+<option value="">--Danh mục--</option>
+<?php foreach($categories as $c): ?>
+<option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+<?php endforeach; ?>
+</select><br>
+
+<textarea name="description" class="form-control" placeholder="Mô tả"></textarea><br>
+
+<input type="file" name="image" class="form-control"><br>
+
+<button class="btn btn-primary">Thêm</button>
+
+</form>
 </div>
 
-<?php include('../../includes/footer.php'); ?>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/includes/footer.php'); ?>
