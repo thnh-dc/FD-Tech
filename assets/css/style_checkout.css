@@ -1,0 +1,137 @@
+/* checkout layout */
+.checkout-layout {
+    max-width: 1400px; /* Giới hạn độ rộng để form */
+    margin: 0 auto;   /* Đẩy form ra chính giữa màn hình */
+    padding: var(--space-md) 0;
+}
+
+/* các phần tử bên trong form cách nhau  */
+.checkout-layout form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+/* section */
+
+.checkout-section {
+    background: var(--bg-main);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--space-md);
+}
+
+.checkout-section h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-md);
+    color: var(--primary);
+}
+
+/* form */
+
+.checkout-section input,
+.checkout-section textarea {
+    width: 100%;
+    padding: 10px var(--space-md);
+    margin-bottom: var(--space-md);
+    border: 1px solid #ddd;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+}
+
+.checkout-section textarea {
+    resize: none;
+    min-height: 80px;
+}
+
+/* productlist */
+
+.checkout-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid #eee;
+}
+
+.checkout-item:last-child {
+    border-bottom: none;
+}
+
+.checkout-item p:first-child {
+    font-weight: 600;
+}
+
+.checkout-item p:last-child {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+
+/* payment */
+
+.checkout-section label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    cursor: pointer;
+}
+.checkout-section input[type="radio"] {
+    width: auto;
+    margin-bottom: 0; /* Xóa khoảng cách thừa để chữ và nút nằm thẳng hàng */
+} /* ép nút radio về lại kích cỡ chuẩn */
+
+/* total */
+
+.checkout-section b {
+    font-size: var(--text-lg);
+    color: var(--danger);
+}
+
+/* button */
+
+.checkout-section .btn {
+    width: 100%;
+    margin-top: var(--space-md);
+}
+
+/* succes page */
+
+.success-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.success-card {
+    background: var(--bg-main);
+    padding: var(--space-xl);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    text-align: center;
+    max-width: 500px;
+}
+
+.success-title {
+    font-size: var(--text-xl);
+    color: var(--success);
+    margin-bottom: var(--space-md);
+}
+
+.success-message {
+    color: var(--text-muted);
+    margin-bottom: var(--space-lg);
+}
+
+/* empty cart */
+
+.empty-cart-container {
+    text-align: center;
+    padding: var(--space-xl);
+}
+
+.empty-cart-container h2 {
+    margin-bottom: var(--space-md);
+}

@@ -1,23 +1,43 @@
 <?php 
-    session_start();
-    $id = $_SESSION['id'] ?? 0; //Lấy user
-    
+    require_once '../config/database.php';
+
     $custom_css='
         <link rel="stylesheet" href="../assets/css/style_cart.css">';
     include '../includes/header.php';
-    require_once '../config/database.php'; // config database
-    
-    $stmt = $pdo->prepare("SELECT * FROM cart_items WHERE user_id = ?");
-    $stmt->execute([$id]);
-    $cartItems = $stmt->fetchAll();//Hiện sản phẩm trong giỏ hàng từ user
 
+    $stmt = $pdo->prepare("
+        SELECT c.id, c.quantity, p.name, p.price
+        FROM cart_items c
+        JOIN products p ON c.product_id = p.id
+        WHERE c.user_id = ?
+    ");
+
+    $stmt->execute([$id=1302]); //user test
+    $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total = 0;
-    if(isset($cartItems)){
-        foreach($cartItems as $item){
-            $total += $item['price'] * $item['quantity'];
-        }
-    }//Tính tổng
+    foreach($cartItems as $item){
+        $total += $item['price'] * $item['quantity'];
+    }
 ?>
+
+<style> /* fix layout cart - important*/
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th,
+    .data-table td {
+        display: table-cell !important;
+        padding: 12px 20px;
+        text-align: left;
+    }
+
+    .data-table th {
+        font-weight: 600;
+        background: #f5f5f5;
+    }
+</style>
 
 <div class="container">
     <section class="section-block">
@@ -38,13 +58,13 @@
 
                 <tbody>
                 <?php foreach($cartItems as $item): ?>
-                    <tr>
+                    <tr class="cart-item"> 
                         <td><?= $item['name'] ?></td>
-                        <td><?= $item['price'] ?></td>
-                        <td><?= $item['quantity'] ?></td>
-                        <td><?= $item['price'] * $item['quantity'] ?>₫</td>
+                        <td class="item-price"><?= number_format($item['price']) ?> vn₫</td>
+                        <td class="item-quantity"><?= $item['quantity'] ?></td>
+                        <td class="item-subtotal"><?=number_format( $item['price'] * $item['quantity'])?>vn₫</td>
                         <td>
-                            <button class="btn btn-danger">Xóa</button>
+                            <button class="btn btn-danger btn-delete" data-id="<?= $item['id'] ?>">Xóa</button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -52,11 +72,11 @@
             </table>
             <div class="cart-summary">
                 <p class="summary-text">
-                    Tổng thanh toán: 
-                    <span class="price-highlight"><?= $total ?>₫</span>
+                    <b>Tổng thanh toán: </b>
+                    <span class="price-highlight"><?= number_format($total) ?>vn₫</span>
                 </p>
-
-                <a href="product_list.php">
+                    
+                <a href="checkout.php">
                     <button class="btn btn-primary btn-large">
                         Tiến Hành Đặt Hàng
                     </button>
@@ -87,4 +107,5 @@
         </div>
     </section>
 </div>
+<script src="/FD-Tech/assets/js/script_cart.js" ></script>
 <?php include '../includes/footer.php'; ?>
