@@ -6,7 +6,7 @@ document.addEventListener('click', function (e) {
     const row = btn.closest('tr');
 
     if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
-        fetch('/TEST/user/delete_cart.php', {
+        fetch('/FD-Tech/user/delete_cart.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
