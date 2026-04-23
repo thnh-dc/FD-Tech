@@ -1,5 +1,3 @@
-CREATE DATABASE IF NOT EXISTS fd_tech;
-USE fd_tech;
 
 -- 1. Bảng Users
 CREATE TABLE users (
