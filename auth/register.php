@@ -1,75 +1,91 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Giỏ Hàng Của Bạn - FD Tech</title>
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/style_auth.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <?php include '../includes/header.php'; ?>
-    <div class="login-wrapper">
-        <div class="login-container">
-            <div class="login-branding">
-                <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo">
-                <h1>FD TECH</h1>
-                <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
+<?php
+session_start();
+include '../config/database.php';
+
+// --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ ---
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']);
+
+    // 1. Kiểm tra xem 2 mật khẩu có giống nhau không
+    if ($password !== $confirm_password) {
+        echo "<script>alert('Mật khẩu xác nhận không khớp! Vui lòng nhập lại.');</script>";
+    } else {
+        // 2. Mã hóa mật khẩu để bảo mật
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        try {
+            // 3. Kiểm tra xem Username hoặc Email đã bị ai đăng ký chưa
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+            $stmt->execute([$username, $email]);
+            
+            if ($stmt->rowCount() > 0) {
+                echo "<script>alert('Tên đăng nhập hoặc Email này đã có người sử dụng!');</script>";
+            } else {
+                // 4. Nếu chưa có ai dùng -> Lưu vào Database (PDO)
+                $stmt = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+                $stmt->execute([$username, $hashed_password, $email]);
+                
+                // Đăng ký thành công -> Báo hiệu và chuyển qua trang đăng nhập
+                echo "<script>alert('Đăng ký thành công! Hãy đăng nhập nhé.'); window.location.href='login.php';</script>";
+                exit();
+            }
+        } catch (PDOException $e) {
+            echo "<script>alert('Lỗi hệ thống: Không thể đăng ký lúc này.');</script>";
+            error_log($e->getMessage());
+        }
+    }
+}
+?>
+
+<?php include '../includes/header.php'; ?>
+
+<link rel="stylesheet" href="../assets/css/style_register.css">
+
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="login-branding">
+            <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo">
+            <h1>FD TECH</h1>
+            <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
+        </div>
+
+        <div class="login-form-box">
+            <div class="form-header">
+                <h2 class="form-title">Đăng ký</h2>
             </div>
 
-            <div class="login-form-box">
-                <div class="form-header">
-                    <h2 class="form-title">Đăng ký</h2>
+            <form action="" method="POST">
+                <div class="input-group">
+                    <input type="text" name="username" placeholder="Tên đăng nhập" required>
                 </div>
 
-                <form action="#" method="POST">
-                    <div class="input-group">
-                        <input type="text" placeholder="Họ và tên" required>
-                    </div>
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Mật khẩu" required>
+                </div>
 
-                    <div class="input-group">
-                        <input type="text" placeholder="Email hoặc Số điện thoại" required>
-                    </div>
-                    
-                    <div class="input-group">
-                        <input type="password" placeholder="Mật khẩu" required>
-                    </div>
+                <div class="input-group">
+                    <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required>
+                </div>
 
-                    <div class="input-group">
-                        <input type="password" placeholder="Xác nhận mật khẩu" required>
-                    </div>
+                <button type="submit" class="btn-login">ĐĂNG KÝ</button>
 
-                    <button type="submit" class="btn-login">ĐĂNG KÝ</button>
+                <div class="terms-text">
+                    Bằng việc đăng ký, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> & <a href="#">Chính sách bảo mật</a> của FD Tech
+                </div>
 
-                    <div class="terms-text">
-                        Bằng việc đăng ký, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> & <a href="#">Chính sách bảo mật</a> của FD Tech
-                    </div>
-
-                    <div class="divider">HOẶC</div>
-
-                    <div class="social-login">
-                        <button type="button" class="btn-social facebook">
-                            <i class="fab fa-facebook"></i> Facebook
-                        </button>
-                        <button type="button" class="btn-social google">
-                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px" height="18px">
-                                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.7 17.74 9.5 24 9.5z"></path>
-                                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
-                                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
-                                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
-                                <path fill="none" d="M0 0h48v48H0z"></path>
-                            </svg> 
-                            Google
-                        </button>
-                    </div>
-
-                    <div class="register-link">
-                        Bạn đã có tài khoản? <a href="login.php">Đăng nhập</a>
-                    </div>
-                </form>
-            </div>
+                <div class="register-link" style="margin-top: 25px;">
+                    Bạn đã có tài khoản? <a href="login.php">Đăng nhập</a>
+                </div>
+            </form>
         </div>
     </div>
-    <?php include '../includes/footer.php'; ?>
-</body>
-</html>
+</div>
+
+<?php include '../includes/footer.php'; ?>

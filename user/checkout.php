@@ -11,7 +11,6 @@ $stmt = $pdo->prepare("
     WHERE c.user_id = ?
 ");
 $stmt->execute([$id = 1302]); //user test
-
 $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 //Tính tổng
@@ -22,10 +21,7 @@ foreach($cartItems as $row){
 ?>
 
 <div class="container">
-
 <?php if(isset($_GET['status']) && $_GET['status'] == 'success'): ?>
-
-    <!-- success -->
     <div class="success-page-wrapper">
         <div class="success-card">
             <h1 class="success-title">Đặt hàng thành công!</h1>
@@ -65,7 +61,6 @@ foreach($cartItems as $row){
             <?php endforeach; ?>
 
         </div>
-
         <!-- thanh toán -->
         <div class="checkout-section">
             <h3>💳 Thanh toán</h3>
@@ -91,23 +86,15 @@ foreach($cartItems as $row){
             <button type="submit" class="btn btn-primary">
                 Xác nhận đặt hàng
             </button>
-
         </div>
-
     </form>
-
     </div>
-
 <?php else: ?>
-
     <!-- Nếu chưa có sản phẩm thì ... -->
     <div class="empty-cart-container">
         <h2>Oppss, bạn chưa có sản phẩm để thanh toán.</h2>
         <a href="cart.php" class="btn btn-primary">Quay lại giỏ hàng</a>
     </div>
-
 <?php endif; ?>
-
 </div>
-
 <?php include '../includes/footer.php'; ?>

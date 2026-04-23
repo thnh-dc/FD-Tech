@@ -12,13 +12,14 @@
         WHERE c.user_id = ?
     ");
 
-    $stmt->execute([$id=1302]); //user test
+    $stmt->execute([$id='user_id']); //user test
     $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total = 0;
     foreach($cartItems as $item){
         $total += $item['price'] * $item['quantity'];
     }
 ?>
+
 <style> /* fix layout cart - important*/
     .data-table {
         width: 100%;
