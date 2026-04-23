@@ -1,6 +1,47 @@
+<?php
+session_start();
+include '../config/database.php';
+
+// --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ ---
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']);
+
+    // 1. Kiểm tra xem 2 mật khẩu có giống nhau không
+    if ($password !== $confirm_password) {
+        echo "<script>alert('Mật khẩu xác nhận không khớp! Vui lòng nhập lại.');</script>";
+    } else {
+        // 2. Mã hóa mật khẩu để bảo mật
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        try {
+            // 3. Kiểm tra xem Username hoặc Email đã bị ai đăng ký chưa
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+            $stmt->execute([$username, $email]);
+            
+            if ($stmt->rowCount() > 0) {
+                echo "<script>alert('Tên đăng nhập hoặc Email này đã có người sử dụng!');</script>";
+            } else {
+                // 4. Nếu chưa có ai dùng -> Lưu vào Database (PDO)
+                $stmt = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+                $stmt->execute([$username, $hashed_password, $email]);
+                
+                // Đăng ký thành công -> Báo hiệu và chuyển qua trang đăng nhập
+                echo "<script>alert('Đăng ký thành công! Hãy đăng nhập nhé.'); window.location.href='login.php';</script>";
+                exit();
+            }
+        } catch (PDOException $e) {
+            echo "<script>alert('Lỗi hệ thống: Không thể đăng ký lúc này.');</script>";
+            error_log($e->getMessage());
+        }
+    }
+}
+?>
+
 <?php include '../includes/header.php'; ?>
 
-<!-- Link CSS ngoài -->
 <link rel="stylesheet" href="style_register.css">
 
 <div class="login-wrapper">
@@ -16,21 +57,21 @@
                 <h2 class="form-title">Đăng ký</h2>
             </div>
 
-            <form action="#" method="POST">
+            <form action="" method="POST">
                 <div class="input-group">
-                    <input type="text" placeholder="Họ và tên" required>
+                    <input type="text" name="username" placeholder="Tên đăng nhập" required>
                 </div>
 
                 <div class="input-group">
-                    <input type="text" placeholder="Email hoặc Số điện thoại" required>
+                    <input type="email" name="email" placeholder="Email" required>
                 </div>
                 
                 <div class="input-group">
-                    <input type="password" placeholder="Mật khẩu" required>
+                    <input type="password" name="password" placeholder="Mật khẩu" required>
                 </div>
 
                 <div class="input-group">
-                    <input type="password" placeholder="Xác nhận mật khẩu" required>
+                    <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required>
                 </div>
 
                 <button type="submit" class="btn-login">ĐĂNG KÝ</button>
@@ -39,19 +80,7 @@
                     Bằng việc đăng ký, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> & <a href="#">Chính sách bảo mật</a> của FD Tech
                 </div>
 
-                <div class="divider">HOẶC</div>
-
-                <div class="social-login">
-                    <button type="button" class="btn-social facebook">
-                        <i class="fab fa-facebook"></i> Facebook
-                    </button>
-                    <button type="button" class="btn-social google">
-                        <!-- SVG giữ nguyên -->
-                        Google
-                    </button>
-                </div>
-
-                <div class="register-link">
+                <div class="register-link" style="margin-top: 25px;">
                     Bạn đã có tài khoản? <a href="login.php">Đăng nhập</a>
                 </div>
             </form>
