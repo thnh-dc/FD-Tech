@@ -23,3 +23,12 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error("Không tìm thấy ID menuToggle hoặc categoryDropdown!");
     }
 });
+function updateCartCount() {
+    fetch('../user/get_cart_count.php') // File này trả về số lượng giỏ hàng
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('.cart-icon .count').innerText = data.count;
+        });
+}
+// Gọi hàm khi trang load
+updateCartCount();

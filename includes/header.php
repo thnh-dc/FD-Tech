@@ -6,9 +6,9 @@
     <title>FD Tech</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/FD-Tech/assets/css/header.css">
-    <link rel="stylesheet" href="/FD-Tech/assets/css/footer.css">
-    <link rel="stylesheet" href="/FD-Tech/assets/css/style_chung.css">
+    <link rel="stylesheet" href="../assets/css/header.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="../assets/css/style_chung.css">
     <?php
         if (isset($custom_css)) {
             echo $custom_css;
@@ -24,7 +24,7 @@
     <div class="container header-flex">
         <div class="logo">
             <a href="http://localhost/FD-Tech/user/index.php">
-                <img src="../assets/images/logo-fd.jpg" alt="FD TECH" style="height: 50px;"> 
+                <img src="../assets/images/logo-FD.jpg" alt="FD TECH" style="height: 50px;"> 
                 <span style="font-size: 24px; font-weight: bold; color: #333;">FD<span style="color: #00a8ff;">TECH</span></span>
             </a>
         </div>
@@ -38,12 +38,21 @@
         </ul>
 
         <div class="header-auth">
-            <a href="http://localhost/FD-Tech/auth/login.php" class="auth-link">
-                <i class="fas fa-user-circle"></i> Đăng nhập
-            </a>
-            <span class="divider">|</span>
-            <a href="http://localhost/FD-Tech/auth/register.php" class="auth-link">Đăng ký</a>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <div class="user-profile">
+            <img src="../assets/images/<?php echo $_SESSION['user_avt']; ?>" alt="AVT" style="width:30px; border-radius:50%;">
+            <span><?php echo $_SESSION['user_name']; ?></span>
+            <div class="dropdown-menu">
+                <a href="../user/profile.php">Thông tin</a>
+                <a href="../auth/logout.php">Đăng xuất</a>
+            </div>
         </div>
+    <?php else: ?>
+        <a href="../auth/login.php" class="auth-link">Đăng nhập</a>
+        <span class="divider">|</span>
+        <a href="../auth/register.php" class="auth-link">Đăng ký</a>
+    <?php endif; ?>
+</div>
     </div>
 </div>
 
@@ -86,15 +95,13 @@
 
             <div class="header-icons">
                 <a href="#"><i class="far fa-heart"></i></a>
-                <a href="/FD-Tech/user/cart.php" class="cart-icon">
+                <a href="/user/cart.php" class="cart-icon">
                     <i class="fas fa-shopping-bag"></i> <span class="count">0</span>
                     <span class="cart-text">Giỏ hàng</span>
                 </a>
             </div>
         </div>
     </div>
-</nav>
-
 <script src="../assets/js/navbar.js"></script>
 </body>
 </html>
