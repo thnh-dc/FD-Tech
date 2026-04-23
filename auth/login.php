@@ -65,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <button type="submit" class="btn-login">Đăng nhập</button>
 
                 <a href="#" class="forgot-pw">Quên mật khẩu</a>
-
                 <div class="register-link" style="margin-top: 25px;">
                     Bạn mới biết đến FD Tech? <a href="register.php">Đăng ký</a>
                 </div>
