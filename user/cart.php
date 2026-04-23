@@ -1,5 +1,6 @@
 <?php 
     require_once '../config/database.php';
+    session_start();
 
     $custom_css='
         <link rel="stylesheet" href="../assets/css/style_cart.css">';
@@ -12,7 +13,10 @@
         WHERE c.user_id = ?
     ");
 
-    $stmt->execute([$id='user_id']); //user test
+    $id = $_SESSION['user_id'] ?? 0;
+    $stmt->execute([$id]);
+
+    // $stmt->execute([$id='user_id']); //user test
     $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total = 0;
     foreach($cartItems as $item){
