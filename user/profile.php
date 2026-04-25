@@ -102,7 +102,7 @@ try {
                 </li>
             </ul>
         </div>
-        <div class="profile-content">    
+        <div class="profile-content">
             <div id="tab-profile" class="tab-content active">
                 <div class="profile-header">
                     <h2>Hồ sơ của tôi</h2>
