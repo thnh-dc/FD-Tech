@@ -78,6 +78,7 @@ try {
 <?php include '../includes/header.php'; ?>
 
 <link rel="stylesheet" href="../assets/css/style_profile.css">
+
 <div class="profile-wrapper">
     <div class="profile-container">
         
@@ -187,28 +188,6 @@ try {
                 <div class="profile-header">
                     <h2>Kho Voucher</h2>
                     <p>Các mã giảm giá bạn đã lưu</p>
-                </div>
-                <div class="voucher-grid">
-                    <div class="voucher-card">
-                        <div class="vc-left">
-                            <i class="fas fa-truck"></i><span style="font-size: 11px; font-weight: bold;">Freeship</span>
-                        </div>
-                        <div class="vc-right">
-                            <h4>Giảm 15k phí vận chuyển</h4>
-                            <p>Đơn tối thiểu 50k</p>
-                            <p style="color: #e74c3c; margin-top: 5px;">HSD: 31/12/2026</p>
-                        </div>
-                    </div>
-                    <div class="voucher-card">
-                        <div class="vc-left" style="background: #e67e22;">
-                            <i class="fas fa-ticket-alt"></i><span style="font-size: 11px; font-weight: bold;">Giảm Giá</span>
-                        </div>
-                        <div class="vc-right">
-                            <h4>Giảm 10% Tối đa 100k</h4>
-                            <p>Cho Phụ kiện Game</p>
-                            <p style="color: #e74c3c; margin-top: 5px;">HSD: 15/11/2026</p>
-                        </div>
-                    </div>
                 </div>
             </div>
 
