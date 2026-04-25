@@ -23,7 +23,6 @@ foreach($cartItems as $row){
     $total += $row['price'] * $row['quantity'];
 }
 ?>
-
 <div class="container">
 <?php if(isset($_GET['status']) && $_GET['status'] == 'success'): ?>
     <div class="success-page-wrapper">
@@ -79,7 +78,6 @@ foreach($cartItems as $row){
                 Chuyển khoản
             </label>
         </div>
-
         <!-- tổng -->
         <div class="checkout-section">
 

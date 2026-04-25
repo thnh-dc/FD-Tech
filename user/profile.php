@@ -89,7 +89,6 @@ try {
                     <p style="font-size: 12px; color: #777;"><i class="fas fa-pencil-alt"></i> Sửa hồ sơ</p>
                 </div>
             </div>
-            
             <ul class="profile-menu">
                 <li><a onclick="switchTab('profile', this)" class="menu-link active"><i class="far fa-user"></i> Tài khoản của tôi</a></li>
                 <li><a onclick="switchTab('password', this)" class="menu-link"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
