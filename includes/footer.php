@@ -1,17 +1,11 @@
-<footer class="footer">
+<footer class="footer" id="footer-contact">
 
   <!-- TOP BAR -->
   <div class="footer-top">
     <div class="container top-flex">
       <div class="top-text">
-        ✈️ FD Tech - Thế Giới Mua Bán Đồ Chơi Công Nghệ, Phụ Kiện Chơi Game
+        ✈️ FD Tech - Thế Giới Thiết Bị, Phụ Kiện Công Nghệ
       </div>
-
-     <div class="subscribe">
-    <input type="email" placeholder="Nhập email của bạn">
-    <button type="button">
-        Đăng ký </button>
-</div>
     </div>
   </div>
 
@@ -29,10 +23,12 @@
           <h3>22052005</h3>
         </div>
       </div>
-
+      <div class="address">
+        <strong>FD-TECH@gmail.com</strong>
+      </div>
       <div class="address">
         <strong>Địa chỉ</strong>
-        <p>An Nhơn, Bình Định</p>
+        <p>Trường Đại học Quy Nhơn </p>
       </div>
     </div>
 
@@ -75,3 +71,5 @@
   </div>
 
 </footer>
+</body>
+</html>

@@ -44,34 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 
-<<<<<<< Updated upstream
-<link rel="stylesheet" href="style_login.css">
-
-<div class="login-wrapper">
-    <div class="login-container">
-        <div class="login-branding">
-            <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo">
-            <h1>FD TECH</h1>
-            <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
-        </div>
-
-        <div class="login-form-box">
-            <div class="form-header">
-                <h2 class="form-title">Đăng nhập</h2>
-                <div class="qr-login" title="Đăng nhập bằng mã QR">
-                    <i class="fas fa-qrcode"></i>
-                </div>
-            </div>
-
-            <form action="" method="POST">
-                <div class="input-group">
-                    <input type="text" name="username" placeholder="Email hoặc Tên đăng nhập" required>
-                </div>
-                
-                <div class="input-group">
-                    <input type="password" name="password" placeholder="Mật khẩu" required>
-                </div>
-=======
     <header class="auth-header">
         <div class="auth-header-container">
             <div class="auth-header-left">
@@ -85,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </header>
->>>>>>> Stashed changes
 
     <div class="login-wrapper">
         <div class="login-container">
@@ -95,19 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
             </div>
 
-<<<<<<< Updated upstream
-                <a href="#" class="forgot-pw">Quên mật khẩu</a>
-
-                <div class="register-link" style="margin-top: 25px;">
-                    Bạn mới biết đến FD Tech? <a href="register.php">Đăng ký</a>
-=======
             <div class="login-form-box">
                 <div class="form-header">
                     <h2 class="form-title">Đăng nhập</h2>
                     <div class="qr-login" title="Đăng nhập bằng mã QR">
                         <i class="fas fa-qrcode"></i>
                     </div>
->>>>>>> Stashed changes
                 </div>
                 <form action="" method="POST">
                     <div class="input-group">
@@ -128,13 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-<<<<<<< Updated upstream
-</div>
-
-<?php include '../includes/footer.php'; ?>
-=======
 
     <?php include '../includes/footer.php'; ?>
 </body>
 </html>
->>>>>>> Stashed changes

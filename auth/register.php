@@ -53,18 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
 </head>
 
-<<<<<<< Updated upstream
-<?php include '../includes/header.php'; ?>
-
-<link rel="stylesheet" href="style_register.css">
-
-<div class="login-wrapper">
-    <div class="login-container">
-        <div class="login-branding">
-            <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo">
-            <h1>FD TECH</h1>
-            <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
-=======
 <body>
         <header class="auth-header">
         <div class="auth-header-container">
@@ -77,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="auth-header-right">
                 <a href="#">Bạn cần giúp đỡ?</a>
             </div>
->>>>>>> Stashed changes
         </div>
     </header>
 
