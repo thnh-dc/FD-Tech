@@ -39,24 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký - FD Tech</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style_login.css">
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-    
-</head>
 
-<<<<<<< Updated upstream
 <?php include '../includes/header.php'; ?>
 
-<link rel="stylesheet" href="style_register.css">
+<link rel="stylesheet" href="../assets/css/style_register.css">
 
 <div class="login-wrapper">
     <div class="login-container">
@@ -64,30 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo">
             <h1>FD TECH</h1>
             <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
-=======
-<body>
-        <header class="auth-header">
-        <div class="auth-header-container">
-            <div class="auth-header-left">
-                <a href="/FD-Tech/user/index.php" class="auth-logo">
-                    <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                    <span class="auth-brand">FD<span>TECH</span></span>
-                </a>
-            </div>
-            <div class="auth-header-right">
-                <a href="#">Bạn cần giúp đỡ?</a>
-            </div>
->>>>>>> Stashed changes
         </div>
-    </header>
-
-    <div class="login-wrapper">
-        <div class="login-container">
-            <div class="login-branding">
-                <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                <h1>FD TECH</h1>
-                <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
-            </div>
 
         <div class="login-form-box">
             <div class="form-header">

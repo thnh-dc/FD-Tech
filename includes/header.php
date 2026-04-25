@@ -94,4 +94,5 @@
         </div>
     </div>
 </nav>
+
 <script src="../assets/js/navbar.js"></script>
