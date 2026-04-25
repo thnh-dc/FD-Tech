@@ -78,7 +78,6 @@ foreach($cartItems as $row){
                 Chuyển khoản
             </label>
         </div>
-        
         <!-- tổng -->
         <div class="checkout-section">
 

@@ -78,7 +78,6 @@ try {
 <?php include '../includes/header.php'; ?>
 
 <link rel="stylesheet" href="../assets/css/style_profile.css">
-
 <div class="profile-wrapper">
     <div class="profile-container">
         
