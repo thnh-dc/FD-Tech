@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 !DOCTYPE html>
 <html lang="vi">
 <head>
@@ -61,3 +62,50 @@
     <script src="../assets/js/product.js"></script>
 </body>
 </html>
+=======
+<?php 
+$id = isset($_GET['id']) ? $_GET['id'] : 1; 
+include '../includes/header.php'; 
+?>
+
+<link rel="stylesheet" href="../assets/css/product.css?v=<?php echo time(); ?>">
+
+<div class="container" style="margin-bottom: 60px;">
+    <div style="padding: 20px 0; font-size: 14px;">
+        <a href="product_list.php" style="color: #6C757D;">Sản phẩm</a> / Chi tiết
+    </div>
+
+    <div class="detail-layout">
+        <div class="detail-left">
+            <div class="gallery-main">
+                <img id="mainImgView" src="https://via.placeholder.com/400" alt="Detail Image">
+            </div>
+            <div style="text-align: center; color: #6C757D; font-size: 13px;">Rê chuột để phóng to ảnh</div>
+        </div>
+
+        <div class="detail-right">
+            <h1 class="detail-title">Sản phẩm mã số #<?php echo $id; ?></h1>
+            <div style="font-size: 32px; font-weight: 800; color: #DC3545; margin: 20px 0;">
+                1.460.000₫
+            </div>
+
+            <div style="background: #F8F9FA; padding: 20px; border-radius: 8px;">
+                <h3 style="margin-top: 0; font-size: 16px;">Thông tin sản phẩm:</h3>
+                <ul style="padding-left: 20px; line-height: 1.8; color: #333;">
+                    <li>Bảo hành chính hãng 12 tháng.</li>
+                    <li>Giao hàng miễn phí toàn quốc.</li>
+                    <li>Lỗi là đổi mới trong 30 ngày.</li>
+                </ul>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-now">MUA NGAY</button>
+                <button class="btn-outline">THÊM VÀO GIỎ HÀNG</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/product.js"></script>
+<?php include '../includes/footer.php'; ?>
+>>>>>>> Stashed changes

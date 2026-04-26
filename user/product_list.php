@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 !DOCTYPE html>
 <html lang="vi">
 <head>
@@ -140,5 +141,75 @@
     </div>
 
     <script src="../assets/js/product.js"></script>
+=======
+<?php
+// Mock Data: Mảng giả lập Database theo chuẩn
+$products = [
+    ['id' => 1, 'name' => 'Bàn phím cơ Light God Game FD 37 - Bản Pro 2026', 'price' => 1460000, 'old_price' => 1800000, 'discount' => '-18%', 'specs' => ['Quang học', 'RGB', 'Full-size'], 'rating' => 4.9, 'reviews' => 124, 'img' => 'https://via.placeholder.com/200x200/23B5D3/FFFFFF?text=Keyboard'],
+    ['id' => 2, 'name' => 'Chuột Gaming God Cane VD 31 Siêu Nhẹ', 'price' => 1400000, 'old_price' => 1500000, 'discount' => '-6%', 'specs' => ['16000 DPI', 'Wireless', '80g'], 'rating' => 5.0, 'reviews' => 342, 'img' => 'https://via.placeholder.com/200x200/0B2A4A/FFFFFF?text=Mouse'],
+    ['id' => 3, 'name' => 'Tai nghe vòm 7.1 F9 Night God Game', 'price' => 1400000, 'old_price' => 0, 'discount' => '', 'specs' => ['Over-ear', '7.1 Surround', 'Mic AI'], 'rating' => 4.8, 'reviews' => 56, 'img' => 'https://via.placeholder.com/200x200/23B5D3/FFFFFF?text=Headset'],
+    ['id' => 4, 'name' => 'Lót chuột RGB Matrix Cực Đại Kín Bàn', 'price' => 350000, 'old_price' => 500000, 'discount' => '-30%', 'specs' => ['800x300mm', 'LED RGB', 'Cao su'], 'rating' => 4.7, 'reviews' => 890, 'img' => 'https://via.placeholder.com/200x200/0B2A4A/FFFFFF?text=Mousepad'],
+    ['id' => 5, 'name' => 'Củ sạc nhanh GaN 30W Ighti God', 'price' => 450000, 'old_price' => 600000, 'discount' => '-25%', 'specs' => ['30W', 'Type-C', 'GaN'], 'rating' => 4.9, 'reviews' => 210, 'img' => 'https://via.placeholder.com/200x200/23B5D3/FFFFFF?text=Charger'],
+    ['id' => 6, 'name' => 'Bàn phím giả cơ K100 (Bản Tiêu Chuẩn)', 'price' => 450000, 'old_price' => 0, 'discount' => '', 'specs' => ['Membrane', 'Rainbow', 'TKL'], 'rating' => 4.5, 'reviews' => 67, 'img' => 'https://via.placeholder.com/200x200/0B2A4A/FFFFFF?text=Keyboard+2'],
+    ['id' => 7, 'name' => 'Chuột không dây FD Office M1 Silent', 'price' => 250000, 'old_price' => 350000, 'discount' => '-28%', 'specs' => ['Silent', 'Bluetooth', 'Pin 1 năm'], 'rating' => 4.6, 'reviews' => 450, 'img' => 'https://via.placeholder.com/200x200/23B5D3/FFFFFF?text=Office+Mouse'],
+];
+?>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tất cả sản phẩm - FD Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/product.css?v=<?php echo time(); ?>">
+</head>
+<body>
+
+    <?php include '../includes/header.php'; ?>
+
+    <div class="container" style="margin-bottom: 64px;">
+        <div style="padding: 16px 0; font-size: 14px; color: #6C757D;">
+            <a href="index.php" style="color: #0B2A4A; font-weight: 600;">Trang chủ</a> / <span>Thiết bị công nghệ</span>
+        </div>
+
+        <h2 style="color: #0B2A4A; font-size: 24px; margin-bottom: 24px; border-bottom: 2px solid #F4F6F9; padding-bottom: 12px;">ĐIỆN THOẠI & PHỤ KIỆN NỔI BẬT</h2>
+
+        <div class="grid-5-cols">
+            <?php foreach($products as $sp): ?>
+                <a href="product_detail.php?id=<?php echo $sp['id']; ?>" class="product-card">
+                    
+                    <?php if($sp['discount'] != ''): ?>
+                        <span class="discount-badge"><?php echo $sp['discount']; ?></span>
+                    <?php endif; ?>
+
+                    <div class="product-img-wrap">
+                        <img src="<?php echo $sp['img']; ?>" alt="<?php echo $sp['name']; ?>">
+                    </div>
+
+                    <h3 class="product-name"><?php echo $sp['name']; ?></h3>
+                    
+                    <div class="specs-tags">
+                        <?php foreach($sp['specs'] as $spec): ?>
+                            <span><?php echo $spec; ?></span>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="price-box">
+                        <div class="price-current"><?php echo number_format($sp['price'], 0, ',', '.'); ?> ₫</div>
+                        <?php if($sp['old_price'] > 0): ?>
+                            <div class="price-old"><?php echo number_format($sp['old_price'], 0, ',', '.'); ?> ₫</div>
+                        <?php endif; ?>
+                        
+                        <div class="rating">
+                            ★★★★★ <span>(<?php echo $sp['reviews']; ?>)</span>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <?php include '../includes/footer.php'; ?>
+>>>>>>> Stashed changes
 </body>
 </html>
