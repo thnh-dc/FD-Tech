@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/config/database.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/FD-Tech/includes/header.php');
+    require_once '/FD-Tech/config/database.php';
+    include '/FD-Tech/includes/header.php' ;
 
 $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
 
