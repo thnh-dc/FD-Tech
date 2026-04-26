@@ -1,5 +1,6 @@
 <?php
 include '../config/database.php';
+session_start();
 
 $custom_css='<link rel="stylesheet" href="/FD-Tech/assets/css/style_checkout.css">';
 include '../includes/header.php';
@@ -10,7 +11,10 @@ $stmt = $pdo->prepare("
     JOIN products p ON c.product_id = p.id
     WHERE c.user_id = ?
 ");
-$stmt->execute([$id = 1302]); //user test
+//$stmt->execute([$id = 1302]); //user test
+$id = $_SESSION['user_id'] ?? 0;
+$stmt->execute([$id]);
+
 $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 //Tính tổng
@@ -47,6 +51,7 @@ foreach($cartItems as $row){
             <input type="text" name="phone" placeholder="SĐT" required>
             <textarea name="address" placeholder="Địa chỉ" required></textarea>
         </div>
+
         <!-- sản phẩm -->
         <div class="checkout-section">
             <h3>📦 Sản phẩm</h3>
