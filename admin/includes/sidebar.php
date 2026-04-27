@@ -25,7 +25,7 @@
             </a>
             <ul class="submenu <?= $is_product_active ? 'show' : '' ?>">
                 <li><a href="add.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-plus"></i> Thêm sản phẩm</a></li>
-                <li><a href="list_product.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'delete.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-trash"></i> Quản lí sản phẩm</a></li>
+                <li><a href="list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'delete.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-trash"></i> Quản lí sản phẩm</a></li>
             </ul>
         </li>
     </ul>
