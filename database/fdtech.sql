@@ -80,3 +80,6 @@ CREATE TABLE payments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
+
+ALTER TABLE users ADD full_name VARCHAR(100) AFTER username;
+ALTER TABLE users ADD avatar VARCHAR(255) DEFAULT 'default-avatar.png' AFTER full_name;

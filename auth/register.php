@@ -2,6 +2,11 @@
 session_start();
 include '../config/database.php';
 
+// Các biến lưu trạng thái thông báo
+$flash_msg = '';
+$flash_type = '';
+$redirect_url = ''; // Biến để chuyển hướng nếu đăng ký thành công
+
 // --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
@@ -11,7 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // 1. Kiểm tra xem 2 mật khẩu có giống nhau không
     if ($password !== $confirm_password) {
-        echo "<script>alert('Mật khẩu xác nhận không khớp! Vui lòng nhập lại.');</script>";
+        $flash_msg = 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.';
+        $flash_type = 'error';
     } else {
         // 2. Mã hóa mật khẩu để bảo mật
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -22,18 +28,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute([$username, $email]);
             
             if ($stmt->rowCount() > 0) {
-                echo "<script>alert('Tên đăng nhập hoặc Email này đã có người sử dụng!');</script>";
+                $flash_msg = 'Tên đăng nhập hoặc Email này đã có người sử dụng!';
+                $flash_type = 'error';
             } else {
-                // 4. Nếu chưa có ai dùng -> Lưu vào Database (PDO)
+                // 4. Nếu chưa có ai dùng -> Lưu vào Database
                 $stmt = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
                 $stmt->execute([$username, $hashed_password, $email]);
                 
-                // Đăng ký thành công -> Báo hiệu và chuyển qua trang đăng nhập
-                echo "<script>alert('Đăng ký thành công! Hãy đăng nhập nhé.'); window.location.href='login.php';</script>";
-                exit();
+                // Đăng ký thành công -> Gán thông báo và link chuyển hướng
+                $flash_msg = 'Đăng ký thành công! Đang chuyển đến Đăng nhập...';
+                $flash_type = 'success';
+                $redirect_url = 'login.php';
             }
         } catch (PDOException $e) {
-            echo "<script>alert('Lỗi hệ thống: Không thể đăng ký lúc này.');</script>";
+            $flash_msg = 'Lỗi hệ thống: Không thể đăng ký lúc này.';
+            $flash_type = 'error';
             error_log($e->getMessage());
         }
     }
@@ -51,10 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../assets/css/style_chung.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
-        <header class="auth-header">
+    <header class="auth-header">
         <div class="auth-header-container">
             <div class="auth-header-left">
                 <a href="/FD-Tech/user/index.php" class="auth-logo">
@@ -76,40 +86,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
             </div>
 
-        <div class="login-form-box">
-            <div class="form-header">
-                <h2 class="form-title">Đăng ký</h2>
+            <div class="login-form-box">
+                <div class="form-header">
+                    <h2 class="form-title">Đăng ký</h2>
+                </div>
+
+                <form action="" method="POST">
+                    <div class="input-group">
+                        <input type="text" name="username" placeholder="Tên đăng nhập" required 
+                               value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" name="email" placeholder="Email" required 
+                               value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="password" name="password" placeholder="Mật khẩu" required>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required>
+                    </div>
+
+                    <button type="submit" class="btn-login">ĐĂNG KÝ</button>
+
+                    <div class="terms-text">
+                        Bằng việc đăng ký, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> & <a href="#">Chính sách bảo mật</a> của FD Tech
+                    </div>
+
+                    <div class="register-link" style="margin-top: 25px;">
+                        Bạn đã có tài khoản? <a href="login.php">Đăng nhập</a>
+                    </div>
+                </form>
             </div>
-
-            <form action="" method="POST">
-                <div class="input-group">
-                    <input type="text" name="username" placeholder="Tên đăng nhập" required>
-                </div>
-
-                <div class="input-group">
-                    <input type="email" name="email" placeholder="Email" required>
-                </div>
-                
-                <div class="input-group">
-                    <input type="password" name="password" placeholder="Mật khẩu" required>
-                </div>
-
-                <div class="input-group">
-                    <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required>
-                </div>
-
-                <button type="submit" class="btn-login">ĐĂNG KÝ</button>
-
-                <div class="terms-text">
-                    Bằng việc đăng ký, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> & <a href="#">Chính sách bảo mật</a> của FD Tech
-                </div>
-
-                <div class="register-link" style="margin-top: 25px;">
-                    Bạn đã có tài khoản? <a href="login.php">Đăng nhập</a>
-                </div>
-            </form>
         </div>
     </div>
-</div>
 
-<?php include '../includes/footer.php'; ?>
+    <?php include '../includes/footer.php'; ?>
+
+    <?php if (!empty($flash_msg)): ?>
+    <script>
+        Swal.fire({
+            icon: '<?php echo $flash_type; ?>',
+            title: '<?php echo $flash_type == "success" ? "Tuyệt vời!" : "Lỗi!"; ?>',
+            text: '<?php echo $flash_msg; ?>',
+            timer: 2000, // Đợi 2 giây
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
+        }).then(function() {
+            // Nếu có link chuyển hướng (đăng ký thành công), tự động nhảy trang
+            <?php if (!empty($redirect_url)): ?>
+                window.location.href = '<?php echo $redirect_url; ?>';
+            <?php endif; ?>
+        });
+    </script>
+    <?php endif; ?>
+
+</body>
+</html>
