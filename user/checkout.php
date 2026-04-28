@@ -40,7 +40,7 @@
 
             <button onclick="window.location.href='index.php'" 
                     class="btn btn-primary">
-                Tiến Hành Đặt Hàng
+                Tiếp tục mua sắm
             </button>
         </div>
     </div>
