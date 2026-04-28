@@ -1,13 +1,14 @@
 <?php 
-    require_once '../config/database.php';
     session_start();
+    require_once 'check_login.php';
+    require_once '../config/database.php';
 
     $custom_css='
         <link rel="stylesheet" href="../assets/css/style_cart.css">';
     include '../includes/header.php';
 
     $stmt = $pdo->prepare("
-        SELECT c.id, c.quantity, p.name, p.price
+        SELECT c.id, c.quantity, p.name, p.price, p.image_url
         FROM cart_items c
         JOIN products p ON c.product_id = p.id
         WHERE c.user_id = ?
@@ -63,9 +64,20 @@
                 <tbody>
                 <?php foreach($cartItems as $item): ?>
                     <tr class="cart-item"> 
-                        <td><?= $item['name'] ?></td>
+                        <td class="product-info">
+                            <div class="product-box">
+                                <img src="<?= $item['image_url'] ?>" class="product-img">
+                                <span class="product-name"><?= $item['name'] ?></span>
+                            </div>
+                        </td>
                         <td class="item-price"><?= number_format($item['price']) ?> vn₫</td>
-                        <td class="item-quantity"><?= $item['quantity'] ?></td>
+                            <td>
+                                <div class="quantity-box">
+                                    <button class="btn-minus" data-id="<?= $item['id'] ?>">-</button>
+                                    <input type="text" value="<?= $item['quantity'] ?>" readonly class="qty-input" id="qty-<?= $item['id'] ?>">
+                                    <button class="btn-plus" data-id="<?= $item['id'] ?>">+</button>
+                                </div>
+                            </td>
                         <td class="item-subtotal"><?=number_format( $item['price'] * $item['quantity'])?>vn₫</td>
                         <td>
                             <button class="btn btn-danger btn-delete" data-id="<?= $item['id'] ?>">Xóa</button>
@@ -76,11 +88,13 @@
             </table>
             <div class="cart-summary">
                 <p class="summary-text">
+                    <br/>
                     <b>Tổng thanh toán: </b>
                     <span class="price-highlight"><?= number_format($total) ?>vn₫</span>
                 </p>
                     
                 <a href="checkout.php">
+                    <br/>
                     <button class="btn btn-primary btn-large">
                         Tiến Hành Đặt Hàng
                     </button>
