@@ -31,7 +31,7 @@
     </ul>
 
     <div class="sidebar-footer">
-        <a href="logout.php" class="btn btn-danger logout-btn">
+        <a href="/FD-Tech/auth/logout.php" class="btn btn-danger logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
         </a>
     </div>
