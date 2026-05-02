@@ -1,128 +1,121 @@
-<?php include'../includes/header.php'?>
+<?php 
+// MẢNG DỮ LIỆU ĐỘNG PHP (10 Sản phẩm)
+$products = [
+    1 => ['id'=>1, 'cat'=>'pc', 'name'=>'Chuột Gaming God Cane VD 31 Siêu Nhẹ', 'price'=>1400000, 'old'=>1800000, 'sale'=>'-22%', 'rating'=>4.8, 'img'=>'https://via.placeholder.com/300x300/0B2A4A/FFFFFF?text=Mouse', 'desc'=>'Chuột gaming siêu nhẹ chỉ 63g. Cảm biến 16000 DPI siêu chuẩn xác.'],
+    2 => ['id'=>2, 'cat'=>'pc', 'name'=>'Bàn phím cơ Light God Game FD 37 Pro', 'price'=>1460000, 'old'=>0, 'sale'=>'MỚI', 'rating'=>5.0, 'img'=>'https://via.placeholder.com/300x300/23B5D3/FFFFFF?text=Keyboard', 'desc'=>'Switch quang học siêu bền. Hệ thống LED RGB 16.8 triệu màu nháy theo nhạc.'],
+    3 => ['id'=>3, 'cat'=>'audio', 'name'=>'Tai nghe vòm 7.1 F9 Night God', 'price'=>1400000, 'old'=>1700000, 'sale'=>'-18%', 'rating'=>4.7, 'img'=>'https://via.placeholder.com/300x300/0B2A4A/FFFFFF?text=Headset', 'desc'=>'Tai nghe over-ear cách âm tuyệt đối. Âm thanh vòm 7.1 hỗ trợ chơi game FPS.'],
+    4 => ['id'=>4, 'cat'=>'acc', 'name'=>'Củ sạc nhanh GaN 30W Ighti God', 'price'=>450000, 'old'=>600000, 'sale'=>'-25%', 'rating'=>4.9, 'img'=>'https://via.placeholder.com/300x300/23B5D3/FFFFFF?text=Charger', 'desc'=>'Công nghệ GaN siêu nhỏ gọn. Sạc nhanh chuẩn PD an toàn chống cháy nổ.'],
+    5 => ['id'=>5, 'cat'=>'acc', 'name'=>'Lót chuột RGB Matrix Cực Đại', 'price'=>350000, 'old'=>0, 'sale'=>'', 'rating'=>4.6, 'img'=>'https://via.placeholder.com/300x300/0B2A4A/FFFFFF?text=Mousepad', 'desc'=>'Kích thước 800x300mm trải dài bàn. Viền khâu LED RGB cực sáng.'],
+    6 => ['id'=>6, 'cat'=>'pc', 'name'=>'Bàn phím giả cơ FD K100', 'price'=>450000, 'old'=>550000, 'sale'=>'-18%', 'rating'=>4.5, 'img'=>'https://via.placeholder.com/300x300/23B5D3/FFFFFF?text=Keyboard+2', 'desc'=>'Bàn phím Membrane gõ nảy. Khung kim loại chắc chắn, LED Rainbow.'],
+    7 => ['id'=>7, 'cat'=>'pc', 'name'=>'Chuột không dây FD Office M1', 'price'=>250000, 'old'=>350000, 'sale'=>'-28%', 'rating'=>4.8, 'img'=>'https://via.placeholder.com/300x300/0B2A4A/FFFFFF?text=Office+Mouse', 'desc'=>'Phím bấm Silent chống ồn. Thời lượng pin trâu lên đến 12 tháng.'],
+    8 => ['id'=>8, 'cat'=>'acc', 'name'=>'Giá đỡ tai nghe nhôm nguyên khối', 'price'=>200000, 'old'=>0, 'sale'=>'', 'rating'=>4.9, 'img'=>'https://via.placeholder.com/300x300/23B5D3/FFFFFF?text=Stand', 'desc'=>'Nhôm CNC cao cấp nguyên khối. Lót cao su chống trơn trượt.'],
+    9 => ['id'=>9, 'cat'=>'acc', 'name'=>'Cáp sạc Type-C bọc dù siêu bền 2m', 'price'=>150000, 'old'=>250000, 'sale'=>'-40%', 'rating'=>4.7, 'img'=>'https://via.placeholder.com/300x300/0B2A4A/FFFFFF?text=Cable', 'desc'=>'Cáp dài 2 mét bọc dù chống đứt gãy. Hỗ trợ sạc nhanh và truyền dữ liệu.'],
+    10=> ['id'=>10, 'cat'=>'audio', 'name'=>'Webcam Full HD 1080p tích hợp Micro', 'price'=>850000, 'old'=>1100000, 'sale'=>'-22%', 'rating'=>4.6, 'img'=>'https://via.placeholder.com/300x300/23B5D3/FFFFFF?text=Webcam', 'desc'=>'Sắc nét Full HD 1080p. Micro lọc ồn cực tốt phục vụ học tập trực tuyến.']
+];
 
-<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 16px; margin-bottom: 64px;">
-    
-    <div style="padding: 16px 0; font-size: 14px; color: #6C757D;">
-        <a href="index.php" style="color: #0B2A4A; font-weight: 600; text-decoration: none;">Trang chủ</a> / <span>Tất cả sản phẩm</span>
-    </div>
+// Hàm in sao đánh giá
+function renderStars($rating) {
+    return str_repeat('★', floor($rating)) . str_repeat('☆', 5 - floor($rating));
+}
+?>
 
-    <div class="layout-with-sidebar" style="display: flex; gap: 32px; align-items: flex-start;">
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Sản phẩm - FD Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style_product.css?v=<?php echo time(); ?>">
+</head>
+<body>
+
+    <header class="header-vip">
+        <div class="container header-flex">
+            <h2>FD TECH V.I.P</h2>
+            <div class="header-tools">
+                <button id="btnDarkmode" class="btn-darkmode">🌙 Tối</button>
+                <div class="cart-wrap">
+                    🛒 Giỏ hàng <span class="cart-badge" id="cartBadge">0</span>
+                    <div class="cart-dropdown">
+                        <div class="cart-dropdown-header">Sản phẩm mới thêm</div>
+                        <div class="cart-items" id="cartItems"></div>
+                        <a href="#" class="btn-view-cart">Xem chi tiết Giỏ Hàng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 24px;">
         
-        <aside class="sidebar" style="width: 260px; flex-shrink: 0; background: #FFFFFF; padding: 24px; border: 1px solid #F4F6F9; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h2 style="font-size: 20px; color: #0B2A4A; margin-bottom: 24px; border-bottom: 2px solid #F4F6F9; padding-bottom: 12px;">BỘ LỌC CHI TIẾT</h2>
-            <form action="#">
-                <h3 style="font-size: 14px; margin-bottom: 8px;">Tìm kiếm</h3>
-                <input type="text" style="width: 100%; padding: 10px; border: 1px solid #6C757D; border-radius: 4px; margin-bottom: 16px;" placeholder="Tên sản phẩm...">
+        <div class="flash-sale">
+            <h2 style="margin:0; font-size: 20px;">⚡ GIỜ VÀNG DEAL SỐC</h2>
+            <div class="timer">Kết thúc trong: <span id="hour">02</span>:<span id="minute">15</span>:<span id="second">30</span></div>
+        </div>
 
-                <h3 style="font-size: 14px; margin-bottom: 8px;">Danh mục</h3>
-                <label style="display: block; margin-bottom: 8px; cursor: pointer;"><input type="radio" name="cat" checked> Tất cả</label>
-                <label style="display: block; margin-bottom: 8px; cursor: pointer;"><input type="radio" name="cat"> Headphones</label>
-                <label style="display: block; margin-bottom: 8px; cursor: pointer;"><input type="radio" name="cat"> Keyboards</label>
-                <label style="display: block; margin-bottom: 8px; cursor: pointer;"><input type="radio" name="cat"> Mouse</label>
-                <label style="display: block; margin-bottom: 16px; cursor: pointer;"><input type="radio" name="cat"> Others</label>
-
-                <button type="button" style="width: 100%; padding: 12px; background: #23B5D3; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">ÁP DỤNG LỌC</button>
-            </form>
-        </aside>
-
-        <main class="main-content" style="flex-grow: 1;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <h2 style="font-size: 24px; color: #0B2A4A; margin: 0;">SẢN PHẨM NỔI BẬT</h2>
-                <span style="color: #6C757D; font-size: 14px;">Hiển thị 8 sản phẩm</span>
+        <div class="filter-bar">
+            <div class="filter-tags">
+                <button class="filter-btn active" data-cat="all">Tất cả</button>
+                <button class="filter-btn" data-cat="pc">Phím Chuột</button>
+                <button class="filter-btn" data-cat="audio">Âm thanh / Hình ảnh</button>
+                <button class="filter-btn" data-cat="acc">Phụ kiện khác</button>
             </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px;">
-                
-                <div style="border: 1px solid #F4F6F9; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;">
-                    <a href="product_detail.php?id=1" style="text-decoration: none;">
-                        <div style="height: 180px; background: #F4F6F9; margin-bottom: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight:bold; color: #23B5D3;">Ảnh Mouse 1</div>
-                        <p style="font-size: 12px; color: #6C757D; font-weight: bold;">MOUSE</p>
-                        <h3 style="font-size: 16px; color: #333333; margin: 8px 0; height: 40px; overflow: hidden;">Chuột Gaming God Cane VD 31</h3>
-                        <p style="font-size: 20px; font-weight: bold; color: #0B2A4A; margin-bottom: 16px;">1.400.000 đ</p>
-                    </a>
-                    <button style="width: 100%; padding: 10px; background: #23B5D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Thêm vào giỏ</button>
-                </div>
-
-                <div style="border: 1px solid #F4F6F9; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;">
-                    <a href="product_detail.php?id=2" style="text-decoration: none;">
-                        <div style="height: 180px; background: #F4F6F9; margin-bottom: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight:bold; color: #23B5D3;">Ảnh Keyboard 1</div>
-                        <p style="font-size: 12px; color: #6C757D; font-weight: bold;">KEYBOARDS</p>
-                        <h3 style="font-size: 16px; color: #333333; margin: 8px 0; height: 40px; overflow: hidden;">Bàn phím cơ Light God Game</h3>
-                        <p style="font-size: 20px; font-weight: bold; color: #0B2A4A; margin-bottom: 16px;">1.460.000 đ</p>
-                    </a>
-                    <button style="width: 100%; padding: 10px; background: #23B5D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Thêm vào giỏ</button>
-                </div>
-
-                <div style="border: 1px solid #F4F6F9; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;">
-                    <a href="product_detail.php?id=3" style="text-decoration: none;">
-                        <div style="height: 180px; background: #F4F6F9; margin-bottom: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight:bold; color: #23B5D3;">Ảnh Headphone 1</div>
-                        <p style="font-size: 12px; color: #6C757D; font-weight: bold;">HEADPHONES</p>
-                        <h3 style="font-size: 16px; color: #333333; margin: 8px 0; height: 40px; overflow: hidden;">Tai nghe F9 Night God Game</h3>
-                        <p style="font-size: 20px; font-weight: bold; color: #0B2A4A; margin-bottom: 16px;">1.400.000 đ</p>
-                    </a>
-                    <button style="width: 100%; padding: 10px; background: #23B5D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Thêm vào giỏ</button>
-                </div>
-
-                <div style="border: 1px solid #F4F6F9; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;">
-                    <a href="product_detail.php?id=4" style="text-decoration: none;">
-                        <div style="height: 180px; background: #F4F6F9; margin-bottom: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight:bold; color: #23B5D3;">Ảnh Sạc</div>
-                        <p style="font-size: 12px; color: #6C757D; font-weight: bold;">OTHERS</p>
-                        <h3 style="font-size: 16px; color: #333333; margin: 8px 0; height: 40px; overflow: hidden;">Củ sạc nhanh 30W Ighti God</h3>
-                        <p style="font-size: 20px; font-weight: bold; color: #0B2A4A; margin-bottom: 16px;">1.450.000 đ</p>
-                    </a>
-                    <button style="width: 100%; padding: 10px; background: #23B5D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Thêm vào giỏ</button>
-                </div>
-
-                <div style="border: 1px solid #F4F6F9; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;">
-                    <a href="product_detail.php?id=5" style="text-decoration: none;">
-                        <div style="height: 180px; background: #F4F6F9; margin-bottom: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight:bold; color: #23B5D3;">Ảnh Lót Chuột</div>
-                        <p style="font-size: 12px; color: #6C757D; font-weight: bold;">OTHERS</p>
-                        <h3 style="font-size: 16px; color: #333333; margin: 8px 0; height: 40px; overflow: hidden;">Lót chuột RGB FD Matrix Cực Đại</h3>
-                        <p style="font-size: 20px; font-weight: bold; color: #0B2A4A; margin-bottom: 16px;">350.000 đ</p>
-                    </a>
-                    <button style="width: 100%; padding: 10px; background: #23B5D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Thêm vào giỏ</button>
-                </div>
-
-                <div style="border: 1px solid #F4F6F9; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;">
-                    <a href="product_detail.php?id=6" style="text-decoration: none;">
-                        <div style="height: 180px; background: #F4F6F9; margin-bottom: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight:bold; color: #23B5D3;">Ảnh Keyboard 2</div>
-                        <p style="font-size: 12px; color: #6C757D; font-weight: bold;">KEYBOARDS</p>
-                        <h3 style="font-size: 16px; color: #333333; margin: 8px 0; height: 40px; overflow: hidden;">Bàn phím giả cơ FD K100</h3>
-                        <p style="font-size: 20px; font-weight: bold; color: #0B2A4A; margin-bottom: 16px;">450.000 đ</p>
-                    </a>
-                    <button style="width: 100%; padding: 10px; background: #23B5D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Thêm vào giỏ</button>
-                </div>
-
-                <div style="border: 1px solid #F4F6F9; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;">
-                    <a href="product_detail.php?id=7" style="text-decoration: none;">
-                        <div style="height: 180px; background: #F4F6F9; margin-bottom: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight:bold; color: #23B5D3;">Ảnh Mouse 2</div>
-                        <p style="font-size: 12px; color: #6C757D; font-weight: bold;">MOUSE</p>
-                        <h3 style="font-size: 16px; color: #333333; margin: 8px 0; height: 40px; overflow: hidden;">Chuột không dây FD Office M1</h3>
-                        <p style="font-size: 20px; font-weight: bold; color: #0B2A4A; margin-bottom: 16px;">250.000 đ</p>
-                    </a>
-                    <button style="width: 100%; padding: 10px; background: #23B5D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Thêm vào giỏ</button>
-                </div>
-
-                <div style="border: 1px solid #F4F6F9; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;">
-                    <a href="product_detail.php?id=8" style="text-decoration: none;">
-                        <div style="height: 180px; background: #F4F6F9; margin-bottom: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight:bold; color: #23B5D3;">Ảnh Giá đỡ</div>
-                        <p style="font-size: 12px; color: #6C757D; font-weight: bold;">OTHERS</p>
-                        <h3 style="font-size: 16px; color: #333333; margin: 8px 0; height: 40px; overflow: hidden;">Giá đỡ tai nghe FD Stand Pro</h3>
-                        <p style="font-size: 20px; font-weight: bold; color: #0B2A4A; margin-bottom: 16px;">200.000 đ</p>
-                    </a>
-                    <button style="width: 100%; padding: 10px; background: #23B5D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Thêm vào giỏ</button>
-                </div>
-
+            <div>
+                <select id="sortSelect" class="sort-select">
+                    <option value="default">Sắp xếp: Mặc định</option>
+                    <option value="asc">Giá: Thấp đến Cao</option>
+                    <option value="desc">Giá: Cao đến Thấp</option>
+                </select>
             </div>
-            
-            <div style="display: flex; justify-content: center; gap: 8px; margin-top: 40px;">
-                <a href="#" style="padding: 8px 16px; background: #0B2A4A; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">1</a>
-                <a href="#" style="padding: 8px 16px; background: white; color: #0B2A4A; border: 1px solid #F4F6F9; text-decoration: none; border-radius: 4px; font-weight: bold;">2</a>
-                <a href="#" style="padding: 8px 16px; background: white; color: #0B2A4A; border: 1px solid #F4F6F9; text-decoration: none; border-radius: 4px; font-weight: bold;">3</a>
-            </div>
+        </div>
 
-        </main>
+        <div class="product-grid-5" id="productGrid">
+            <?php foreach($products as $sp): ?>
+                <a href="product_detail.php?id=<?php echo $sp['id']; ?>" class="product-card fpt-card" 
+                   data-cat="<?php echo $sp['cat']; ?>" data-price="<?php echo $sp['price']; ?>"
+                   data-name="<?php echo $sp['name']; ?>" data-img="<?php echo $sp['img']; ?>" data-desc="<?php echo $sp['desc']; ?>">
+                    
+                    <?php if($sp['sale']): ?>
+                        <div class="badge-sale"><?php echo $sp['sale']; ?></div>
+                    <?php endif; ?>
+
+                    <div class="img-wrap">
+                        <img src="<?php echo $sp['img']; ?>" alt="Ảnh">
+                        <button class="btn-quickview">👁️ Xem Nhanh</button>
+                    </div>
+                    
+                    <h3 class="product-name"><?php echo $sp['name']; ?></h3>
+                    
+                    <div class="rating">
+                        <?php echo renderStars($sp['rating']); ?> <span>(<?php echo rand(50, 500); ?> đánh giá)</span>
+                    </div>
+
+                    <div class="product-price">
+                        <?php echo number_format($sp['price'], 0, ',', '.'); ?> ₫
+                        <?php if($sp['old'] > 0): ?>
+                            <span class="price-old"><?php echo number_format($sp['old'], 0, ',', '.'); ?> ₫</span>
+                        <?php endif; ?>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
     </div>
-</div>
-<script src="../assets/js/product.js"></script>
-<?php include '../includes/footer.php'?>
+
+    <div class="modal-overlay" id="quickViewModal">
+        <div class="modal-content">
+            <button class="btn-close">&times;</button>
+            <div class="modal-left">
+                <img id="modalImg" src="" alt="Zoom">
+            </div>
+            <div class="modal-right">
+                <h2 id="modalName" style="margin-bottom: 15px; font-size: 24px; color: var(--text-main);">Tên</h2>
+                <div id="modalPrice" style="color: var(--secondary); font-size: 32px; font-weight: bold; margin-bottom: 20px;">0 ₫</div>
+                <div id="modalDesc" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">Mô tả</div>
+                <button class="btn btn-buy-now" style="width: 100%;">TỚI TRANG CHI TIẾT SẢN PHẨM</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/script_product.js"></script>
+</body>
+</html>
