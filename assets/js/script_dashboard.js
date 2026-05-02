@@ -20,3 +20,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('revenueChart');
+
+    if (!ctx) return; // tránh lỗi nếu không có canvas
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Doanh thu theo tháng',
+                data: revenueData,
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString('vi-VN') + '₫';
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
