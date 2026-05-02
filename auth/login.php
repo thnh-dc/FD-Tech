@@ -2,6 +2,11 @@
 session_start();
 include '../config/database.php';
 
+// Các biến lưu thông báo
+$flash_msg = '';
+$flash_type = '';
+$redirect_url = '';
+
 // --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG NHẬP ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $login_input = trim($_POST['username']); 
@@ -17,13 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
             
-            header("Location: ../user/index.php");
-            exit();
+            // --- THÊM THÔNG BÁO THÀNH CÔNG TẠI ĐÂY ---
+            $flash_msg = 'Chào mừng bạn quay trở lại, ' . $user['username'] . '!';
+            $flash_type = 'success';
+            $redirect_url = '../user/index.php'; // Đường dẫn trang chủ
         } else {
-            echo "<script>alert('Sai tên đăng nhập hoặc mật khẩu!');</script>";
+            $flash_msg = 'Sai tên đăng nhập hoặc mật khẩu!';
+            $flash_type = 'error';
         }
     } catch (PDOException $e) {
-        echo "<script>alert('Lỗi hệ thống: Không thể đăng nhập lúc này.');</script>";
+        $flash_msg = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
+        $flash_type = 'error';
         error_log($e->getMessage());
     }
 }
@@ -41,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../assets/css/style_chung.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -75,7 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <form action="" method="POST">
                     <div class="input-group">
-                        <input type="text" name="username" placeholder="Email hoặc Tên đăng nhập" required>
+                        <input type="text" name="username" placeholder="Email hoặc Tên đăng nhập" required 
+                               value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
                     </div>
                     
                     <div class="input-group">
@@ -94,5 +105,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <?php include '../includes/footer.php'; ?>
+
+    <?php if (!empty($flash_msg)): ?>
+    <script>
+        Swal.fire({
+            icon: '<?php echo $flash_type; ?>',
+            title: '<?php echo $flash_type == "success" ? "Đăng nhập thành công!" : "Đăng nhập thất bại!"; ?>',
+            text: '<?php echo $flash_msg; ?>',
+            timer: 1500, // Đợi 1.5 giây để khách kịp thấy thông báo
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
+        }).then(function() {
+            // Nếu có link chuyển hướng (đăng nhập thành công), nhảy sang trang chủ
+            <?php if (!empty($redirect_url)): ?>
+                window.location.href = '<?php echo $redirect_url; ?>';
+            <?php endif; ?>
+        });
+    </script>
+    <?php endif; ?>
+
 </body>
 </html>
