@@ -95,7 +95,7 @@
 
             <div class="header-icons">
                 <a href="#"><i class="far fa-heart"></i></a>
-                <a href="/user/cart.php" class="cart-icon">
+                <a href="../user/cart.php" class="cart-icon">
                     <i class="fas fa-shopping-bag"></i> <span class="count">0</span>
                     <span class="cart-text">Giỏ hàng</span>
                 </a>
