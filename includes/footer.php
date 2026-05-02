@@ -70,6 +70,4 @@
     </div>
   </div>
 
-</footer>
-</body>
-</html>
+</footer
