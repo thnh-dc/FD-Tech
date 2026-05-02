@@ -40,8 +40,8 @@
         <div class="header-auth">
     <?php if (isset($_SESSION['user_id'])): ?>
         <div class="user-profile">
-            <img src="../assets/images/<?php echo $_SESSION['user_avt']; ?>" alt="AVT" style="width:30px; border-radius:50%;">
-            <span><?php echo $_SESSION['user_name']; ?></span>
+            <img src="../assets/images/<?php echo $_SESSION['avatar']; ?>"alt="AVT" style="width:30px; border-radius:50%;">
+            <span><?php echo $_SESSION['username']; ?></span>
             <div class="dropdown-menu">
                 <a href="../user/profile.php">Thông tin</a>
                 <a href="../auth/logout.php">Đăng xuất</a>
