@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
-
+//render chart dashboard
 document.addEventListener("DOMContentLoaded", function () {
     const ctx = document.getElementById('revenueChart');
 
@@ -49,4 +49,46 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+});
+
+//menu cập nhật tràng tháo list_order
+document.querySelectorAll('.btn-action').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+
+        // đóng tất cả menu khác
+        document.querySelectorAll('.action-menu').forEach(m => m.style.display = 'none');
+
+        const menu = this.nextElementSibling;
+        menu.style.display = 'block';
+    });
+});
+
+// click chọn trạng thái
+document.querySelectorAll('.action-menu button').forEach(btn => {
+    btn.addEventListener('click', function () {
+
+        const status = this.getAttribute('data-status');
+        const orderId = this.closest('td').querySelector('.btn-action').dataset.id;
+
+        fetch('update_order_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=${orderId}&status=${status}`
+        })
+        .then(res => res.text())
+        .then(data => {
+            if (data.trim() === 'success') {
+                alert('Cập nhật thành công!');
+                location.reload();
+            } else {
+                alert('Lỗi cập nhật!');
+            }
+        });
+    });
+});
+
+// click ngoài để đóng menu
+document.addEventListener('click', () => {
+    document.querySelectorAll('.action-menu').forEach(m => m.style.display = 'none');
 });
