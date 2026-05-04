@@ -87,12 +87,7 @@
 
             <label>
                 <input type="radio" name="payment_method" value="cod" checked>
-                COD
-            </label>
-
-            <label>
-                <input type="radio" name="payment_method" value="bank">
-                Chuyển khoản
+                Thanh toán khi nhận hàng
             </label>
         </div>
         <!-- tổng -->
