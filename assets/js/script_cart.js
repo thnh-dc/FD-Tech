@@ -19,7 +19,7 @@ document.addEventListener('click', function (e) {
             if (data.trim() === 'success') {
                 row.remove();
 
-                // Nếu muốn cập nhật tổng tiền → reload
+                // cập nhật tổng tiền → reload
                 location.reload();
             } else {
                 alert('Xóa thất bại!');
@@ -33,18 +33,6 @@ document.addEventListener('click', function (e) {
 });
 
 //Script tăng/giảm sản phẩm
-document.addEventListener('click', function(e){
-
-    if(e.target.classList.contains('btn-plus')){
-        updateQty(e.target.dataset.id, 1);
-    }
-
-    if(e.target.classList.contains('btn-minus')){
-        updateQty(e.target.dataset.id, -1);
-    }
-
-});
-
 function updateQty(id, change) {
     fetch('action_cart/update_cart.php', {
         method: 'POST',
@@ -63,3 +51,14 @@ function updateQty(id, change) {
     })
     .catch(err => console.error(err));
 }
+document.addEventListener('click', function(e){
+
+    if(e.target.classList.contains('btn-plus')){
+        updateQty(e.target.dataset.id, 1);
+    }
+
+    if(e.target.classList.contains('btn-minus')){
+        updateQty(e.target.dataset.id, -1);
+    }
+
+});
