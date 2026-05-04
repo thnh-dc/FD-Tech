@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-//menu cập nhật tràng tháo list_order
+//menu cập nhật trạng thái list_order
 document.querySelectorAll('.btn-action').forEach(btn => {
     btn.addEventListener('click', function (e) {
         e.stopPropagation();
