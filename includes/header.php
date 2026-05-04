@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/style_chung.css">
+    <link rel="stylesheet" href="../assets/css/index.css">
     <?php
         if (isset($custom_css)) {
             echo $custom_css;
@@ -23,37 +24,38 @@
     <div class="main-header">
     <div class="container header-flex">
         <div class="logo">
-            <a href="http://localhost/FD-Tech/user/index.php">
+            <a href="index.php">
                 <img src="../assets/images/logo-FD.jpg" alt="FD TECH" style="height: 50px;"> 
                 <span style="font-size: 24px; font-weight: bold; color: #333;">FD<span style="color: #00a8ff;">TECH</span></span>
             </a>
         </div>
 
         <ul class="main-menu">
-            <li><a href="index.php">Trang chủ</a></li>
-            <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
-            <li><a href="#">Tin tức</a></li>
-            <li><a href="#">Khuyến mãi</a></li>
-            <li><a href="#footer-contact">Liên hệ</a></li>
+        <li><a href="index.php">Trang chủ</a></li>
+        <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
+        <li><a href="#">Tin tức</a></li>
+        <li><a href="index.php#khuyen-mai">Khuyến mãi</a></li>
+        <li><a href="#footer-contact">Liên hệ</a></li>
         </ul>
 
-        <div class="header-auth">
+       <div class="header-auth">
     <?php if (isset($_SESSION['user_id'])): ?>
         <div class="user-profile">
-            <img src="../assets/images/<?php echo $_SESSION['user_avt']; ?>" alt="AVT" style="width:30px; border-radius:50%;">
-            <span><?php echo $_SESSION['user_name']; ?></span>
+            <img src="../assets/images/<?php echo $_SESSION['user_avt']; ?>" alt="AVT" style="width:30px; border-radius:50%; vertical-align: middle;">
+            
+            <span><i class="fas fa-user"></i> <?php echo $_SESSION['user_name']; ?></span>
+            
             <div class="dropdown-menu">
                 <a href="../user/profile.php">Thông tin</a>
                 <a href="../auth/logout.php">Đăng xuất</a>
             </div>
         </div>
     <?php else: ?>
-        <a href="../auth/login.php" class="auth-link">Đăng nhập</a>
+        <a href="../auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
         <span class="divider">|</span>
         <a href="../auth/register.php" class="auth-link">Đăng ký</a>
     <?php endif; ?>
 </div>
-    </div>
 </div>
 
     <div class="bottom-header">
@@ -68,18 +70,18 @@
                 <div class="category-dropdown" id="categoryDropdown">
                     <div class="category-list">
                         <?php 
-                        $categories = [
+                            $categories = [
                             ['id' => 'khuyen-mai', 'name' => 'Khuyến mãi'],
-                            ['id' => 'san-pham-ban-chay', 'name' => 'Sản phẩm bán chạy'],
+                            ['id' => 'san-pham-noi-bat', 'name' => 'Sản phẩm nổi bật'],
                             ['id' => 'xay-dung-cau-hinh', 'name' => 'Xây dựng cấu hình'],
                             ['id' => 'man-hinh-may-tinh', 'name' => 'MÀN HÌNH MÁY TÍNH'],
                             ['id' => 'loa-tai-nghe', 'name' => 'LOA - TAI NGHE'],
                             ['id' => 'ban-phim-co', 'name' => 'BÀN PHÍM CƠ'],
                             ['id' => 'chuot', 'name' => 'CHUỘT'],
                             ['id' => 'phu-kien-khac', 'name' => 'PHỤ KIỆN KHÁC'],
-                        ];
+                       ];
                         foreach ($categories as $category): ?>
-                            <a href="products.php?category=<?php echo $category['id']; ?>" class="category-item">
+                            <a href="index.php#<?php echo $category['id']; ?>" class="category-item">
                                 <span><?php echo $category['name']; ?></span>
                                 <i class="fas fa-chevron-right"></i>
                             </a>
@@ -88,10 +90,10 @@
                 </div>
             </div>
             
-            <div class="search-box">
-                <input type="text" placeholder="Nội dung tìm kiếm">
-                <button type="submit"><i class="fas fa-search"></i></button>
-            </div>
+            <form action="search.php" method="GET" class="search-box">
+            <input type="text" name="query" placeholder="Nội dung tìm kiếm" required>
+            <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
 
             <div class="header-icons">
                 <a href="#"><i class="far fa-heart"></i></a>
@@ -102,6 +104,3 @@
             </div>
         </div>
     </div>
-<script src="../assets/js/navbar.js"></script>
-</body>
-</html>
