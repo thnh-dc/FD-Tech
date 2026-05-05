@@ -62,3 +62,28 @@ document.addEventListener('click', function(e){
     }
 
 });
+
+// Chọn tất cả
+document.getElementById('check-all')?.addEventListener('change', function() {
+    const checked = this.checked;
+    document.querySelectorAll('.item-check').forEach(cb => {
+        cb.checked = checked;
+    });
+});
+
+// Submit form → gửi list sản phẩm được chọn
+document.getElementById('checkout-form')?.addEventListener('submit', function(e) {
+    const selected = [];
+
+    document.querySelectorAll('.item-check:checked').forEach(cb => {
+        selected.push(cb.value);
+    });
+
+    if (selected.length === 0) {
+        alert('Vui lòng chọn ít nhất 1 sản phẩm!');
+        e.preventDefault();
+        return;
+    }
+
+    document.getElementById('selected-items').value = selected.join(',');
+});
