@@ -1,3 +1,9 @@
+<?php
+// Đảm bảo session đã được khởi động
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -21,6 +27,7 @@
     $cart_count = 0;   
 ?>
     <div class="main-header">
+<<<<<<< Updated upstream
     <div class="container header-flex">
         <div class="logo">
             <a href="http://localhost/FD-Tech/user/index.php">
@@ -46,6 +53,55 @@
         </div>
     </div>
 </div>
+=======
+        <div class="container header-flex">
+            <div class="logo">
+                <a href="index.php">
+                    <img src="../assets/images/logo-FD.jpg" alt="FD TECH" style="height: 50px;"> 
+                    <span style="font-size: 24px; font-weight: bold; color: #333;">FD<span style="color: #00a8ff;">TECH</span></span>
+                </a>
+            </div>
+
+            <ul class="main-menu">
+                <li><a href="index.php">Trang chủ</a></li>
+                <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
+                <li><a href="#">Tin tức</a></li>
+                <li><a href="index.php#khuyen-mai">Khuyến mãi</a></li>
+                <li><a href="#footer-contact">Liên hệ</a></li>
+            </ul>
+
+            <div class="header-auth">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <?php 
+                        // XỬ LÝ AVATAR THÔNG MINH TRÊN HEADER
+                        $username_avt = $_SESSION['username'] ?? 'User';
+                        $initials = mb_strtoupper(mb_substr($username_avt, 0, 2, 'UTF-8'), 'UTF-8');
+                        $avatar_url = "https://ui-avatars.com/api/?name=" . urlencode($initials) . "&background=random&color=fff&size=30";
+                        
+                        // Nếu user đã có avatar tự tải (lưu trong session), thì ghi đè đường dẫn
+                        if (!empty($_SESSION['avatar'])) {
+                            $avatar_url = "../upload/avatar_user/" . $_SESSION['avatar'];
+                        }
+                    ?>
+                    <div class="user-profile">
+                        <img src="<?php echo $avatar_url; ?>" alt="AVT" style="width:30px; height: 30px; object-fit: cover; border-radius:50%; vertical-align: middle;">
+                        
+                        <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($_SESSION['username']); ?></span>
+                        
+                        <div class="dropdown-menu">
+                            <a href="../user/profile.php">Thông tin</a>
+                            <a href="../auth/logout.php">Đăng xuất</a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <a href="../auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
+                    <span class="divider">|</span>
+                    <a href="../auth/register.php" class="auth-link">Đăng ký</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+>>>>>>> Stashed changes
 
     <div class="bottom-header">
         <div class="container header-flex">
@@ -79,20 +135,32 @@
                 </div>
             </div>
             
+<<<<<<< Updated upstream
             <div class="search-box">
                 <input type="text" placeholder="Nội dung tìm kiếm">
                 <button type="submit"><i class="fas fa-search"></i></button>
             </div>
+=======
+            <form action="search.php" method="GET" class="search-box">
+                <input type="text" name="query" placeholder="Nội dung tìm kiếm" required>
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+>>>>>>> Stashed changes
 
             <div class="header-icons">
                 <a href="#"><i class="far fa-heart"></i></a>
                 <a href="/FD-Tech/user/cart.php" class="cart-icon">
-                    <i class="fas fa-shopping-bag"></i> <span class="count">0</span>
+                    <i class="fas fa-shopping-bag"></i> <span class="count"><?php echo $cart_count; ?></span>
                     <span class="cart-text">Giỏ hàng</span>
                 </a>
             </div>
         </div>
     </div>
+<<<<<<< Updated upstream
 </nav>
 
 <script src="../assets/js/navbar.js"></script>
+=======
+</body>
+</html>
+>>>>>>> Stashed changes

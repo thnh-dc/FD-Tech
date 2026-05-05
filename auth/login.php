@@ -2,6 +2,10 @@
 session_start();
 include '../config/database.php';
 
+// --- THÔNG TIN ADMIN CỨNG ---
+define('ADMIN_USER', 'admin');
+define('ADMIN_PASS', 'admin123');
+
 // Các biến lưu thông báo
 $flash_msg = '';
 $flash_type = '';
@@ -12,28 +16,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $login_input = trim($_POST['username']); 
     $password = trim($_POST['password']);
 
-    try {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
-        $stmt->execute([$login_input, $login_input]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // 1. KIỂM TRA XEM CÓ PHẢI LÀ ADMIN CỨNG KHÔNG
+    if ($login_input === ADMIN_USER && $password === ADMIN_PASS) {
+        // Cấp cờ session để bắt đầu bước xác minh 2 lớp
+        $_SESSION['pending_admin_login'] = true; 
+        $_SESSION['admin_step'] = 1; 
+        
+        $flash_msg = 'Vui lòng xác minh bảo mật 2 lớp!';
+        $flash_type = 'info';
+        $redirect_url = 'admin_verify.php'; // Chuyển sang trang xác minh admin
+    } 
+    // 2. NẾU KHÔNG PHẢI ADMIN -> KIỂM TRA DATABASE (USER BÌNH THƯỜNG)
+    else {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
+            $stmt->execute([$login_input, $login_input]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
-            
-            // --- THÊM THÔNG BÁO THÀNH CÔNG TẠI ĐÂY ---
-            $flash_msg = 'Chào mừng bạn quay trở lại, ' . $user['username'] . '!';
-            $flash_type = 'success';
-            $redirect_url = '../user/index.php'; // Đường dẫn trang chủ
-        } else {
-            $flash_msg = 'Sai tên đăng nhập hoặc mật khẩu!';
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['role'] = $user['role'];
+                
+                // --- THÊM THÔNG BÁO THÀNH CÔNG TẠI ĐÂY ---
+                $flash_msg = 'Chào mừng bạn quay trở lại, ' . $user['username'] . '!';
+                $flash_type = 'success';
+                $redirect_url = '../user/index.php'; // Đường dẫn trang chủ
+            } else {
+                $flash_msg = 'Sai tên đăng nhập hoặc mật khẩu!';
+                $flash_type = 'error';
+            }
+        } catch (PDOException $e) {
+            $flash_msg = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
             $flash_type = 'error';
+            error_log($e->getMessage());
         }
-    } catch (PDOException $e) {
-        $flash_msg = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
-        $flash_type = 'error';
-        error_log($e->getMessage());
     }
 }
 ?>
@@ -110,14 +127,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script>
         Swal.fire({
             icon: '<?php echo $flash_type; ?>',
-            title: '<?php echo $flash_type == "success" ? "Đăng nhập thành công!" : "Đăng nhập thất bại!"; ?>',
+            // Cập nhật title thông minh hơn để bắt được trạng thái Info của Admin
+            title: '<?php 
+                if ($flash_type == "success") echo "Đăng nhập thành công!"; 
+                elseif ($flash_type == "info") echo "Xác minh Admin!"; 
+                else echo "Đăng nhập thất bại!"; 
+            ?>',
             text: '<?php echo $flash_msg; ?>',
             timer: 1500, // Đợi 1.5 giây để khách kịp thấy thông báo
             showConfirmButton: false,
             toast: true,
             position: 'top-end'
         }).then(function() {
-            // Nếu có link chuyển hướng (đăng nhập thành công), nhảy sang trang chủ
+            // Nếu có link chuyển hướng (đăng nhập thành công HOẶC đang sang bước xác minh admin)
             <?php if (!empty($redirect_url)): ?>
                 window.location.href = '<?php echo $redirect_url; ?>';
             <?php endif; ?>
