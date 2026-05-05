@@ -41,9 +41,9 @@
        <div class="header-auth">
     <?php if (isset($_SESSION['user_id'])): ?>
         <div class="user-profile">
-            <img src="../assets/images/<?php echo $_SESSION['user_avt']; ?>" alt="AVT" style="width:30px; border-radius:50%; vertical-align: middle;">
+            <img src="../assets/images/<?php echo $_SESSION['avatar']; ?>" alt="AVT" style="width:30px; border-radius:50%; vertical-align: middle;">
             
-            <span><i class="fas fa-user"></i> <?php echo $_SESSION['user_name']; ?></span>
+            <span><i class="fas fa-user"></i> <?php echo $_SESSION['username']; ?></span>
             
             <div class="dropdown-menu">
                 <a href="../user/profile.php">Thông tin</a>
@@ -97,7 +97,7 @@
 
             <div class="header-icons">
                 <a href="#"><i class="far fa-heart"></i></a>
-                <a href="/user/cart.php" class="cart-icon">
+                <a href="/FD-Tech/user/cart.php" class="cart-icon">
                     <i class="fas fa-shopping-bag"></i> <span class="count">0</span>
                     <span class="cart-text">Giỏ hàng</span>
                 </a>
