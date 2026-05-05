@@ -80,7 +80,7 @@ document.getElementById('checkout-form')?.addEventListener('submit', function(e)
     });
 
     if (selected.length === 0) {
-        alert('Vui lòng chọn ít nhất 1 sản phẩm!');
+        alert('Bạn phải chọn ít nhất một sản phẩm !');
         e.preventDefault();
         return;
     }
