@@ -1,5 +1,3 @@
-CREATE DATABASE IF NOT EXISTS fd-tech;
-USE fd-tech;
 
 -- 1. Bảng Users
 CREATE TABLE users (
@@ -83,3 +81,4 @@ CREATE TABLE payments (
 
 ALTER TABLE users ADD full_name VARCHAR(100) AFTER username;
 ALTER TABLE users ADD avatar VARCHAR(255) DEFAULT 'default-avatar.png' AFTER full_name;
+ALTER TABLE users ADD address TEXT AFTER phone;

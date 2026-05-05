@@ -22,9 +22,28 @@ try {
     $productsRow = $stmtProducts->fetch(PDO::FETCH_ASSOC);
     $totalProductsCount = $productsRow['total_products'] ?? 0;
 
+    // 4.Truy vấn để render biểu đồ
+    $stmtChart = $pdo->prepare("
+        SELECT DATE_FORMAT(created_at, '%Y-%m') as month,
+            SUM(total_amount) as revenue
+        FROM orders
+        WHERE status = 'completed' AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+        GROUP BY month
+        ORDER BY month");
+    $stmtChart->execute();
+    $chartData = $stmtChart->fetchAll(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
     // Xử lý lỗi nếu không kết nối được database
     echo "Lỗi truy vấn: " . $e->getMessage();
+}
+//tách dữ liệu
+$labels = [];
+$data = [];
+
+foreach ($chartData as $row) {
+    $labels[] = $row['month'];
+    $data[] = $row['revenue'];
 }
 ?>
 
@@ -92,13 +111,17 @@ try {
                 <section class="section-block" style="margin-top: var(--space-xl);">
                     <div class="card stat-chart-placeholder" style="background: var(--bg-main); padding: var(--space-lg); border-radius: var(--radius-md); box-shadow: var(--shadow-card); min-height: 300px;">
                         <h3 style="margin-bottom: var(--space-md); color: var(--primary);">Biểu đồ doanh thu </h3>
-                        <p class="text-muted">Khu vực này dùng để render biểu đồ ...</p>
+                        <canvas id="revenueChart"></canvas>
                     </div>
                 </section>
             </div>
         </main>
     </div>
-
+    <script>
+    const revenueLabels = <?= json_encode($labels) ?>;
+    const revenueData = <?= json_encode($data) ?>;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../assets/js/script_dashboard.js"></script>
 </body>
 </html>

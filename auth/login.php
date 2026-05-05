@@ -13,19 +13,19 @@ $redirect_url = '';
 
 // --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG NHẬP ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $login_input = trim($_POST['username']); 
+    $login_input = trim($_POST['username']);
     $password = trim($_POST['password']);
 
     // 1. KIỂM TRA XEM CÓ PHẢI LÀ ADMIN CỨNG KHÔNG
     if ($login_input === ADMIN_USER && $password === ADMIN_PASS) {
         // Cấp cờ session để bắt đầu bước xác minh 2 lớp
-        $_SESSION['pending_admin_login'] = true; 
-        $_SESSION['admin_step'] = 1; 
-        
+        $_SESSION['pending_admin_login'] = true;
+        $_SESSION['admin_step'] = 1;
+
         $flash_msg = 'Vui lòng xác minh bảo mật 2 lớp!';
         $flash_type = 'info';
         $redirect_url = 'admin_verify.php'; // Chuyển sang trang xác minh admin
-    } 
+    }
     // 2. NẾU KHÔNG PHẢI ADMIN -> KIỂM TRA DATABASE (USER BÌNH THƯỜNG)
     else {
         try {
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
-                
+
                 // --- THÊM THÔNG BÁO THÀNH CÔNG TẠI ĐÂY ---
                 $flash_msg = 'Chào mừng bạn quay trở lại, ' . $user['username'] . '!';
                 $flash_type = 'success';
@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,9 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../assets/css/style_login.css">
     <link rel="stylesheet" href="../assets/css/style_chung.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
 
     <header class="auth-header">
@@ -102,17 +104,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <form action="" method="POST">
                     <div class="input-group">
-                        <input type="text" name="username" placeholder="Email hoặc Tên đăng nhập" required 
-                               value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
+                        <input type="text" name="username" placeholder="Email hoặc Tên đăng nhập" required
+                            value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
                     </div>
-                    
+
                     <div class="input-group">
                         <input type="password" name="password" placeholder="Mật khẩu" required>
                     </div>
 
                     <button type="submit" class="btn-login">Đăng nhập</button>
 
-                    <a href="#" class="forgot-pw">Quên mật khẩu</a>
+                    <a href="forgot_password.php" class="forgot-pw">Quên mật khẩu</a>
+
                     <div class="register-link" style="margin-top: 25px;">
                         Bạn mới biết đến FD Tech? <a href="register.php">Đăng ký</a>
                     </div>
@@ -124,28 +127,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php include '../includes/footer.php'; ?>
 
     <?php if (!empty($flash_msg)): ?>
-    <script>
-        Swal.fire({
-            icon: '<?php echo $flash_type; ?>',
-            // Cập nhật title thông minh hơn để bắt được trạng thái Info của Admin
-            title: '<?php 
-                if ($flash_type == "success") echo "Đăng nhập thành công!"; 
-                elseif ($flash_type == "info") echo "Xác minh Admin!"; 
-                else echo "Đăng nhập thất bại!"; 
-            ?>',
-            text: '<?php echo $flash_msg; ?>',
-            timer: 1500, // Đợi 1.5 giây để khách kịp thấy thông báo
-            showConfirmButton: false,
-            toast: true,
-            position: 'top-end'
-        }).then(function() {
-            // Nếu có link chuyển hướng (đăng nhập thành công HOẶC đang sang bước xác minh admin)
-            <?php if (!empty($redirect_url)): ?>
-                window.location.href = '<?php echo $redirect_url; ?>';
-            <?php endif; ?>
-        });
-    </script>
+        <script>
+            Swal.fire({
+                icon: '<?php echo $flash_type; ?>',
+                // Cập nhật title thông minh hơn để bắt được trạng thái Info của Admin
+                title: '<?php
+                if ($flash_type == "success")
+                    echo "Đăng nhập thành công!";
+                elseif ($flash_type == "info")
+                    echo "Xác minh Admin!";
+                else
+                    echo "Đăng nhập thất bại!";
+                ?>',
+                        text: '<?php echo $flash_msg; ?>',
+                    timer: 1500, // Đợi 1.5 giây để khách kịp thấy thông báo
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                    }).then(function () {
+                        // Nếu có link chuyển hướng (đăng nhập thành công HOẶC đang sang bước xác minh admin)
+                        <?php if (!empty($redirect_url)): ?>
+                            window.location.href = '<?php echo $redirect_url; ?>';
+                        <?php endif; ?>
+                    });
+        </script>
     <?php endif; ?>
 
 </body>
+
 </html>

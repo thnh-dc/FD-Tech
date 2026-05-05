@@ -1,15 +1,21 @@
 .top-bar .container, .main-header .container, .bottom-header .container { padding: 0 15px; }
-
+.container {
+    max-width: 1200px; /* Giới hạn độ rộng tối đa */
+    margin: 0 auto;    /* Căn giữa trang */
+    width: 100%;       /* Luôn chiếm đầy chiều rộng khả dụng */
+}
 /* ===== TOP BAR ===== */
 .top-bar { 
     background: var(--bg-light);
     padding: 8px 0; font-size: 12px;
     border-bottom: 1px solid #eee;
      color: var(--text-muted); }
-.header-flex { 
+.header-flex {
     display: flex;
-    align-items: center;
-     justify-content: space-between; }
+    align-items: center;    /* Đây là chìa khóa để không bị nảy lên */
+    justify-content: space-between;
+    width: 100%;
+}
 
 /* ===== MAIN HEADER ===== */
 .main-header { 
@@ -20,16 +26,22 @@
     display: flex; 
     align-items: center; }
 .logo a {
+    display: flex;          /* Chuyển sang flex để ảnh và chữ thẳng hàng */
+    align-items: center;    /* Căn giữa dọc */
+    gap: 10px;
     text-decoration: none !important;
 }
-.logo img { 
-    max-height: 50px; 
-    width: auto; }
+.logo img {
+    display: block;         /* Loại bỏ khoảng trắng thừa dưới ảnh */
+    height: 50px;
+    width: auto;
+}
 
-.main-menu { 
-    display: flex; 
-    list-style: none; 
-    gap: 20px; }
+.main-menu {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
 .main-menu a { 
     text-decoration: none; 
     color: var(--text-dark); 
