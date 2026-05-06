@@ -25,13 +25,14 @@ $sp = isset($products[$id]) ? $products[$id] : $products[1];
     <meta charset="UTF-8">
     <title>Chi tiết - <?php echo $sp['name']; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style_product.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../assets/css/product.css?v=<?php echo time(); ?>">
 </head>
 <body>
 
     <header class="header-vip">
         <div class="container header-flex">
-            <h2>FD TECH V.I.P</h2>
+            <!-- ĐÃ XÓA CHỮ V.I.P Ở ĐÂY -->
+            <h2>FD TECH</h2>
             <div class="header-tools">
                 <button id="btnDarkmode" class="btn-darkmode">🌙 Tối</button>
                 <div class="cart-wrap">
@@ -127,6 +128,6 @@ $sp = isset($products[$id]) ? $products[$id] : $products[1];
 
     </div>
 
-    <script src="../assets/js/script_product.js"></script>
+    <script src="../assets/js/product.js"></script>
 </body>
 </html>

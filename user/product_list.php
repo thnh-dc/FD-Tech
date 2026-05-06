@@ -25,13 +25,14 @@ function renderStars($rating) {
     <meta charset="UTF-8">
     <title>Sản phẩm - FD Tech</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style_product.css?v=<?php echo time(); ?>">
+    <!-- ĐƯỜNG DẪN NÀY ĐÃ ĐƯỢC SỬA ĐỂ CHẠY TRONG THƯ MỤC TEST CỦA BẠN -->
+    <link rel="stylesheet" href="../assets/css/product.css?v=<?php echo time(); ?>">
 </head>
 <body>
 
     <header class="header-vip">
         <div class="container header-flex">
-            <h2>FD TECH V.I.P</h2>
+            <h2>FD TECH</h2>
             <div class="header-tools">
                 <button id="btnDarkmode" class="btn-darkmode">🌙 Tối</button>
                 <div class="cart-wrap">
@@ -116,6 +117,7 @@ function renderStars($rating) {
         </div>
     </div>
 
-    <script src="../assets/js/script_product.js"></script>
+    <!-- ĐƯỜNG DẪN NÀY CŨNG ĐÃ ĐƯỢC SỬA -->
+    <script src="../assets/js/product.js"></script>
 </body>
 </html>
