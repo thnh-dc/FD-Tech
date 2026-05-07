@@ -30,11 +30,11 @@
         </div>
 
         <ul class="main-menu">
-            <li><a href="index.php">Trang chủ</a></li>
-            <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
-            <li><a href="#">Tin tức</a></li>
-            <li><a href="#">Khuyến mãi</a></li>
-            <li><a href="#footer-contact">Liên hệ</a></li>
+        <li><a href="index.php">Trang chủ</a></li>
+        <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
+        <li><a href="#">Tin tức</a></li>
+        <li><a href="index.php#khuyen-mai">Khuyến mãi</a></li>
+        <li><a href="#footer-contact">Liên hệ</a></li>
         </ul>
 
         <div class="header-auth">
@@ -68,18 +68,18 @@
                 <div class="category-dropdown" id="categoryDropdown">
                     <div class="category-list">
                         <?php 
-                        $categories = [
+                            $categories = [
                             ['id' => 'khuyen-mai', 'name' => 'Khuyến mãi'],
-                            ['id' => 'san-pham-ban-chay', 'name' => 'Sản phẩm bán chạy'],
+                            ['id' => 'san-pham-noi-bat', 'name' => 'Sản phẩm nổi bật'],
                             ['id' => 'xay-dung-cau-hinh', 'name' => 'Xây dựng cấu hình'],
                             ['id' => 'man-hinh-may-tinh', 'name' => 'MÀN HÌNH MÁY TÍNH'],
                             ['id' => 'loa-tai-nghe', 'name' => 'LOA - TAI NGHE'],
                             ['id' => 'ban-phim-co', 'name' => 'BÀN PHÍM CƠ'],
                             ['id' => 'chuot', 'name' => 'CHUỘT'],
                             ['id' => 'phu-kien-khac', 'name' => 'PHỤ KIỆN KHÁC'],
-                        ];
+                       ];
                         foreach ($categories as $category): ?>
-                            <a href="products.php?category=<?php echo $category['id']; ?>" class="category-item">
+                            <a href="index.php#<?php echo $category['id']; ?>" class="category-item">
                                 <span><?php echo $category['name']; ?></span>
                                 <i class="fas fa-chevron-right"></i>
                             </a>
@@ -88,10 +88,10 @@
                 </div>
             </div>
             
-            <div class="search-box">
-                <input type="text" placeholder="Nội dung tìm kiếm">
-                <button type="submit"><i class="fas fa-search"></i></button>
-            </div>
+            <form action="search.php" method="GET" class="search-box">
+            <input type="text" name="query" placeholder="Nội dung tìm kiếm" required>
+            <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
 
             <div class="header-icons">
                 <a href="#"><i class="far fa-heart"></i></a>

@@ -46,6 +46,7 @@
     flex: 2; 
     display: flex; 
     justify-content: space-between; }
+    
 .footer-right .col h4 { 
     margin-bottom: 20px; 
     color: var(--primary); 

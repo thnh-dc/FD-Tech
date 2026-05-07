@@ -66,8 +66,8 @@
   <div class="footer-bottom">
     <div class="container bottom-flex">
       <p>©FD-Techshop.vn - All Rights Reserved</p>
-      <p>VNPAY</p>
     </div>
   </div>
+</footer>
 
 </footer
