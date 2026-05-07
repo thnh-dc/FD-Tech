@@ -15,7 +15,7 @@
         </li>
 
         <?php 
-            $product_pages = ['add.php', 'update.php', 'delete.php'];
+            $product_pages = ['add.php', 'edit.php'];
             $is_product_active = in_array(basename($_SERVER['PHP_SELF']), $product_pages);
         ?>
         <li class="menu-item has-submenu <?= $is_product_active ? 'rotate-arrow' : '' ?>">
