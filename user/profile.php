@@ -24,13 +24,13 @@ try {
 
 // --- 2. XỬ LÝ LƯU DỮ LIỆU ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action'])) {
-    
+
     // NẾU LÀ FORM CẬP NHẬT HỒ SƠ
     if ($_POST['form_action'] == 'update_profile') {
         $full_name = trim($_POST['fullname']);
         $email = trim($_POST['email']);
         $phone = trim($_POST['phone']);
-        $avatar_name = $user['avatar'] ?? ''; 
+        $avatar_name = $user['avatar'] ?? '';
         $upload_error = '';
 
         // Xử lý upload ảnh
@@ -42,19 +42,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action'])) {
 
             if (!in_array($ext, $allowed)) {
                 $upload_error = 'Chỉ chấp nhận file ảnh định dạng JPG, JPEG hoặc PNG!';
-            } elseif ($filesize > 1048576) { 
-                $upload_error = 'Dung lượng ảnh vượt quá 1MB!';
+            } elseif ($filesize > 10048576) {
+                $upload_error = 'Dung lượng ảnh vượt quá 10MB!';
             } else {
                 $new_filename = $user_id . "_" . time() . "." . $ext;
-                $upload_dir = "../assets/uploads/avatars/";
-                
-                if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+                // ĐÃ SỬA ĐƯỜNG DẪN TẠI ĐÂY
+                $upload_dir = "../upload/avatar_user/";
+
+                if (!is_dir($upload_dir))
+                    mkdir($upload_dir, 0777, true);
 
                 $upload_path = $upload_dir . $new_filename;
 
                 if (move_uploaded_file($_FILES['avatar']['tmp_name'], $upload_path)) {
-                    $avatar_name = $new_filename; 
-                    if(!empty($user['avatar']) && file_exists($upload_dir . $user['avatar'])){
+                    $avatar_name = $new_filename;
+                    if (!empty($user['avatar']) && file_exists($upload_dir . $user['avatar'])) {
                         unlink($upload_dir . $user['avatar']);
                     }
                 } else {
@@ -71,8 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action'])) {
             try {
                 $stmt = $pdo->prepare("UPDATE users SET full_name = ?, email = ?, phone = ?, avatar = ? WHERE id = ?");
                 $stmt->execute([$full_name, $email, $phone, $avatar_name, $user_id]);
-                
+
                 $_SESSION['full_name'] = $full_name;
+                // Cập nhật lại session avatar để header nhận luôn ảnh mới
+                $_SESSION['avatar'] = $avatar_name;
+
                 $_SESSION['flash_msg'] = 'Cập nhật hồ sơ thành công!';
                 $_SESSION['flash_type'] = 'success';
             } catch (PDOException $e) {
@@ -99,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action'])) {
                     $new_hashed = password_hash($new_password, PASSWORD_DEFAULT);
                     $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
                     $stmt->execute([$new_hashed, $user_id]);
-                    
+
                     $_SESSION['flash_msg'] = 'Đổi mật khẩu thành công!';
                     $_SESSION['flash_type'] = 'success';
                 } else {
@@ -117,9 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action'])) {
 }
 
 // --- 3. XÁC ĐỊNH ĐƯỜNG DẪN AVATAR ĐỂ HIỂN THỊ ---
-$has_custom_avatar = !empty($user['avatar']) && file_exists("../assets/uploads/avatars/" . $user['avatar']);
+// ĐÃ SỬA ĐƯỜNG DẪN TẠI ĐÂY
+$has_custom_avatar = !empty($user['avatar']) && file_exists("../upload/avatar_user/" . $user['avatar']);
 if ($has_custom_avatar) {
-    $avatar_url = "../assets/uploads/avatars/" . $user['avatar'];
+    $avatar_url = "../upload/avatar_user/" . $user['avatar'];
 } else {
     $initials = mb_strtoupper(mb_substr($user['username'], 0, 2, 'UTF-8'), 'UTF-8');
     $avatar_url = "https://ui-avatars.com/api/?name=" . urlencode($initials) . "&background=random&color=fff&size=128";
@@ -133,7 +139,7 @@ if ($has_custom_avatar) {
 
 <div class="profile-wrapper">
     <div class="profile-container">
-        
+
         <div class="profile-sidebar">
             <div class="user-brief">
                 <img src="<?php echo $avatar_url; ?>" id="sidebar-avatar" alt="Avatar">
@@ -143,34 +149,49 @@ if ($has_custom_avatar) {
                 </div>
             </div>
             <ul class="profile-menu">
-                <li><a onclick="switchTab('profile', this)" class="menu-link active"><i class="far fa-user"></i> Tài khoản của tôi</a></li>
-                <li><a onclick="switchTab('password', this)" class="menu-link"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
-                <li><a onclick="switchTab('orders', this)" class="menu-link"><i class="fas fa-clipboard-list"></i> Đơn mua</a></li>
-                <li><a onclick="switchTab('notifications', this)" class="menu-link"><i class="far fa-bell"></i> Thông báo</a></li>
-                <li><a onclick="switchTab('vouchers', this)" class="menu-link"><i class="fas fa-ticket-alt"></i> Kho Voucher</a></li>
-                <li><a onclick="switchTab('favorites', this)" class="menu-link"><i class="far fa-heart"></i> Sản phẩm yêu thích</a></li>
+                <li><a onclick="switchTab('profile', this)" class="menu-link active"><i class="far fa-user"></i> Tài
+                        khoản của tôi</a></li>
+                <li><a onclick="switchTab('password', this)" class="menu-link"><i class="fas fa-lock"></i> Đổi mật
+                        khẩu</a></li>
+
+                <li><a href="profile_order.php" class="menu-link"><i class="fas fa-clipboard-list"></i> Đơn mua</a></li>
+
+                <li><a onclick="switchTab('notifications', this)" class="menu-link"><i class="far fa-bell"></i> Thông
+                        báo</a></li>
+                <li><a onclick="switchTab('vouchers', this)" class="menu-link"><i class="fas fa-ticket-alt"></i> Kho
+                        Voucher</a></li>
+                <li><a onclick="switchTab('favorites', this)" class="menu-link"><i class="far fa-heart"></i> Sản phẩm
+                        yêu thích</a></li>
                 <li style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
-                    <a href="../auth/logout.php" style="color: #DB4437;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                    <a href="../auth/logout.php" style="color: #DB4437;"><i class="fas fa-sign-out-alt"></i> Đăng
+                        xuất</a>
                 </li>
             </ul>
         </div>
-        
-        <div class="profile-content">    
+
+        <div class="profile-content">
             <div id="tab-profile" class="tab-content active">
                 <div class="profile-header">
                     <h2>Hồ sơ của tôi</h2>
                     <p>Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
                 </div>
-                
+
                 <form action="" method="POST" enctype="multipart/form-data" class="profile-body-split">
                     <input type="hidden" name="form_action" value="update_profile">
-                    
+
                     <div class="profile-form-area">
                         <div class="profile-form">
-                            <div class="form-group"><label>Tên đăng nhập</label><input type="text" value="<?php echo htmlspecialchars($user['username']); ?>" readonly style="background: #f9f9f9;"></div>
-                            <div class="form-group"><label>Họ và Tên</label><input type="text" name="fullname" value="<?php echo htmlspecialchars($user['full_name'] ?? ''); ?>" placeholder="Nhập họ và tên"></div>
-                            <div class="form-group"><label>Email</label><input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required></div>
-                            <div class="form-group"><label>Số điện thoại</label><input type="text" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" placeholder="Nhập số điện thoại"></div>
+                            <div class="form-group"><label>Tên đăng nhập</label><input type="text"
+                                    value="<?php echo htmlspecialchars($user['username']); ?>" readonly
+                                    style="background: #f9f9f9;"></div>
+                            <div class="form-group"><label>Họ và Tên</label><input type="text" name="fullname"
+                                    value="<?php echo htmlspecialchars($user['full_name'] ?? ''); ?>"
+                                    placeholder="Nhập họ và tên"></div>
+                            <div class="form-group"><label>Email</label><input type="email" name="email"
+                                    value="<?php echo htmlspecialchars($user['email']); ?>" required></div>
+                            <div class="form-group"><label>Số điện thoại</label><input type="text" name="phone"
+                                    value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>"
+                                    placeholder="Nhập số điện thoại"></div>
                             <div class="form-group">
                                 <label>Giới tính</label>
                                 <select name="gender">
@@ -178,17 +199,20 @@ if ($has_custom_avatar) {
                                     <option value="female" selected>Nữ</option>
                                 </select>
                             </div>
-                            <div class="form-group"><label>Ngày sinh</label><input type="date" name="dob" value="2000-01-01"></div>
+                            <div class="form-group"><label>Ngày sinh</label><input type="date" name="dob"
+                                    value="2000-01-01"></div>
                             <div class="form-group"><button type="submit" class="btn-save">Lưu Thay Đổi</button></div>
                         </div>
                     </div>
-                    
+
                     <div class="profile-avatar-area">
                         <div class="avatar-preview-box">
                             <img src="<?php echo $avatar_url; ?>" id="image-preview" alt="Avatar">
                         </div>
-                        <input type="file" id="file-upload" name="avatar" accept=".jpg, .jpeg, .png" style="display: none;" onchange="previewImage(event)">
-                        <button type="button" class="btn-upload" onclick="document.getElementById('file-upload').click()">Chọn Ảnh</button>
+                        <input type="file" id="file-upload" name="avatar" accept=".jpg, .jpeg, .png"
+                            style="display: none;" onchange="previewImage(event)">
+                        <button type="button" class="btn-upload"
+                            onclick="document.getElementById('file-upload').click()">Chọn Ảnh</button>
                         <div class="avatar-note">Dung lượng file tối đa 1 MB<br>Định dạng: .JPEG, .PNG</div>
                     </div>
                 </form>
@@ -201,17 +225,36 @@ if ($has_custom_avatar) {
                 </div>
                 <form action="" method="POST" class="pw-form">
                     <input type="hidden" name="form_action" value="change_password">
-                    <div class="form-group"><label>Mật khẩu hiện tại</label><input type="password" name="current_password" required></div>
-                    <div class="form-group"><label>Mật khẩu mới</label><input type="password" name="new_password" required></div>
-                    <div class="form-group"><label>Xác nhận mật khẩu</label><input type="password" name="confirm_password" required></div>
+                    <div class="form-group"><label>Mật khẩu hiện tại</label><input type="password"
+                            name="current_password" required></div>
+                    <div class="form-group"><label>Mật khẩu mới</label><input type="password" name="new_password"
+                            required></div>
+                    <div class="form-group"><label>Xác nhận mật khẩu</label><input type="password"
+                            name="confirm_password" required></div>
                     <button type="submit" class="btn-save">Xác Nhận Đổi</button>
                 </form>
             </div>
 
-            <div id="tab-orders" class="tab-content"><div class="empty-state"><i class="fas fa-file-invoice"></i><p>Chưa có đơn hàng nào</p></div></div>
-            <div id="tab-notifications" class="tab-content"><div class="empty-state"><i class="far fa-bell-slash"></i><p>Chưa có thông báo nào</p></div></div>
-            <div id="tab-vouchers" class="tab-content"><div class="empty-state"><i class="fas fa-ticket-alt"></i><p>Kho Voucher trống</p></div></div>
-            <div id="tab-favorites" class="tab-content"><div class="empty-state"><i class="far fa-heart"></i><p>Chưa có sản phẩm yêu thích</p></div></div>
+            <div id="tab-orders" class="tab-content">
+                <div class="empty-state"><i class="fas fa-file-invoice"></i>
+                    <p>Chưa có đơn hàng nào</p>
+                </div>
+            </div>
+            <div id="tab-notifications" class="tab-content">
+                <div class="empty-state"><i class="far fa-bell-slash"></i>
+                    <p>Chưa có thông báo nào</p>
+                </div>
+            </div>
+            <div id="tab-vouchers" class="tab-content">
+                <div class="empty-state"><i class="fas fa-ticket-alt"></i>
+                    <p>Kho Voucher trống</p>
+                </div>
+            </div>
+            <div id="tab-favorites" class="tab-content">
+                <div class="empty-state"><i class="far fa-heart"></i>
+                    <p>Chưa có sản phẩm yêu thích</p>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -229,23 +272,23 @@ if ($has_custom_avatar) {
             toast: true,
             position: 'top-end' // Hiện góc trên cùng bên phải giống Shopee
         });
-    <?php 
+        <?php
         // Xóa thông báo sau khi hiện xong để refresh không bị hiện lại
         unset($_SESSION['flash_msg']);
         unset($_SESSION['flash_type']);
-    endif; 
+    endif;
     ?>
 
     // Các hàm phụ trợ
     function previewImage(event) {
         var reader = new FileReader();
-        reader.onload = function(){
+        reader.onload = function () {
             var output = document.getElementById('image-preview');
             var sidebarOutput = document.getElementById('sidebar-avatar');
             output.src = reader.result;
             sidebarOutput.src = reader.result;
         };
-        if(event.target.files[0]) {
+        if (event.target.files[0]) {
             reader.readAsDataURL(event.target.files[0]);
         }
     }
@@ -261,7 +304,7 @@ if ($has_custom_avatar) {
         for (var i = 0; i < menus.length; i++) {
             menus[i].classList.remove('active');
         }
-        if(element) element.classList.add('active');
+        if (element) element.classList.add('active');
     }
 </script>
 <?php include '../includes/footer.php'; ?>
