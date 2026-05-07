@@ -4,7 +4,7 @@ require_once '../config/database.php';
 
 try {
     // Truy vấn lấy danh sách đơn hàng kèm tên khách hàng
-    $sql = "SELECT o.*, u.username 
+    $sql = "SELECT o.*, u.username, u.address
             FROM orders o 
             JOIN users u ON o.user_id = u.id 
             ORDER BY o.created_at DESC";
@@ -53,9 +53,9 @@ try {
                                 <tr>
                                     <th>Mã Đơn</th>
                                     <th>User ID</th>
-                                    <th>Tên người dùng</th>
                                     <th>Tổng Tiền</th>
                                     <th>Trạng Thái</th>
+                                    <th>Địa chỉ</th>
                                     <th>Ngày Đặt</th>
                                     <th>Thao Tác</th>
                                 </tr>
@@ -66,7 +66,6 @@ try {
                                         <tr>
                                             <td>#FD-<?= $row['id'] ?></td>
                                             <td class="user"><?= htmlspecialchars($row['user_id']) ?></td>
-                                            <td class="user"><?= htmlspecialchars($row['username']) ?></td>
                                             <td class="price-highlight">
                                                 <?= number_format($row['total_amount'], 0, ',', '.') ?>₫
                                             </td>
@@ -85,6 +84,7 @@ try {
                                                 ?>
                                                 <span class="badge <?= $badge_class ?>"><?= $status_vi ?></span>
                                             </td>
+                                            <td class="address"><?= htmlspecialchars($row['address']) ?></td>
                                             <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
                                             <td style="position: relative;">
                                                 <button class="btn btn-primary btn-action" data-id="<?= $row['id'] ?>">

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/style_chung.css">
+    <link rel="stylesheet" href="../assets/css/index.css">
     <?php
         if (isset($custom_css)) {
             echo $custom_css;
@@ -23,7 +24,7 @@
     <div class="main-header">
     <div class="container header-flex">
         <div class="logo">
-            <a href="http://localhost/FD-Tech/user/index.php">
+            <a href="index.php">
                 <img src="../assets/images/logo-FD.jpg" alt="FD TECH" style="height: 50px;"> 
                 <span style="font-size: 24px; font-weight: bold; color: #333;">FD<span style="color: #00a8ff;">TECH</span></span>
             </a>
@@ -37,23 +38,24 @@
         <li><a href="#footer-contact">Liên hệ</a></li>
         </ul>
 
-        <div class="header-auth">
+       <div class="header-auth">
     <?php if (isset($_SESSION['user_id'])): ?>
         <div class="user-profile">
-            <img src="../assets/images/<?php echo $_SESSION['avatar']; ?>"alt="AVT" style="width:30px; border-radius:50%;">
-            <span><?php echo $_SESSION['username']; ?></span>
+            <img src="../assets/images/<?php echo $_SESSION['avatar']; ?>" alt="AVT" style="width:30px; border-radius:50%; vertical-align: middle;">
+            
+            <span><i class="fas fa-user"></i> <?php echo $_SESSION['username']; ?></span>
+            
             <div class="dropdown-menu">
                 <a href="../user/profile.php">Thông tin</a>
                 <a href="../auth/logout.php">Đăng xuất</a>
             </div>
         </div>
     <?php else: ?>
-        <a href="../auth/login.php" class="auth-link">Đăng nhập</a>
+        <a href="../auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
         <span class="divider">|</span>
         <a href="../auth/register.php" class="auth-link">Đăng ký</a>
     <?php endif; ?>
 </div>
-    </div>
 </div>
 
     <div class="bottom-header">
@@ -95,7 +97,7 @@
 
             <div class="header-icons">
                 <a href="#"><i class="far fa-heart"></i></a>
-                <a href="../user/cart.php" class="cart-icon">
+                <a href="/FD-Tech/user/cart.php" class="cart-icon">
                     <i class="fas fa-shopping-bag"></i> <span class="count">0</span>
                     <span class="cart-text">Giỏ hàng</span>
                 </a>

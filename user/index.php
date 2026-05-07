@@ -1,10 +1,12 @@
 <?php 
     include '../includes/header.php'; 
-    
+    include '../includes/db.php'; 
 ?>
-<div style="min-height: 400px; padding: 50px; text-align: center; background-color: #f9f9f9;">
-    <h1>User Dashboard</h1>
-    <p>Welcome to your dashboard!</p>
+<div class="banner-container">
+    <div class="banner-track" id="bannerTrack">
+        <div class="banner-slide"><img src="../assets/images/banner.jpg" alt="Slide 1"></div>
+        <div class="banner-slide"><img src="../assets/images/banner1.jpg" alt="Slide 2"></div>
+    </div>
 </div>
 
     <h2 id="khuyen-mai" class="section-title">Flash Sale - Giá Sốc</h2>
