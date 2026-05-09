@@ -46,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action'])) {
                 $upload_error = 'Dung lượng ảnh vượt quá 10MB!';
             } else {
                 $new_filename = $user_id . "_" . time() . "." . $ext;
-                // ĐÃ SỬA ĐƯỜNG DẪN TẠI ĐÂY
                 $upload_dir = "../upload/avatar_user/";
 
                 if (!is_dir($upload_dir))
@@ -122,7 +121,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action'])) {
 }
 
 // --- 3. XÁC ĐỊNH ĐƯỜNG DẪN AVATAR ĐỂ HIỂN THỊ ---
-// ĐÃ SỬA ĐƯỜNG DẪN TẠI ĐÂY
 $has_custom_avatar = !empty($user['avatar']) && file_exists("../upload/avatar_user/" . $user['avatar']);
 if ($has_custom_avatar) {
     $avatar_url = "../upload/avatar_user/" . $user['avatar'];
@@ -149,27 +147,18 @@ if ($has_custom_avatar) {
                 </div>
             </div>
             <ul class="profile-menu">
-                <li><a onclick="switchTab('profile', this)" class="menu-link active"><i class="far fa-user"></i> Tài
-                        khoản của tôi</a></li>
-                <li><a onclick="switchTab('password', this)" class="menu-link"><i class="fas fa-lock"></i> Đổi mật
-                        khẩu</a></li>
-
+                <li><a onclick="switchTab('profile', this)" class="menu-link active"><i class="far fa-user"></i> Tài khoản của tôi</a></li>
+                <li><a onclick="switchTab('password', this)" class="menu-link"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
                 <li><a href="profile_order.php" class="menu-link"><i class="fas fa-clipboard-list"></i> Đơn mua</a></li>
-
-                <li><a onclick="switchTab('notifications', this)" class="menu-link"><i class="far fa-bell"></i> Thông
-                        báo</a></li>
-                <li><a onclick="switchTab('vouchers', this)" class="menu-link"><i class="fas fa-ticket-alt"></i> Kho
-                        Voucher</a></li>
-                <li><a onclick="switchTab('favorites', this)" class="menu-link"><i class="far fa-heart"></i> Sản phẩm
-                        yêu thích</a></li>
+                
                 <li style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
-                    <a href="../auth/logout.php" style="color: #DB4437;"><i class="fas fa-sign-out-alt"></i> Đăng
-                        xuất</a>
+                    <a href="../auth/logout.php" style="color: #DB4437;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
                 </li>
             </ul>
         </div>
 
         <div class="profile-content">
+            
             <div id="tab-profile" class="tab-content active">
                 <div class="profile-header">
                     <h2>Hồ sơ của tôi</h2>
@@ -181,17 +170,18 @@ if ($has_custom_avatar) {
 
                     <div class="profile-form-area">
                         <div class="profile-form">
-                            <div class="form-group"><label>Tên đăng nhập</label><input type="text"
-                                    value="<?php echo htmlspecialchars($user['username']); ?>" readonly
-                                    style="background: #f9f9f9;"></div>
-                            <div class="form-group"><label>Họ và Tên</label><input type="text" name="fullname"
-                                    value="<?php echo htmlspecialchars($user['full_name'] ?? ''); ?>"
-                                    placeholder="Nhập họ và tên"></div>
-                            <div class="form-group"><label>Email</label><input type="email" name="email"
-                                    value="<?php echo htmlspecialchars($user['email']); ?>" required></div>
-                            <div class="form-group"><label>Số điện thoại</label><input type="text" name="phone"
-                                    value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>"
-                                    placeholder="Nhập số điện thoại"></div>
+                            <div class="form-group"><label>Tên đăng nhập</label>
+                                <input type="text" value="<?php echo htmlspecialchars($user['username']); ?>" readonly style="background: #f9f9f9;">
+                            </div>
+                            <div class="form-group"><label>Họ và Tên</label>
+                                <input type="text" name="fullname" value="<?php echo htmlspecialchars($user['full_name'] ?? ''); ?>" placeholder="Nhập họ và tên">
+                            </div>
+                            <div class="form-group"><label>Email</label>
+                                <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                            </div>
+                            <div class="form-group"><label>Số điện thoại</label>
+                                <input type="text" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" placeholder="Nhập số điện thoại">
+                            </div>
                             <div class="form-group">
                                 <label>Giới tính</label>
                                 <select name="gender">
@@ -199,8 +189,9 @@ if ($has_custom_avatar) {
                                     <option value="female" selected>Nữ</option>
                                 </select>
                             </div>
-                            <div class="form-group"><label>Ngày sinh</label><input type="date" name="dob"
-                                    value="2000-01-01"></div>
+                            <div class="form-group"><label>Ngày sinh</label>
+                                <input type="date" name="dob" value="2000-01-01">
+                            </div>
                             <div class="form-group"><button type="submit" class="btn-save">Lưu Thay Đổi</button></div>
                         </div>
                     </div>
@@ -209,11 +200,9 @@ if ($has_custom_avatar) {
                         <div class="avatar-preview-box">
                             <img src="<?php echo $avatar_url; ?>" id="image-preview" alt="Avatar">
                         </div>
-                        <input type="file" id="file-upload" name="avatar" accept=".jpg, .jpeg, .png"
-                            style="display: none;" onchange="previewImage(event)">
-                        <button type="button" class="btn-upload"
-                            onclick="document.getElementById('file-upload').click()">Chọn Ảnh</button>
-                        <div class="avatar-note">Dung lượng file tối đa 1 MB<br>Định dạng: .JPEG, .PNG</div>
+                        <input type="file" id="file-upload" name="avatar" accept=".jpg, .jpeg, .png" style="display: none;" onchange="previewImage(event)">
+                        <button type="button" class="btn-upload" onclick="document.getElementById('file-upload').click()">Chọn Ảnh</button>
+                        <div class="avatar-note">Dung lượng file tối đa 10 MB<br>Định dạng: .JPEG, .PNG</div>
                     </div>
                 </form>
             </div>
@@ -225,12 +214,15 @@ if ($has_custom_avatar) {
                 </div>
                 <form action="" method="POST" class="pw-form">
                     <input type="hidden" name="form_action" value="change_password">
-                    <div class="form-group"><label>Mật khẩu hiện tại</label><input type="password"
-                            name="current_password" required></div>
-                    <div class="form-group"><label>Mật khẩu mới</label><input type="password" name="new_password"
-                            required></div>
-                    <div class="form-group"><label>Xác nhận mật khẩu</label><input type="password"
-                            name="confirm_password" required></div>
+                    <div class="form-group"><label>Mật khẩu hiện tại</label>
+                        <input type="password" name="current_password" required>
+                    </div>
+                    <div class="form-group"><label>Mật khẩu mới</label>
+                        <input type="password" name="new_password" required>
+                    </div>
+                    <div class="form-group"><label>Xác nhận mật khẩu</label>
+                        <input type="password" name="confirm_password" required>
+                    </div>
                     <button type="submit" class="btn-save">Xác Nhận Đổi</button>
                 </form>
             </div>
@@ -238,21 +230,6 @@ if ($has_custom_avatar) {
             <div id="tab-orders" class="tab-content">
                 <div class="empty-state"><i class="fas fa-file-invoice"></i>
                     <p>Chưa có đơn hàng nào</p>
-                </div>
-            </div>
-            <div id="tab-notifications" class="tab-content">
-                <div class="empty-state"><i class="far fa-bell-slash"></i>
-                    <p>Chưa có thông báo nào</p>
-                </div>
-            </div>
-            <div id="tab-vouchers" class="tab-content">
-                <div class="empty-state"><i class="fas fa-ticket-alt"></i>
-                    <p>Kho Voucher trống</p>
-                </div>
-            </div>
-            <div id="tab-favorites" class="tab-content">
-                <div class="empty-state"><i class="far fa-heart"></i>
-                    <p>Chưa có sản phẩm yêu thích</p>
                 </div>
             </div>
 
@@ -307,4 +284,5 @@ if ($has_custom_avatar) {
         if (element) element.classList.add('active');
     }
 </script>
+
 <?php include '../includes/footer.php'; ?>

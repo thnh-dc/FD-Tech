@@ -38,8 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
 
+                $_SESSION['avatar'] = $user['avatar'];
+
                 // --- THÊM THÔNG BÁO THÀNH CÔNG TẠI ĐÂY ---
-                $flash_msg = 'Chào mừng bạn quay trở lại, ' . $user['username'] . '!';
+                $flash_msg = 'Chào bạn, ' . $user['username'] . '!';
                 $flash_type = 'success';
                 $redirect_url = '../user/index.php'; // Đường dẫn trang chủ
             } else {
@@ -139,12 +141,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 else
                     echo "Đăng nhập thất bại!";
                 ?>',
-                        text: '<?php echo $flash_msg; ?>',
-                    timer: 1500, // Đợi 1.5 giây để khách kịp thấy thông báo
+                                text: '<?php echo $flash_msg; ?>',
+                    timer: 1000, // Đợi 1.5 giây để khách kịp thấy thông báo
                     showConfirmButton: false,
                     toast: true,
                     position: 'top-end'
-                    }).then(function () {
+                            }).then(function () {
                         // Nếu có link chuyển hướng (đăng nhập thành công HOẶC đang sang bước xác minh admin)
                         <?php if (!empty($redirect_url)): ?>
                             window.location.href = '<?php echo $redirect_url; ?>';
