@@ -32,3 +32,14 @@ function updateCartCount() {
 }
 // Gọi hàm khi trang load
 updateCartCount();
+document.querySelector('.user-profile-toggle').addEventListener('click', function() {
+    const menu = document.querySelector('.user-dropdown-menu');
+    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+});
+
+// Click ra ngoài để đóng menu
+window.onclick = function(event) {
+    if (!event.target.closest('.user-profile-wrapper')) {
+        document.querySelector('.user-dropdown-menu').style.display = 'none';
+    }
+}
