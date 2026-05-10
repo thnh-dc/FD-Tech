@@ -226,3 +226,31 @@
 .header-auth .divider {
     color: #ccc !important;       
 }
+/* 1. Mặc định là ẩn menu đi */
+/* Ẩn menu khi chưa di chuột vào */
+.user-dropdown-menu {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 1px 15px rgba(0,0,0,0.15);
+    z-index: 1000;
+    list-style: none;
+    width: 200px;
+    padding: 0;
+}
+
+/* Hiện menu khi di chuột vào vùng chứa profile */
+.user-profile-wrapper:hover .user-dropdown-menu {
+    display: block !important;
+}
+
+/* Định dạng ảnh avatar cho tròn */
+.user-avatar-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 5px;
+}
