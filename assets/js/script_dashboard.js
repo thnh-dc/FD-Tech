@@ -12,10 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Toggle class 'show' để CSS chuyển từ display: none sang block
             submenu.classList.toggle('show');
-
-            // Tìm thẻ <li> cha để thêm class xoay mũi tên
-            const parentLi = this.parentElement;
-            parentLi.classList.toggle('rotate-arrow');
         });
     });
 

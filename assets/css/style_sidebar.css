@@ -87,11 +87,6 @@
     font-weight: 600;
 }
 
-/* JS sẽ thêm class xoay mũi tên khi mở Submenu */
-.rotate-arrow .arrow-icon {
-    transform: rotate(180deg);
-}
-
 /* Nút Đăng xuất*/
 .sidebar-footer {
     padding: var(--space-lg);
