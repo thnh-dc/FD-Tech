@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -60,7 +61,7 @@
             </ul>
         </div>
     <?php else: ?>
-        <a href="../auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
+        <a href="FD-Tech/auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
         <span class="divider">|</span>
         <a href="../auth/register.php" class="auth-link">Đăng ký</a>
     <?php endif; ?>

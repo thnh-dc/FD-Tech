@@ -12,7 +12,7 @@
 </div>
 <div class="container"> 
     
-    <h2 class="section-title">⭐ Sản phẩm nổi bật</h2>
+    <h2 id="san-pham-noi-bat" class="section-title">⭐ Sản phẩm nổi bật</h2>
     <div class="product-grid">
         <?php
         $stmt = $pdo->query("SELECT * FROM products ORDER BY RAND() LIMIT 8");
@@ -28,7 +28,7 @@
         ?>
     </div>
 
-    <h2 class="section-title">🔥 Flash Sale - Giá Sốc</h2>
+    <h2 id="khuyen-mai" class="section-title">🔥 Flash Sale - Giá Sốc</h2>
     <div class="product-grid">
         <?php
         $stmt = $pdo->query("SELECT * FROM products ORDER BY price ASC LIMIT 8");
@@ -44,7 +44,7 @@
         ?>
     </div>
 
-    <h2 class="section-title">🖥️ Màn hình máy tính</h2>
+    <h2 id="man-hinh-may-tinh" class="section-title">🖥️ Màn hình máy tính</h2>
     <div class="product-grid">
         <?php
         $stmt = $pdo->query("SELECT * FROM products WHERE category_id = 3 LIMIT 8");
@@ -59,7 +59,7 @@
         ?>
     </div>
 
-    <h2 class="section-title">🎧 Loa - Tai nghe</h2>
+    <h2 id="loa-tai-nghe" class="section-title">🎧 Loa - Tai nghe</h2>
     <div class="product-grid">
         <?php
         $stmt = $pdo->query("SELECT * FROM products WHERE category_id IN (4, 5) LIMIT 8");
@@ -74,7 +74,7 @@
         ?>
     </div>
 
-    <h2 class="section-title">⌨️ Bàn phím cơ</h2>
+    <h2 id="ban-phim-co" class="section-title">⌨️ Bàn phím cơ</h2>
     <div class="product-grid">
         <?php
         $stmt = $pdo->query("SELECT * FROM products WHERE category_id = 6 LIMIT 8");
@@ -89,7 +89,7 @@
         ?>
     </div>
 
-    <h2 class="section-title">🖱️ Chuột Gaming</h2>
+    <h2 id="chuot" class="section-title">🖱️ Chuột Gaming</h2>
     <div class="product-grid">
         <?php
         $stmt = $pdo->query("SELECT * FROM products WHERE category_id = 7 LIMIT 8");
@@ -104,7 +104,7 @@
         ?>
     </div>
 
-    <h2 class="section-title">🔌 Phụ kiện khác</h2>
+    <h2 id="phu-kien-khac" class="section-title">🔌 Phụ kiện khác</h2>
     <div class="product-grid">
         <?php
         $stmt = $pdo->query("SELECT * FROM products WHERE category_id = 8 LIMIT 8");
