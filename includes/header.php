@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -38,20 +39,29 @@
         <li><a href="#footer-contact">Liên hệ</a></li>
         </ul>
 
-       <div class="header-auth">
-    <?php if (isset($_SESSION['user_id'])): ?>
-        <div class="user-profile">
-            <img src="../assets/images/<?php echo $_SESSION['avatar']; ?>" alt="AVT" style="width:30px; border-radius:50%; vertical-align: middle;">
-            
-            <span><i class="fas fa-user"></i> <?php echo $_SESSION['username']; ?></span>
-            
-            <div class="dropdown-menu">
-                <a href="../user/profile.php">Thông tin</a>
-                <a href="../auth/logout.php">Đăng xuất</a>
+      <div class="header-auth">
+    <?php 
+    // Đảm bảo có dòng này ở đầu file header.php nhé: session_start();
+    if (isset($_SESSION['user_id'])): 
+    ?>
+        <div class="user-profile-wrapper">
+            <div class="user-profile-toggle">
+                <?php 
+                    $avatar = !empty($_SESSION['avatar']) ? $_SESSION['avatar'] : 'default-avatar.png';
+                ?>
+                <img src="../assets/images/<?php echo $avatar; ?>" alt="AVT" class="user-avatar-img">
+                <span class="user-name-text"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
+                <i class="fas fa-caret-down"></i>
             </div>
+            
+            <ul class="user-dropdown-menu">
+                <li><a href="../user/profile.php"><i class="fas fa-user-cog"></i> Tài khoản của tôi</a></li>
+                <li><a href="../user/orders.php"><i class="fas fa-shopping-bag"></i> Đơn mua</a></li>
+                <li><a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+            </ul>
         </div>
     <?php else: ?>
-        <a href="../auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
+        <a href="FD-Tech/auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
         <span class="divider">|</span>
         <a href="../auth/register.php" class="auth-link">Đăng ký</a>
     <?php endif; ?>
