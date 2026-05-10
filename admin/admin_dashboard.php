@@ -1,16 +1,15 @@
 <?php
 session_start();
-
 include '../config/database.php';
 
 try {
-    // 1. Tính tổng doanh thu (Chỉ tính các đơn hàng có trạng thái 'completed')
+    // 1. Tính tổng doanh thu
     $stmtRevenue = $pdo->prepare("SELECT SUM(total_amount) as total_revenue FROM orders WHERE status = 'completed'");
     $stmtRevenue->execute();
     $revenueRow = $stmtRevenue->fetch(PDO::FETCH_ASSOC);
     $totalRevenue = $revenueRow['total_revenue'] ?? 0; // Trả về 0 nếu chưa có doanh thu
 
-    // 2. Đếm số lượng đơn hàng mới (Đơn hàng có trạng thái 'pending')
+    // 2. Đếm số lượng đơn hàng mới
     $stmtOrders = $pdo->prepare("SELECT COUNT(id) as new_orders FROM orders WHERE status = 'pending'");
     $stmtOrders->execute();
     $ordersRow = $stmtOrders->fetch(PDO::FETCH_ASSOC);
