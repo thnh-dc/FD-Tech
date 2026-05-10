@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['description']
     ]);
 
-    header("Location: list_product.php?msg=Thêm thành công");
+    header("Location: list_products.php?msg=Thêm thành công");
     exit;
 }
 ?>
@@ -101,4 +101,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 </body>
-</html>
+</html> 
