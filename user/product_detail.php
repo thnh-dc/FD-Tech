@@ -1,48 +1,100 @@
-<?php  include '../includes/header.php';?>
+<?php  
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
 
-<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 16px; margin-bottom: 64px;">
+// --- THIẾT LẬP KẾT NỐI MYSQL ---
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "fd-tech"; 
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
+}
+
+// --- TRUY VẤN DỮ LIỆU SẢN PHẨM ---
+$sql = "SELECT * FROM products WHERE id = ?"; 
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $sp = $result->fetch_assoc();
+} else {
+    die("<h2 style='text-align:center; margin-top:50px;'>Sản phẩm không tồn tại hoặc đã bị xóa!</h2>");
+}
+
+$stmt->close();
+$conn->close();
+
+include '../includes/header.php';
+?>
+<link rel="stylesheet" href="../assets/css/product_style.css?v=<?php echo time(); ?>">
+
+<header class="header-vip">
+    <div class="container header-flex">
+        <h2>FD TECH</h2>
+        <div class="header-tools">
+            <div class="cart-wrap">🛒 Giỏ hàng <span class="cart-badge" id="cartBadge">0</span></div>
+        </div>
+    </div>
+</header>
+
+<div class="container" style="margin-bottom: 64px;">
     
-    <div style="padding: 16px 0; font-size: 14px; color: #6C757D;">
-        <a href="index.php" style="color: #0B2A4A; font-weight: 600; text-decoration: none;">Trang chủ</a> / 
-        <a href="product_lis.php" style="color: #0B2A4A; font-weight: 600; text-decoration: none;">Sản phẩm</a> / 
-        <span style="color: #333333;">Bàn phím cơ Light God Game</span>
+    <div style="padding: 16px 0; font-size: 14px; color: var(--text-muted);">
+        <a href="index.php" style="color: var(--primary); font-weight: 600;">Trang chủ</a> / 
+        <a href="product_list.php" style="color: var(--primary); font-weight: 600;">Sản phẩm</a> / 
+        <span style="color: var(--text-dark);"><?php echo htmlspecialchars($sp['name']); ?></span>
     </div>
 
-    <div style="display: flex; gap: 40px; margin-top: 24px;">
+    <div class="detail-layout">
         
-        <div id="zoomContainer" style="flex: 1; background: #F4F6F9; border-radius: 8px; display: flex; justify-content: center; align-items: center; height: 400px; cursor: crosshair; overflow: hidden; position: relative;">
-            <div id="zoomImage" style="width: 100%; height: 100%; background: #ddd; display: flex; align-items: center; justify-content: center; transition: transform 0.1s ease-out;">Ảnh Bàn Phím To</div>
+        <div class="detail-left">
+            <div id="zoomContainer" class="main-img-view">
+                <img id="zoomImage" src="<?php echo htmlspecialchars($sp['image_url']); ?>" alt="Ảnh">
+            </div>
+            <div class="thumb-list">
+                <div class="thumb-item active"><img src="<?php echo htmlspecialchars($sp['image_url']); ?>"></div>
+                <div class="thumb-item"><img src="https://via.placeholder.com/400/F4F6F9/23B5D3?text=Goc+2"></div>
+            </div>
+            <p style="text-align: center; font-size: 12px; margin-top: 10px; color: var(--text-muted);">🔍 Rê chuột vào ảnh để phóng to</p>
         </div>
         
-        <div style="flex: 1;">
-            <span style="background: #F4F6F9; color: #23B5D3; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold;">KEYBOARDS</span>
+        <div class="detail-right">
+            <span style="background: var(--bg-light); color: var(--secondary); padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold;"><?php echo htmlspecialchars($sp['cat'] ?? 'Điện tử'); ?></span>
             
-            <h1 style="font-size: 32px; color: #333333; margin: 16px 0;">Bàn phím cơ Light God Game FD 37</h1>
+            <h1 class="detail-title"><?php echo htmlspecialchars($sp['name']); ?></h1>
             
-            <div style="font-size: 40px; color: #0B2A4A; font-weight: 900; margin-bottom: 24px; border-bottom: 1px solid #F4F6F9; padding-bottom: 24px;">
-                1.460.000 ₫
+            <div style="font-size: 40px; color: var(--primary); font-weight: 900; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 24px;">
+                <?php echo number_format($sp['price'], 0, ',', '.'); ?> ₫
             </div>
             
             <div style="margin-bottom: 24px; font-size: 16px;">
-                Tình trạng kho: <span style="color: #28A745; font-weight: bold;">Còn hàng (Mockup)</span>
+                Tình trạng kho: <span style="color: #28A745; font-weight: bold;">Còn hàng</span>
             </div>
 
-            <p style="color: #6C757D; line-height: 1.6; margin-bottom: 32px;">
-                - Bàn phím cơ full-size dành cho game thủ.<br>
-                - Switch quang học siêu bền.<br>
-                - LED RGB 16.8 triệu màu.
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 32px;">
+                <?php echo $sp['desc'] ?? 'Đang cập nhật mô tả...'; ?>
             </p>
             
+            <input type="hidden" id="pd_id" value="<?php echo $id; ?>">
+            <input type="hidden" id="pd_name" value="<?php echo htmlspecialchars($sp['name']); ?>">
+            <input type="hidden" id="pd_price" value="<?php echo $sp['price']; ?>">
+            <input type="hidden" id="pd_img" value="<?php echo htmlspecialchars($sp['image_url']); ?>">
+
             <form action="#" style="display: flex; gap: 16px;">
-                <div style="display: flex; border: 1px solid #6C757D; border-radius: 4px;">
-                    <button type="button" id="btnMinus" style="padding: 10px 15px; background: #F4F6F9; border: none; cursor: pointer;">-</button>
-                    <input type="text" id="qtyInput" value="1" style="width: 50px; text-align: center; border: none; font-weight: bold;" readonly>
-                    <button type="button" id="btnPlus" style="padding: 10px 15px; background: #F4F6F9; border: none; cursor: pointer;">+</button>
+                <div class="qty-box">
+                    <button type="button" id="btnMinus" class="qty-btn">-</button>
+                    <input type="text" id="qtyInput" value="1" class="qty-input" readonly>
+                    <button type="button" id="btnPlus" class="qty-btn">+</button>
                 </div>
-                <button type="button" style="flex: 1; background: #23B5D3; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;">THÊM VÀO GIỎ HÀNG</button>
+                <button type="button" id="btnAddToCart" style="flex: 1; background: var(--secondary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;">THÊM VÀO GIỎ HÀNG</button>
             </form>
         </div>
     </div>
 </div>
-<script src="../assets/js/product.js"></script>
+<script src="../assets/js/product_script.js"></script>
 <?php include '../includes/footer.php'?>

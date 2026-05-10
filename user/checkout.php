@@ -1,27 +1,41 @@
 <?php
-include '../config/database.php';
-session_start();
+    session_start();
+    require_once 'check_login.php';
+    include '../config/database.php';
 
-$custom_css='<link rel="stylesheet" href="/FD-Tech/assets/css/style_checkout.css">';
-include '../includes/header.php';
 
-$stmt = $pdo->prepare("
-    SELECT c.quantity, p.name, p.price
+    $custom_css='<link rel="stylesheet" href="/FD-Tech/assets/css/style_checkout.css">';
+    include '../includes/header.php';
+
+    $selectedItems = $_POST['selected_items'] ?? '';
+    // chuyển thành mảng
+    $selectedArray = explode(',', $selectedItems);
+    // tạo placeholder ?,?,?
+    $placeholders = implode(',', array_fill(0, count($selectedArray), '?'));
+
+    $stmt = $pdo->prepare("
+    SELECT c.id, c.quantity, p.name, p.price, p.image_url
     FROM cart_items c
     JOIN products p ON c.product_id = p.id
     WHERE c.user_id = ?
-");
-//$stmt->execute([$id = 1302]); //user test
-$id = $_SESSION['user_id'] ?? 0;
-$stmt->execute([$id]);
+    AND c.id IN ($placeholders)
+    ");
 
-$cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $id = $_SESSION['user_id'] ?? 0;
+    $par = array_merge([$id], $selectedArray);
+    $stmt->execute($par);
+    // lấy thông tin user
+    $stmtUser = $pdo->prepare("SELECT full_name, phone, address FROM users WHERE id = ?");
+    $stmtUser->execute([$id]);
+    $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
-//Tính tổng
-$total = 0;
-foreach($cartItems as $row){
-    $total += $row['price'] * $row['quantity'];
-}
+    $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //Tính tổng
+    $total = 0;
+    foreach($cartItems as $row){
+        $total += $row['price'] * $row['quantity'];
+    }
 ?>
 <div class="container">
 <?php if(isset($_GET['status']) && $_GET['status'] == 'success'): ?>
@@ -32,7 +46,10 @@ foreach($cartItems as $row){
                 Đơn hàng của bạn đã được ghi nhận.
             </p>
 
-            <a href="index.php" class="btn btn-primary">Tiếp tục mua sắm</a>
+            <button onclick="window.location.href='index.php'" 
+                    class="btn btn-primary">
+                Tiếp tục mua sắm
+            </button>
         </div>
     </div>
 
@@ -42,14 +59,14 @@ foreach($cartItems as $row){
     <div class="checkout-layout">
 
     <form action="process_checkout.php" method="POST">
-
+        <input type="hidden" name="selected_items" value="<?= htmlspecialchars($selectedItems) ?>">
         <!-- THÔNG TIN -->
         <div class="checkout-section">
             <h3>📍 Thông tin nhận hàng</h3>
 
-            <input type="text" name="fullname" placeholder="Họ tên" required>
-            <input type="text" name="phone" placeholder="SĐT" required>
-            <textarea name="address" placeholder="Địa chỉ" required></textarea>
+            <input type="text" name="fullname" value="<?= $user['full_name'] ?? '' ?>" required>
+            <input type="text" name="phone" value="<?= $user['phone'] ?? '' ?>" required>
+            <textarea name="address" required><?= $user['address'] ?? '' ?></textarea>
         </div>
 
         <!-- sản phẩm -->
@@ -58,8 +75,16 @@ foreach($cartItems as $row){
 
             <?php foreach($cartItems as $item): ?>
                 <div class="checkout-item">
-                    <p><?= $item['name'] ?></p>
-                    <p><?= number_format($item['price']) ?>₫ x <?= $item['quantity'] ?></p>
+                    
+                    <img src="<?= $item['image_url'] ?>" class="checkout-img">
+
+                    <div class="checkout-info">
+                        <p class="checkout-name"><?= $item['name'] ?></p>
+                        <p class="checkout-price">
+                            <?= number_format($item['price']) ?>₫ x <?= $item['quantity'] ?>
+                        </p>
+                    </div>
+
                 </div>
             <?php endforeach; ?>
 
@@ -70,12 +95,7 @@ foreach($cartItems as $row){
 
             <label>
                 <input type="radio" name="payment_method" value="cod" checked>
-                COD
-            </label>
-
-            <label>
-                <input type="radio" name="payment_method" value="bank">
-                Chuyển khoản
+                Thanh toán khi nhận hàng
             </label>
         </div>
         <!-- tổng -->
@@ -95,7 +115,10 @@ foreach($cartItems as $row){
     <!-- Nếu chưa có sản phẩm thì ... -->
     <div class="empty-cart-container">
         <h2>Oppss, bạn chưa có sản phẩm để thanh toán.</h2>
-        <a href="cart.php" class="btn btn-primary">Quay lại giỏ hàng</a>
+        <button onclick="window.location.href='cart.php'" 
+                    class="btn btn-primary">
+                Quay lại giỏ hàng của bạn 
+            </button>
     </div>
 <?php endif; ?>
 </div>

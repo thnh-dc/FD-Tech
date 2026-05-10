@@ -4,7 +4,7 @@ require_once '../config/database.php';
 
 try {
     // Truy vấn lấy danh sách đơn hàng kèm tên khách hàng
-    $sql = "SELECT o.*, u.username 
+    $sql = "SELECT o.*, u.username, u.address
             FROM orders o 
             JOIN users u ON o.user_id = u.id 
             ORDER BY o.created_at DESC";
@@ -52,9 +52,10 @@ try {
                             <thead>
                                 <tr>
                                     <th>Mã Đơn</th>
-                                    <th>Khách Hàng</th>
+                                    <th>User ID</th>
                                     <th>Tổng Tiền</th>
                                     <th>Trạng Thái</th>
+                                    <th>Địa chỉ</th>
                                     <th>Ngày Đặt</th>
                                     <th>Thao Tác</th>
                                 </tr>
@@ -64,27 +65,39 @@ try {
                                     <?php foreach ($orders as $row): ?>
                                         <tr>
                                             <td>#FD-<?= $row['id'] ?></td>
-                                            <td class="product-name"><?= htmlspecialchars($row['username']) ?></td>
+                                            <td class="user"><?= htmlspecialchars($row['user_id']) ?></td>
                                             <td class="price-highlight">
                                                 <?= number_format($row['total_amount'], 0, ',', '.') ?>₫
                                             </td>
                                             <td>
                                                 <?php 
-                                                    // Xử lý Badge dựa trên trạng thái (status) từ database
+                                                    // Xử lý Badge dựa trên status từ database
                                                     $status = $row['status'];
                                                     $badge_class = 'badge-info';
                                                     $status_vi = $status;
 
                                                     if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ xử lý'; }
+                                                    elseif ($status == 'processing') { $badge_class = 'badge-warning'; $status_vi = 'Đang xử lí'; }
                                                     elseif ($status == 'shipped') { $badge_class = 'badge-warning'; $status_vi = 'Đang vận chuyển'; }
                                                     elseif ($status == 'completed') { $badge_class = 'badge-success'; $status_vi = 'Hoàn thành'; }
                                                     elseif ($status == 'cancelled') { $badge_class = 'badge-danger'; $status_vi = 'Đã hủy'; }
                                                 ?>
                                                 <span class="badge <?= $badge_class ?>"><?= $status_vi ?></span>
                                             </td>
+                                            <td class="address"><?= htmlspecialchars($row['address']) ?></td>
                                             <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-                                            <td>
-                                                <a href="order_detail.php?id=<?= $row['id'] ?>" class="btn btn-primary" style="padding: 4px 12px; font-size: 12px;">Xem</a>
+                                            <td style="position: relative;">
+                                                <button class="btn btn-primary btn-action" data-id="<?= $row['id'] ?>">
+                                                    Cập nhật
+                                                </button>
+
+                                                <div class="action-menu">
+                                                    <button data-status="pending">Chờ xử lý</button>
+                                                    <button data-status="processing">Đang xử lý</button>
+                                                    <button data-status="shipped">Đang giao</button>
+                                                    <button data-status="completed">Hoàn thành</button>
+                                                    <button data-status="cancelled">Hủy</button>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

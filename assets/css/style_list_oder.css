@@ -16,7 +16,7 @@
     font-size: var(--text-sm);
 }
 
-.product-name {
+.user {
     font-weight: 600;
     color: var(--text-dark);
 }
@@ -38,3 +38,32 @@
 
 .badge-warning { background-color: var(--warning); color: var(--text-dark); }
 .badge-success { background-color: var(--success); }
+.badge-danger {background-color: var(--danger);}
+
+/*style cho menu thao tác đơn hàng */
+.action-menu {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: #a1c1e9;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    z-index: 100;
+    min-width: 150px;
+}
+
+.action-menu button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: #e9e9ea;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.action-menu button:hover {
+    background: #aaaaaa;
+}

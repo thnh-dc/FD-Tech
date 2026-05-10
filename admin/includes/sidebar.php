@@ -15,7 +15,7 @@
         </li>
 
         <?php 
-            $product_pages = ['add.php', 'update.php', 'delete.php'];
+            $product_pages = ['add.php', 'edit.php'];
             $is_product_active = in_array(basename($_SERVER['PHP_SELF']), $product_pages);
         ?>
         <li class="menu-item has-submenu <?= $is_product_active ? 'rotate-arrow' : '' ?>">
@@ -31,7 +31,7 @@
     </ul>
 
     <div class="sidebar-footer">
-        <a href="logout.php" class="btn btn-danger logout-btn">
+        <a href="/FD-Tech/auth/logout.php" class="btn btn-danger logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
         </a>
     </div>

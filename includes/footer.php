@@ -66,10 +66,11 @@
   <div class="footer-bottom">
     <div class="container bottom-flex">
       <p>©FD-Techshop.vn - All Rights Reserved</p>
-      <p>VNPAY</p>
     </div>
   </div>
-
 </footer>
+
+<script src="../assets/js/navbar.js"></script>
+<script src="../assets/js/banner.js"></script>
 </body>
-</html>
+</html> 
