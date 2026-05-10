@@ -58,12 +58,12 @@
             
             <ul class="user-dropdown-menu">
                 <li><a href="../user/profile.php"><i class="fas fa-user-cog"></i> Tài khoản của tôi</a></li>
-                <li><a href="../user/orders.php"><i class="fas fa-shopping-bag"></i> Đơn mua</a></li>
+                <li><a href="../user/profile_order.php"><i class="fas fa-shopping-bag"></i> Đơn mua</a></li>
                 <li><a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
             </ul>
         </div>
     <?php else: ?>
-        <a href="FD-Tech/auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
+        <a href="../auth/login.php" class="auth-link"><i class="fas fa-user-circle"></i> Đăng nhập</a>
         <span class="divider">|</span>
         <a href="../auth/register.php" class="auth-link">Đăng ký</a>
     <?php endif; ?>
