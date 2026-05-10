@@ -64,11 +64,11 @@
     border-left: 4px solid var(--secondary);
 }
 
-/* ===== SUBMENU (Mục con: Thêm, Sửa, Xóa) ===== */
+/* Mục con*/
 .submenu {
     list-style: none;
-    background-color: #081e36; /* Tối hơn màu primary một chút */
-    display: none; /* Ẩn mặc định, JS sẽ mở lên */
+    background-color: #081e36;
+    display: none;
 }
 
 .submenu.show {
@@ -76,12 +76,12 @@
 }
 
 .submenu a {
-    padding: 12px var(--space-lg) 12px 48px; /* Thụt lề vào trong */
+    padding: 12px var(--space-lg) 12px 48px;
     font-size: 13px;
     font-weight: 400;
 }
 
-/* Màu cho link con khi đang active (Thêm mới) */
+/* Màu cho link con khi đang active*/
 .submenu a.active-sub {
     color: var(--secondary) !important;
     font-weight: 600;
@@ -92,7 +92,7 @@
     transform: rotate(180deg);
 }
 
-/* ===== SIDEBAR FOOTER (Nút Đăng xuất) ===== */
+/* Nút Đăng xuất*/
 .sidebar-footer {
     padding: var(--space-lg);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -105,13 +105,4 @@
     justify-content: center;
     align-items: center;
     gap: 8px;
-}
-
-/* ===== RESPONSIVE SIDEBAR ===== */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-    }
 }
