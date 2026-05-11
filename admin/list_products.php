@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../config/database.php';
+require_once __DIR__ . '/check_admin.php';
 
 $search = $_GET['search'] ?? '';
 $category_id = $_GET['category_id'] ?? ''; 
