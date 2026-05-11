@@ -35,7 +35,7 @@
 
         <ul class="main-menu">
         <li><a href="index.php">Trang chủ</a></li>
-        <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
+        
         <li><a href="#">Tin tức</a></li>
         <li><a href="index.php#khuyen-mai">Khuyến mãi</a></li>
         <li><a href="#footer-contact">Liên hệ</a></li>
@@ -108,11 +108,11 @@
             </form>
 
             <div class="header-icons">
-                <a href="#"><i class="far fa-heart"></i></a>
-                <a href="/FD-Tech/user/cart.php" class="cart-icon">
-                    <i class="fas fa-shopping-bag"></i> <span class="count">0</span>
-                    <span class="cart-text">Giỏ hàng</span>
-                </a>
-            </div>
+    <a href="#"><i class="far fa-heart"></i></a>
+    <a href="/FD-Tech/user/cart.php" class="cart-icon">
+        <i class="fas fa-shopping-bag"></i> 
+        <span class="cart-text">Giỏ hàng</span>
+    </a>
+</div>
         </div>
     </div>
