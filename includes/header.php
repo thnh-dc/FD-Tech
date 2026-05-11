@@ -43,7 +43,7 @@
 
       <div class="header-auth">
     <?php 
-    // Đảm bảo có dòng này ở đầu file header.php nhé: session_start();
+    // Đảm bảo có dòng này ở đầu file header.php: session_start();
     if (isset($_SESSION['user_id'])): 
     ?>
         <div class="user-profile-wrapper">
