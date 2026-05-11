@@ -34,6 +34,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $image_url
     ]);
 
+    // ==========================================
+    // --- THÊM ĐOẠN NÀY ĐỂ LƯU TAGS VÀO DATABASE ---
+    $product_id = $pdo->lastInsertId(); // Lấy ID của sản phẩm vừa được tạo ở trên
+
+    if (!empty($_POST['tags'])) {
+        $stmt_tags = $pdo->prepare("INSERT INTO product_tags (product_id, tag_id) VALUES (?, ?)");
+        foreach ($_POST['tags'] as $tag_id) {
+            $stmt_tags->execute([$product_id, $tag_id]);
+        }
+    }
+    // ==========================================
+
     header("Location: list_products.php?msg=Thêm thành công");
     exit;
 }
@@ -65,6 +77,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label class="form-label">Tên sản phẩm</label>
                         <input name="name" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight: 700; color: #2563eb;">🏷️ Gắn nhãn sản phẩm</label>
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; gap: 25px;">
+                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                                <input type="checkbox" name="tags[]" value="1" style="width: 18px; height: 18px;">
+                                <span style="background: #fef3c7; color: #92400e; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold;">
+                                    <i class="fa-solid fa-star"></i> Sản phẩm nổi bật
+                                </span>
+                            </label>
+                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                                <input type="checkbox" name="tags[]" value="2" style="width: 18px; height: 18px;">
+                                <span style="background: #fee2e2; color: #991b1b; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold;">
+                                    <i class="fa-solid fa-bolt"></i> Flash sale
+                                </span>
+                            </label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Hình ảnh sản phẩm</label>
