@@ -34,7 +34,7 @@
     echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
     echo '<img src="'.(strpos($row['image_url'], 'http') === 0 
         ? $row['image_url'] 
-        : '/FD-Tech/'.$row['image_url']).'">';
+        : 'http://localhost/FD-Tech/upload/product_image/'.$row['image_url']).'">';
         echo '<h3>'.$row['name'].'</h3>';
         echo '<p class="price">'.number_format($row['price']).' ₫</p>';
         echo '</a></div>';
