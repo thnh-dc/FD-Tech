@@ -3,31 +3,29 @@ session_start();
 include '../config/database.php';
 
 $step = $_SESSION['reset_step'] ?? 1;
+$alert_msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // BƯỚC 1: KIỂM TRA DATA
     if (isset($_POST['step_1'])) {
         $user_input = trim($_POST['user_input']);
         try {
-            // Kiểm tra Email hoặc Username
-            $stmt = $pdo->prepare("SELECT id, username FROM users WHERE email = ? OR username = ?");
+            // Đã đổi: Kiểm tra Email hoặc Số điện thoại (phone)
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? OR phone = ?");
             $stmt->execute([$user_input, $user_input]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
+                // Nếu tìm thấy, chuyển sang bước 2 để đặt mật khẩu mới
                 $_SESSION['reset_step'] = 2;
                 $_SESSION['reset_user_id'] = $user['id'];
-                $_SESSION['flash_msg'] = 'Tìm thấy tài khoản ' . $user['username'] . '!';
-                $_SESSION['flash_type'] = 'success';
                 header("Location: forgot_password.php");
                 exit();
             } else {
-                $_SESSION['flash_msg'] = 'Không tìm thấy Email/Tên đăng nhập!';
-                $_SESSION['flash_type'] = 'error';
+                $alert_msg = 'Không tìm thấy Email hoặc Số điện thoại này trong hệ thống!';
             }
         } catch (PDOException $e) {
-            $_SESSION['flash_msg'] = 'Lỗi hệ thống!';
-            $_SESSION['flash_type'] = 'error';
+            $alert_msg = 'Lỗi hệ thống: Không thể xử lý yêu cầu lúc này.';
         }
     }
 
@@ -40,26 +38,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $hashed_password = password_hash($new_pass, PASSWORD_DEFAULT);
             $user_id = $_SESSION['reset_user_id'];
             try {
+                // Cập nhật mật khẩu mới vào Database
                 $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
                 $stmt->execute([$hashed_password, $user_id]);
 
+                // Hủy session khôi phục
                 unset($_SESSION['reset_step']);
                 unset($_SESSION['reset_user_id']);
-                $_SESSION['flash_msg'] = 'Đổi mật khẩu thành công!';
-                $_SESSION['flash_type'] = 'success';
+
+                // Gửi thông báo thành công và đá về trang Đăng nhập
+                $_SESSION['flash_msg'] = 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.';
                 header("Location: login.php");
                 exit();
             } catch (PDOException $e) {
-                $_SESSION['flash_msg'] = 'Lỗi cập nhật!';
-                $_SESSION['flash_type'] = 'error';
+                $alert_msg = 'Lỗi cập nhật mật khẩu!';
             }
         } else {
-            $_SESSION['flash_msg'] = 'Mật khẩu không khớp!';
-            $_SESSION['flash_type'] = 'error';
+            $alert_msg = 'Mật khẩu xác nhận không khớp!';
         }
     }
 }
 
+// Xử lý khi người dùng bấm "Quay lại"
 if (isset($_GET['action']) && $_GET['action'] == 'cancel') {
     unset($_SESSION['reset_step']);
     unset($_SESSION['reset_user_id']);
@@ -77,12 +77,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'cancel') {
     <title>Quên mật khẩu - FD Tech</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="../assets/css/style_login.css">
     <link rel="stylesheet" href="../assets/css/style_chung.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -94,11 +91,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'cancel') {
                     <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
                     <span class="auth-brand">FD<span>TECH</span></span>
                 </a>
-                <span style="font-size: 24px; margin-left: 15px; padding-left: 15px; border-left: 1px solid #ccc;">Khôi
-                    phục mật khẩu</span>
-            </div>
-            <div class="auth-header-right">
-                <a href="#">Bạn cần giúp đỡ?</a>
             </div>
         </div>
     </header>
@@ -114,16 +106,13 @@ if (isset($_GET['action']) && $_GET['action'] == 'cancel') {
             <div class="login-form-box">
                 <div class="form-header">
                     <h2 class="form-title"><?php echo ($step == 1) ? 'Lấy lại mật khẩu' : 'Mật khẩu mới'; ?></h2>
-                    <div class="qr-login" title="Trợ giúp">
-                        <i class="fas fa-question-circle"></i>
-                    </div>
                 </div>
 
                 <?php if ($step == 1): ?>
                     <form action="" method="POST">
                         <input type="hidden" name="step_1" value="1">
                         <div class="input-group">
-                            <input type="text" name="user_input" placeholder="Nhập Email hoặc Tên đăng nhập" required>
+                            <input type="text" name="user_input" placeholder="Nhập Email hoặc Số điện thoại" required>
                         </div>
                         <button type="submit" class="btn-login">Kiểm tra thông tin</button>
                     </form>
@@ -151,16 +140,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'cancel') {
 
     <?php include '../includes/footer.php'; ?>
 
-    <?php if (isset($_SESSION['flash_msg'])): ?>
+    <?php if (!empty($alert_msg)): ?>
         <script>
-            Swal.fire({
-                icon: '<?php echo $_SESSION['flash_type']; ?>',
-                text: '<?php echo $_SESSION['flash_msg']; ?>',
-                timer: 1000, showConfirmButton: false, toast: true, position: 'top-end'
-            });
+            alert('<?php echo $alert_msg; ?>');
         </script>
-        <?php unset($_SESSION['flash_msg']);
-        unset($_SESSION['flash_type']); ?>
     <?php endif; ?>
 
 </body>
