@@ -26,11 +26,15 @@
     $stmt->execute([$tag_id_noi_bat]);
 
     // Chạy vòng lặp từ kết quả đã prepare ở trên
+    $base_url = "/FD-Tech/";
+
     while($row = $stmt->fetch()) {
-        echo '<div class="product-card">';
-        echo '<span class="badge-hot">HOT</span>';
-        echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
-        echo '<img src="'.$row['image_url'].'">';
+    echo '<div class="product-card">';
+    echo '<span class="badge-hot">HOT</span>';
+    echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+    echo '<img src="'.(strpos($row['image_url'], 'http') === 0 
+        ? $row['image_url'] 
+        : '/FD-Tech/'.$row['image_url']).'">';
         echo '<h3>'.$row['name'].'</h3>';
         echo '<p class="price">'.number_format($row['price']).' ₫</p>';
         echo '</a></div>';
@@ -50,12 +54,15 @@
             
     $stmt_sale = $pdo->prepare($sql_sale);
     $stmt_sale->execute([$tag_id_flash_sale]);
+    $base_url = "/FD-Tech/";
 
-    while($row = $stmt_sale->fetch()) {
-        echo '<div class="product-card">';
-        echo '<span class="badge-sale">SALE</span>';
-        echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
-        echo '<img src="'.$row['image_url'].'">';
+    while($row = $stmt->fetch()) {
+    echo '<div class="product-card">';
+    echo '<span class="badge-hot">HOT</span>';
+    echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+    echo '<img src="'.(strpos($row['image_url'], 'http') === 0 
+        ? $row['image_url'] 
+        : '/FD-Tech/'.$row['image_url']).'">';
         echo '<h3>'.$row['name'].'</h3>';
         echo '<p class="price">'.number_format($row['price']).' ₫</p>';
         echo '</a></div>';
