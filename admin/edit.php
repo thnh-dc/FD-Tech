@@ -9,7 +9,7 @@ $stmt->execute([$id]);
 $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$product) {
-    header("Location: list_product.php");
+    header("Location: list_products.php");
     exit;
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['id']
     ]);
 
-    header("Location: list_product.php?msg=Sửa thành công");
+    header("Location: list_products.php?msg=Sửa thành công");
     exit;
 }
 ?>
