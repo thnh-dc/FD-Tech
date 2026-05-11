@@ -33,7 +33,7 @@
 
         <ul class="main-menu">
         <li><a href="index.php">Trang chủ</a></li>
-        <li class="has-child"><a href="#">Sản phẩm <i class="fas fa-chevron-down"></i></a></li>
+        <li class="has-child"><a href="#">Sản phẩm </a></li>
         <li><a href="#">Tin tức</a></li>
         <li><a href="index.php#khuyen-mai">Khuyến mãi</a></li>
         <li><a href="#footer-contact">Liên hệ</a></li>
