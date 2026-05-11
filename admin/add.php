@@ -5,18 +5,29 @@ include '../config/database.php';
 $categories = $pdo->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Xử lý Upload Ảnh
-    $image_url = ""; // Mặc định trống
+    $target_dir = "../upload/product_image/";
+
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0777, true);
+    }
+
+    $image_url = "";
+
     if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] == 0) {
-        $target_dir = "../upload/product_image/";
-        
-        // Tạo tên file duy nhất: thời gian + tên gốc
-        $file_name = time() . "_" . basename($_FILES["product_image"]["name"]);
+
+        $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
+
+        if (!in_array($_FILES['product_image']['type'], $allowed_types)) {
+            die("Chỉ cho phép JPG, PNG!");
+        }
+
+        $ext = pathinfo($_FILES["product_image"]["name"], PATHINFO_EXTENSION);
+        $file_name = time() . "." . $ext;
+
         $target_file = $target_dir . $file_name;
-        
-        // Di chuyển file từ bộ nhớ tạm vào thư mục đích
+
         if (move_uploaded_file($_FILES["product_image"]["tmp_name"], $target_file)) {
-            $image_url = $file_name; // Lưu tên file vào DB
+            $image_url = "upload/product_image/" . $file_name;
         }
     }
 
