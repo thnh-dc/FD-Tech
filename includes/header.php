@@ -84,8 +84,6 @@
                         <?php 
                             // Lưu ý: Đảm bảo các giá trị 'id' này khớp với ID danh mục trong database của bạn
                             $categories = [
-                            ['id' => '1', 'name' => 'Khuyến mãi'],
-                            ['id' => '2', 'name' => 'Sản phẩm nổi bật'],
                             ['id' => '3', 'name' => 'Xây dựng cấu hình'],
                             ['id' => '4', 'name' => 'MÀN HÌNH MÁY TÍNH'],
                             ['id' => '5', 'name' => 'LOA - TAI NGHE'],
