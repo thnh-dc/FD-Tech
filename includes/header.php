@@ -57,7 +57,6 @@
             
             <ul class="user-dropdown-menu">
                 <li><a href="../user/profile.php"><i class="fas fa-user-cog"></i> Tài khoản của tôi</a></li>
-                <li><a href="../user/profile_order.php"><i class="fas fa-shopping-bag"></i> Đơn mua</a></li>
                 <li><a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
             </ul>
         </div>
