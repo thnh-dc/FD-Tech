@@ -1,6 +1,6 @@
 <?php 
     include '../includes/header.php'; 
-    include '../includes/db.php'; // File này cung cấp biến $pdo
+    require_once '../config/database.php';
 
     // Lấy từ khóa tìm kiếm
     $search = isset($_GET['query']) ? trim($_GET['query']) : '';
