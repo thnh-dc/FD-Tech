@@ -1,6 +1,6 @@
 <?php 
     include '../includes/header.php'; 
-    include '../includes/db.php'; // File này cung cấp biến $pdo
+    require_once '../config/database.php';
 
     // Lấy từ khóa tìm kiếm
     $search = isset($_GET['query']) ? trim($_GET['query']) : '';
@@ -28,8 +28,7 @@
                         if (!empty($row['image_data'])) {
                             echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_data']).'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';
                         } else {
-                            echo '<img src="../assets/images/default-product.png" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px;">';
-                        }
+echo '<img src="'.$row['image_url'].'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';                        }
 
                         echo '<h3 style="font-size: 14px; margin-bottom: 8px;">'.htmlspecialchars($row['name']).'</h3>';
                         echo '<p style="color: #ee4d2d; font-weight: bold;">'.number_format($row['price']).' ₫</p>';
