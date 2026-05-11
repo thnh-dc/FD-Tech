@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../config/database.php';
+require_once __DIR__ . '/check_admin.php';
 
 try {
     // 1. Tính tổng doanh thu
