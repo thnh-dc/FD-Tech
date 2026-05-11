@@ -8,7 +8,7 @@ if (!isset($_SESSION['pending_admin_login'])) {
 define('ADMIN_USER', 'admin');
 define('ADMIN_PASS', 'admin123');
 define('ADMIN_EMAIL', 'admin@gmail.com');
-define('ADMIN_PHONE', '0987654321');
+define('ADMIN_PHONE', '19001000');
 define('ADMIN_CODE', '888888');
 
 $step = $_SESSION['admin_step'] ?? 1;
@@ -96,12 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php if ($step == 1): ?>
                     <form action="" method="POST">
                         <input type="hidden" name="verify_step_1" value="1">
-                        <div class="input-group"><input type="text" name="Tên đăng nhập" placeholder="Username Admin"
-                                required></div>
-                        <div class="input-group"><input type="password" name="Mật khẩu" placeholder="Password Admin"
-                                required></div>
-                        <div class="input-group"><input type="email" name="email" placeholder="Email Admin" required></div>
-                        <div class="input-group"><input type="text" name="Số điện thoại" placeholder="SĐT Admin" required>
+                        <div class="input-group"><input type="text" name="username" placeholder="Tên đăng nhập" required>
+                        </div>
+                        <div class="input-group"><input type="password" name="password" placeholder="Mật khẩu" required>
+                        </div>
+                        <div class="input-group"><input type="email" name="email" placeholder="Email" required></div>
+                        <div class="input-group"><input type="text" name="phone" placeholder="SĐT" required>
                         </div>
                         <button type="submit" class="btn-login">Xác nhận</button>
                     </form>
