@@ -3,14 +3,28 @@ session_start();
 require_once '../config/database.php'; 
 
 try {
-    // Truy vấn lấy danh sách đơn hàng kèm tên khách hàng
-    $sql = "SELECT o.*, u.username 
-            FROM orders o 
-            JOIN users u ON o.user_id = u.id 
-            ORDER BY o.created_at DESC";
-    
-    $stmt = $pdo->query($sql);
+    $user_filter = $_GET['user_id'] ?? '';
+
+    if ($user_filter != '') {
+        $sql = "SELECT o.*, u.username
+                FROM orders o
+                JOIN users u ON o.user_id = u.id
+                WHERE o.user_id = ?
+                ORDER BY o.created_at DESC";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$user_filter]);
+    } else {
+        $sql = "SELECT o.*, u.username
+                FROM orders o
+                JOIN users u ON o.user_id = u.id
+                ORDER BY o.created_at DESC";
+
+        $stmt = $pdo->query($sql);
+    }
+
     $orders = $stmt->fetchAll();
+
 } catch (PDOException $e) {
     die("Lỗi truy vấn: " . $e->getMessage());
 }
@@ -49,11 +63,17 @@ try {
                 <section class="section-block">
                     <div class="card shadow-card" style="background: var(--bg-main); padding: var(--space-lg); border-radius: var(--radius-md);">
                         <table class="data-table">
+                            <form method="GET" class="filter-form">
+                                <input type="number" name="user_id" placeholder="Nhập User ID..."
+                                    value="<?= $_GET['user_id'] ?? '' ?>">
+
+                                <button type="submit" class="btn btn-primary">Lọc</button>
+                            </form>
                             <thead>
                                 <tr>
                                     <th>Mã Đơn</th>
                                     <th>User ID</th>
-                                    <th>Tên người dùng</th>
+                                    <th>User Name</th>
                                     <th>Tổng Tiền</th>
                                     <th>Trạng Thái</th>
                                     <th>Ngày Đặt</th>
@@ -87,16 +107,28 @@ try {
                                             </td>
                                             <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
                                             <td style="position: relative;">
-                                                <button class="btn btn-primary btn-action" data-id="<?= $row['id'] ?>">
-                                                    Cập nhật
-                                                </button>
+                                                <div class="action-buttons">
+                                                    <button class="btn btn-primary btn-toggle" data-id="<?= $row['id'] ?>">
+                                                        Xem chi tiết
+                                                    </button>
+                                                    <button class="btn btn-primary btn-action" data-id="<?= $row['id'] ?>">
+                                                        Cập nhật
+                                                    </button>
 
-                                                <div class="action-menu">
-                                                    <button data-status="pending">Chờ xử lý</button>
-                                                    <button data-status="processing">Đang xử lý</button>
-                                                    <button data-status="shipped">Đang giao</button>
-                                                    <button data-status="completed">Hoàn thành</button>
-                                                    <button data-status="cancelled">Hủy</button>
+                                                    <div class="action-menu">
+                                                        <button data-status="pending">Chờ xử lý</button>
+                                                        <button data-status="processing">Đang xử lý</button>
+                                                        <button data-status="shipped">Đang giao</button>
+                                                        <button data-status="completed">Hoàn thành</button>
+                                                        <button data-status="cancelled">Hủy</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="order-detail-row" id="detail-<?= $row['id'] ?>" style="display:none;">
+                                            <td colspan="7">
+                                                <div class="order-detail-content">
+                                                    Đang tải...
                                                 </div>
                                             </td>
                                         </tr>

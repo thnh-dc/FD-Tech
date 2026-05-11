@@ -2,130 +2,124 @@
     include '../includes/header.php'; 
     include '../includes/db.php'; 
 ?>
+
+<link rel="stylesheet" href="../assets/css/index.css">
 <div class="banner-container">
     <div class="banner-track" id="bannerTrack">
-        <div class="banner-slide"><img src="../assets/images/banner.jpg" alt="Slide 1"></div>
-        <div class="banner-slide"><img src="../assets/images/banner1.jpg" alt="Slide 2"></div>
+        <div class="banner-slide"><img src="../assets/images/banner.jpg"></div>
+        <div class="banner-slide"><img src="../assets/images/banner1.jpg"></div>
     </div>
 </div>
-
-<div class="container" style="margin-top: 30px;">
+<div class="container"> 
     
-    <h2 id="san-pham-noi-bat" class="section-title">Sản phẩm nổi bật</h2>
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <h2 id="san-pham-noi-bat" class="section-title">⭐ Sản phẩm nổi bật</h2>
+    <div class="product-grid">
         <?php
-        $sql = "SELECT * FROM products WHERE category = 'featured' LIMIT 8"; 
-        $result = $conn->query($sql);
-        while($row = $result->fetch_assoc()) {
+        $stmt = $pdo->query("SELECT * FROM products ORDER BY RAND() LIMIT 8");
+        while($row = $stmt->fetch()) {
             echo '<div class="product-card">';
-            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration: none; color: #333;">';
-            echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_data']).'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';
-            echo '<h3 style="font-size: 14px; margin-bottom: 8px;">'.$row['name'].'</h3>';
-            echo '<p style="color: #ee4d2d; font-weight: bold;">'.number_format($row['price']).' ₫</p>';
+            echo '<span class="badge-hot">HOT</span>';
+            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+            echo '<img src="'.$row['image_url'].'">';
+            echo '<h3>'.$row['name'].'</h3>';
+            echo '<p class="price">'.number_format($row['price']).' ₫</p>';
             echo '</a></div>';
         }
         ?>
     </div>
 
-    <h2 id="khuyen-mai" class="section-title">Flash Sale - Giá Sốc</h2>
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <h2 id="khuyen-mai" class="section-title">🔥 Flash Sale - Giá Sốc</h2>
+    <div class="product-grid">
         <?php
-        $sql_promo = "SELECT * FROM products WHERE category = 'sale_hot' AND is_promotion = 1 LIMIT 8";
-        $result_promo = $conn->query($sql_promo);
-        while($row = $result_promo->fetch_assoc()) {
+        $stmt = $pdo->query("SELECT * FROM products ORDER BY price ASC LIMIT 8");
+        while($row = $stmt->fetch()) {
             echo '<div class="product-card">';
-            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration: none; color: #333;">';
-            echo '<div style="position:relative;">';
-            echo '<span style="position:absolute; top:5px; left:5px; background:red; color:white; padding:2px 8px; font-size:10px; border-radius:4px; z-index:1;">SALE</span>';
-            echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_data']).'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';
-            echo '</div>';
-            echo '<h3 style="font-size: 14px; margin-bottom: 8px;">'.$row['name'].'</h3>';
-            echo '<p style="color: #ee4d2d; font-weight: bold;">'.number_format($row['price']).' ₫</p>';
+            echo '<span class="badge-sale">SALE</span>';
+            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+            echo '<img src="'.$row['image_url'].'">';
+            echo '<h3>'.$row['name'].'</h3>';
+            echo '<p class="price">'.number_format($row['price']).' ₫</p>';
             echo '</a></div>';
         }
         ?>
     </div>
 
-    <h2 id="man-hinh-may-tinh" class="section-title">Màn hình máy tính</h2>
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <h2 id="man-hinh-may-tinh" class="section-title">🖥️ Màn hình máy tính</h2>
+    <div class="product-grid">
         <?php
-        $sql_monitor = "SELECT * FROM products WHERE category = 'monitor' LIMIT 8";
-        $result_monitor = $conn->query($sql_monitor);
-        while($row = $result_monitor->fetch_assoc()) {
+        $stmt = $pdo->query("SELECT * FROM products WHERE category_id = 3 LIMIT 8");
+        while($row = $stmt->fetch()) {
             echo '<div class="product-card">';
-            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration: none; color: #333;">';
-            echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_data']).'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';
-            echo '<h3 style="font-size: 14px; margin-bottom: 8px;">'.$row['name'].'</h3>';
-            echo '<p style="color: #ee4d2d; font-weight: bold;">'.number_format($row['price']).' ₫</p>';
+            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+            echo '<img src="'.$row['image_url'].'">';
+            echo '<h3>'.$row['name'].'</h3>';
+            echo '<p class="price">'.number_format($row['price']).' ₫</p>';
             echo '</a></div>';
         }
         ?>
     </div>
 
-    <h2 id="loa-tai-nghe" class="section-title">Loa - Tai nghe</h2>
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <h2 id="loa-tai-nghe" class="section-title">🎧 Loa - Tai nghe</h2>
+    <div class="product-grid">
         <?php
-        $sql_audio = "SELECT * FROM products WHERE category = 'audio' LIMIT 8";
-        $result_audio = $conn->query($sql_audio);
-        while($row = $result_audio->fetch_assoc()) {
+        $stmt = $pdo->query("SELECT * FROM products WHERE category_id IN (4, 5) LIMIT 8");
+        while($row = $stmt->fetch()) {
             echo '<div class="product-card">';
-            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration: none; color: #333;">';
-            echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_data']).'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';
-            echo '<h3 style="font-size: 14px; margin-bottom: 8px;">'.$row['name'].'</h3>';
-            echo '<p style="color: #ee4d2d; font-weight: bold;">'.number_format($row['price']).' ₫</p>';
+            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+            echo '<img src="'.$row['image_url'].'">';
+            echo '<h3>'.$row['name'].'</h3>';
+            echo '<p class="price">'.number_format($row['price']).' ₫</p>';
             echo '</a></div>';
         }
         ?>
     </div>
 
-    <h2 id="ban-phim-co" class="section-title">Bàn phím cơ</h2>
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <h2 id="ban-phim-co" class="section-title">⌨️ Bàn phím cơ</h2>
+    <div class="product-grid">
         <?php
-        $sql_kb = "SELECT * FROM products WHERE category = 'keyboard' ORDER BY id DESC LIMIT 8"; 
-        $result_kb = $conn->query($sql_kb);
-        while($row = $result_kb->fetch_assoc()) {
+        $stmt = $pdo->query("SELECT * FROM products WHERE category_id = 6 LIMIT 8");
+        while($row = $stmt->fetch()) {
             echo '<div class="product-card">';
-            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration: none; color: #333;">';
-            echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_data']).'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';
-            echo '<h3 style="font-size: 14px; margin-bottom: 8px;">'.$row['name'].'</h3>';
-            echo '<p style="color: #ee4d2d; font-weight: bold;">'.number_format($row['price']).' ₫</p>';
+            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+            echo '<img src="'.$row['image_url'].'">';
+            echo '<h3>'.$row['name'].'</h3>';
+            echo '<p class="price">'.number_format($row['price']).' ₫</p>';
             echo '</a></div>';
         }
         ?>
     </div>
 
-    <h2 id="chuot" class="section-title">Chuột</h2>
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <h2 id="chuot" class="section-title">🖱️ Chuột Gaming</h2>
+    <div class="product-grid">
         <?php
-        $sql_mouse = "SELECT * FROM products WHERE category = 'mouse' ORDER BY id DESC LIMIT 8"; 
-        $result_mouse = $conn->query($sql_mouse);
-        while($row = $result_mouse->fetch_assoc()) {
+        $stmt = $pdo->query("SELECT * FROM products WHERE category_id = 7 LIMIT 8");
+        while($row = $stmt->fetch()) {
             echo '<div class="product-card">';
-            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration: none; color: #333;">';
-            echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_data']).'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';
-            echo '<h3 style="font-size: 14px; margin-bottom: 8px;">'.$row['name'].'</h3>';
-            echo '<p style="color: #ee4d2d; font-weight: bold;">'.number_format($row['price']).' ₫</p>';
+            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+            echo '<img src="'.$row['image_url'].'">';
+            echo '<h3>'.$row['name'].'</h3>';
+            echo '<p class="price">'.number_format($row['price']).' ₫</p>';
             echo '</a></div>';
         }
         ?>
     </div>
 
-    <h2 id="phu-kien-khac" class="section-title">Phụ kiện khác</h2>
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <h2 id="phu-kien-khac" class="section-title">🔌 Phụ kiện khác</h2>
+    <div class="product-grid">
         <?php
-        $sql_acc = "SELECT * FROM products WHERE category = 'accessory' ORDER BY id DESC LIMIT 16"; 
-        $result_acc = $conn->query($sql_acc);
-        while($row = $result_acc->fetch_assoc()) {
-            echo '<div class="product-card" style="position: relative;">';
-            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration: none; color: #333;">';
-            if($row['is_promotion'] == 1) echo '<span style="position:absolute; top:5px; left:5px; background:red; color:white; padding:2px 8px; font-size:10px; border-radius:4px; z-index:1;">SALE</span>';
-            echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_data']).'" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">';
-            echo '<h3 style="font-size: 14px; margin-bottom: 8px;">'.$row['name'].'</h3>';
-            echo '<p style="color: #ee4d2d; font-weight: bold;">'.number_format($row['price']).' ₫</p>';
+        $stmt = $pdo->query("SELECT * FROM products WHERE category_id = 8 LIMIT 8");
+        while($row = $stmt->fetch()) {
+            echo '<div class="product-card">';
+            echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+            echo '<img src="'.$row['image_url'].'">';
+            echo '<h3>'.$row['name'].'</h3>';
+            echo '<p class="price">'.number_format($row['price']).' ₫</p>';
             echo '</a></div>';
         }
         ?>
     </div>
+
 </div>
 
+<script src="../assets/js/banner.js"></script>
 <?php include '../includes/footer.php'; ?>

@@ -12,10 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Toggle class 'show' để CSS chuyển từ display: none sang block
             submenu.classList.toggle('show');
-
-            // Tìm thẻ <li> cha để thêm class xoay mũi tên
-            const parentLi = this.parentElement;
-            parentLi.classList.toggle('rotate-arrow');
         });
     });
 
@@ -71,7 +67,7 @@ document.querySelectorAll('.action-menu button').forEach(btn => {
         const status = this.getAttribute('data-status');
         const orderId = this.closest('td').querySelector('.btn-action').dataset.id;
 
-        fetch('update_order_status.php', {
+        fetch('/FD-Tech/admin/action_list_order/update_order_status.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `id=${orderId}&status=${status}`
@@ -91,4 +87,33 @@ document.querySelectorAll('.action-menu button').forEach(btn => {
 // click ngoài để đóng menu
 document.addEventListener('click', () => {
     document.querySelectorAll('.action-menu').forEach(m => m.style.display = 'none');
+});
+
+//click xem chi tiết đơn hàng 
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btn-toggle").forEach(btn => {
+        btn.addEventListener("click", function () {
+
+            const orderId = this.dataset.id;
+            const row = document.getElementById("detail-" + orderId);
+            const content = row.querySelector(".order-detail-content");
+
+            if (row.style.display === "none" || row.style.display === "") {
+                row.style.display = "table-row";
+
+                if (!row.dataset.loaded) {
+                    fetch("/FD-Tech/admin/action_list_order/get_order_detail.php?order_id=" + orderId)
+                        .then(res => res.text())
+                        .then(data => {
+                            content.innerHTML = data;
+                            row.dataset.loaded = true;
+                        });
+                }
+
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+    });
 });
