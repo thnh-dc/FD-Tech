@@ -70,4 +70,7 @@
   </div>
 </footer>
 
-</footer
+<script src="../assets/js/navbar.js"></script>
+<script src="../assets/js/banner.js"></script>
+</body>
+</html> 

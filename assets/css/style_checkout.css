@@ -73,8 +73,6 @@
     margin-bottom: 0; /* Xóa khoảng cách thừa để chữ và nút nằm thẳng hàng */
 } /* ép nút radio về lại kích cỡ chuẩn */
 
-/* total */
-
 .checkout-section b {
     font-size: var(--text-lg);
     color: var(--danger);
