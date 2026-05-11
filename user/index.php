@@ -58,7 +58,7 @@
 
     while($row = $stmt->fetch()) {
     echo '<div class="product-card">';
-    echo '<span class="badge-hot">HOT</span>';
+    echo '<span class="badge-hot">SALE</span>';
     echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
     echo '<img src="'.(strpos($row['image_url'], 'http') === 0 
         ? $row['image_url'] 
