@@ -2,10 +2,8 @@
 session_start();
 include '../config/database.php';
 
-// Các biến lưu trạng thái thông báo
-$flash_msg = '';
-$flash_type = '';
-$redirect_url = ''; // Biến để chuyển hướng nếu đăng ký thành công
+// Biến lưu trạng thái thông báo hiển thị tại trang
+$alert_msg = '';
 
 // --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -14,35 +12,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
 
-    // 1. Kiểm tra xem 2 mật khẩu có giống nhau không
-    if ($password !== $confirm_password) {
-        $flash_msg = 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.';
-        $flash_type = 'error';
+    // 1. KIỂM TRA ĐỊNH DẠNG DỮ LIỆU (VALIDATION BẰNG PHP)
+    // Regex: Bắt đầu bằng chữ cái (a-z, A-Z), theo sau là chữ hoặc số, tổng độ dài 3-20
+    if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]{2,19}$/', $username)) {
+        $alert_msg = 'Tên đăng nhập phải từ 3-20 ký tự, không chứa ký tự đặc biệt và phải bắt đầu bằng chữ cái!';
+    }
+    // Kiểm tra độ dài mật khẩu
+    elseif (strlen($password) < 6) {
+        $alert_msg = 'Mật khẩu phải có ít nhất 6 ký tự!';
+    }
+    // Kiểm tra 2 mật khẩu có khớp nhau không
+    elseif ($password !== $confirm_password) {
+        $alert_msg = 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.';
     } else {
-        // 2. Mã hóa mật khẩu để bảo mật
+        // 2. Nếu mọi thứ hợp lệ -> Mã hóa mật khẩu để bảo mật
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         try {
             // 3. Kiểm tra xem Username hoặc Email đã bị ai đăng ký chưa
             $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
             $stmt->execute([$username, $email]);
-            
+
             if ($stmt->rowCount() > 0) {
-                $flash_msg = 'Tên đăng nhập hoặc Email này đã có người sử dụng!';
-                $flash_type = 'error';
+                $alert_msg = 'Tên đăng nhập hoặc Email này đã có người sử dụng!';
             } else {
                 // 4. Nếu chưa có ai dùng -> Lưu vào Database
                 $stmt = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
                 $stmt->execute([$username, $hashed_password, $email]);
-                
-                // Đăng ký thành công -> Gán thông báo và link chuyển hướng
-                $flash_msg = 'Đăng ký thành công! Đang chuyển đến Đăng nhập...';
-                $flash_type = 'success';
-                $redirect_url = 'login.php';
+
+                // Đăng ký thành công -> Lưu lời nhắn vào session và chuyển hướng sang login
+                $_SESSION['flash_msg'] = 'Đăng ký thành công! Vui lòng đăng nhập.';
+                header("Location: login.php");
+                exit();
             }
         } catch (PDOException $e) {
-            $flash_msg = 'Lỗi hệ thống: Không thể đăng ký lúc này.';
-            $flash_type = 'error';
+            $alert_msg = 'Lỗi hệ thống: Không thể đăng ký lúc này.';
             error_log($e->getMessage());
         }
     }
@@ -50,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,8 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../assets/css/style_login.css">
     <link rel="stylesheet" href="../assets/css/style_chung.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -71,9 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
                     <span class="auth-brand">FD<span>TECH</span></span>
                 </a>
-            </div>
-            <div class="auth-header-right">
-                <a href="#">Bạn cần giúp đỡ?</a>
             </div>
         </div>
     </header>
@@ -93,28 +93,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <form action="" method="POST">
                     <div class="input-group">
-                        <input type="text" name="username" placeholder="Tên đăng nhập" required 
-                               value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
+                        <input type="text" name="username" placeholder="Tên đăng nhập (Bắt đầu bằng chữ cái)" required
+                            pattern="^[a-zA-Z][a-zA-Z0-9]{2,19}$"
+                            title="Tên đăng nhập phải từ 3-20 ký tự, bắt đầu bằng chữ cái, không chứa khoảng trắng hay ký tự đặc biệt"
+                            value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
                     </div>
 
                     <div class="input-group">
-                        <input type="email" name="email" placeholder="Email" required 
-                               value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
-                    </div>
-                    
-                    <div class="input-group">
-                        <input type="password" name="password" placeholder="Mật khẩu" required>
+                        <input type="email" name="email" placeholder="Email" required
+                            value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                     </div>
 
                     <div class="input-group">
-                        <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required>
+                        <input type="password" name="password" placeholder="Mật khẩu (Tối thiểu 6 ký tự)" required
+                            minlength="6">
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required
+                            minlength="6">
                     </div>
 
                     <button type="submit" class="btn-login">ĐĂNG KÝ</button>
-
-                    <div class="terms-text">
-                        Bằng việc đăng ký, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> & <a href="#">Chính sách bảo mật</a> của FD Tech
-                    </div>
 
                     <div class="register-link" style="margin-top: 25px;">
                         Bạn đã có tài khoản? <a href="login.php">Đăng nhập</a>
@@ -126,24 +126,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php include '../includes/footer.php'; ?>
 
-    <?php if (!empty($flash_msg)): ?>
-    <script>
-        Swal.fire({
-            icon: '<?php echo $flash_type; ?>',
-            title: '<?php echo $flash_type == "success" ? "Tuyệt vời!" : "Lỗi!"; ?>',
-            text: '<?php echo $flash_msg; ?>',
-            timer: 2000, // Đợi 2 giây
-            showConfirmButton: false,
-            toast: true,
-            position: 'top-end'
-        }).then(function() {
-            // Nếu có link chuyển hướng (đăng ký thành công), tự động nhảy trang
-            <?php if (!empty($redirect_url)): ?>
-                window.location.href = '<?php echo $redirect_url; ?>';
-            <?php endif; ?>
-        });
-    </script>
+    <?php if (!empty($alert_msg)): ?>
+        <script>
+            alert('<?php echo $alert_msg; ?>');
+        </script>
     <?php endif; ?>
 
 </body>
+
 </html>
