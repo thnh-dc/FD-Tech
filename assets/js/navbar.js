@@ -23,23 +23,3 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error("Không tìm thấy ID menuToggle hoặc categoryDropdown!");
     }
 });
-function updateCartCount() {
-    fetch('../user/get_cart_count.php') // File này trả về số lượng giỏ hàng
-        .then(response => response.json())
-        .then(data => {
-            document.querySelector('.cart-icon .count').innerText = data.count;
-        });
-}
-// Gọi hàm khi trang load
-updateCartCount();
-document.querySelector('.user-profile-toggle').addEventListener('click', function() {
-    const menu = document.querySelector('.user-dropdown-menu');
-    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-});
-
-// Click ra ngoài để đóng menu
-window.onclick = function(event) {
-    if (!event.target.closest('.user-profile-wrapper')) {
-        document.querySelector('.user-dropdown-menu').style.display = 'none';
-    }
-}

@@ -8,7 +8,7 @@ if (!isset($_SESSION['pending_admin_login'])) {
 define('ADMIN_USER', 'admin');
 define('ADMIN_PASS', 'admin123');
 define('ADMIN_EMAIL', 'admin@gmail.com');
-define('ADMIN_PHONE', '0987654321');
+define('ADMIN_PHONE', '19001000');
 define('ADMIN_CODE', '888888');
 
 $step = $_SESSION['admin_step'] ?? 1;
