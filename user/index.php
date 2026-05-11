@@ -45,7 +45,7 @@
     <h2 id="khuyen-mai" class="section-title">🔥 Flash Sale - Giá Sốc</h2>
 <div class="product-grid">
     <?php
-    $tag_id_flash_sale = 2; // ID của tag "Flash Sale" trong database
+    $tag_id_flash_sale = 2; // Giả sử ID của tag "Flash Sale" là 2
 
     $sql_sale = "SELECT p.* FROM products p 
                  INNER JOIN product_tags pt ON p.id = pt.product_id 
@@ -56,17 +56,13 @@
     $stmt_sale->execute([$tag_id_flash_sale]);
     $base_url = "/FD-Tech/";
 
-    while($row = $stmt_sale->fetch()) { 
-        echo '<div class="product-card">';
-        echo '<span class="badge-sale">SALE</span>'; 
-        echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
-        
-        // Kiểm tra link ảnh
-        $img_path = (strpos($row['image_url'], 'http') === 0) 
-                    ? $row['image_url'] 
-                    : $base_url . $row['image_url'];
-                    
-        echo '<img src="'.$img_path.'">';
+    while($row = $stmt->fetch()) {
+    echo '<div class="product-card">';
+    echo '<span class="badge-hot">SALE</span>';
+    echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+    echo '<img src="'.(strpos($row['image_url'], 'http') === 0 
+        ? $row['image_url'] 
+        : '/FD-Tech/'.$row['image_url']).'">';
         echo '<h3>'.$row['name'].'</h3>';
         echo '<p class="price">'.number_format($row['price']).' ₫</p>';
         echo '</a></div>';
