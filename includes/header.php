@@ -82,18 +82,19 @@
                 <div class="category-dropdown" id="categoryDropdown">
                     <div class="category-list">
                         <?php 
+                            // Lưu ý: Đảm bảo các giá trị 'id' này khớp với ID danh mục trong database của bạn
                             $categories = [
-                            ['id' => 'khuyen-mai', 'name' => 'Khuyến mãi'],
-                            ['id' => 'san-pham-noi-bat', 'name' => 'Sản phẩm nổi bật'],
-                            ['id' => 'xay-dung-cau-hinh', 'name' => 'Xây dựng cấu hình'],
-                            ['id' => 'man-hinh-may-tinh', 'name' => 'MÀN HÌNH MÁY TÍNH'],
-                            ['id' => 'loa-tai-nghe', 'name' => 'LOA - TAI NGHE'],
-                            ['id' => 'ban-phim-co', 'name' => 'BÀN PHÍM CƠ'],
-                            ['id' => 'chuot', 'name' => 'CHUỘT'],
-                            ['id' => 'phu-kien-khac', 'name' => 'PHỤ KIỆN KHÁC'],
+                            ['id' => '1', 'name' => 'Khuyến mãi'],
+                            ['id' => '2', 'name' => 'Sản phẩm nổi bật'],
+                            ['id' => '3', 'name' => 'Xây dựng cấu hình'],
+                            ['id' => '4', 'name' => 'MÀN HÌNH MÁY TÍNH'],
+                            ['id' => '5', 'name' => 'LOA - TAI NGHE'],
+                            ['id' => '6', 'name' => 'BÀN PHÍM CƠ'],
+                            ['id' => '7', 'name' => 'CHUỘT'],
+                            ['id' => '8', 'name' => 'PHỤ KIỆN KHÁC'],
                        ];
                         foreach ($categories as $category): ?>
-                            <a href="index.php#<?php echo $category['id']; ?>" class="category-item">
+                            <a href="/FD-Tech/user/product_list.php?cat=<?php echo $category['id']; ?>" class="category-item">
                                 <span><?php echo $category['name']; ?></span>
                                 <i class="fas fa-chevron-right"></i>
                             </a>
