@@ -8,7 +8,7 @@ if (!isset($_SESSION['pending_admin_login'])) {
 define('ADMIN_USER', 'admin');
 define('ADMIN_PASS', 'admin123');
 define('ADMIN_EMAIL', 'admin@gmail.com');
-define('ADMIN_PHONE', '0987654321');
+define('ADMIN_PHONE', '19001000');
 define('ADMIN_CODE', '888888');
 
 $step = $_SESSION['admin_step'] ?? 1;
@@ -29,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if (isset($_POST['verify_step_2'])) {
         if ($_POST['code'] === ADMIN_CODE) {
-            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['user_id'] = 1;
+            $_SESSION['role'] = 'admin';
             unset($_SESSION['pending_admin_login'], $_SESSION['admin_step']);
             header("Location: ../admin/admin_dashboard.php");
             exit();
@@ -67,12 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
                     <span class="auth-brand">FD<span>TECH</span></span>
                 </a>
-                <span
-                    style="font-size: 24px; margin-left: 15px; padding-left: 15px; border-left: 1px solid #ccc; color:#ee4d2d;">Hệ
-                    thống quản trị</span>
-            </div>
-            <div class="auth-header-right">
-                <a href="#">Bạn cần giúp đỡ?</a>
             </div>
         </div>
     </header>
@@ -88,20 +83,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="login-form-box">
                 <div class="form-header">
                     <h2 class="form-title"><?php echo ($step == 1) ? 'Xác thực thông tin' : 'Mã PIN bảo mật'; ?></h2>
-                    <div class="qr-login" title="Trợ giúp">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
                 </div>
 
                 <?php if ($step == 1): ?>
                     <form action="" method="POST">
                         <input type="hidden" name="verify_step_1" value="1">
-                        <div class="input-group"><input type="text" name="Tên đăng nhập" placeholder="Username Admin"
+                        <div class="input-group"><input type="text" name="username" placeholder="Tên đăng nhập"
                                 required></div>
-                        <div class="input-group"><input type="password" name="Mật khẩu" placeholder="Password Admin"
-                                required></div>
-                        <div class="input-group"><input type="email" name="email" placeholder="Email Admin" required></div>
-                        <div class="input-group"><input type="text" name="Số điện thoại" placeholder="SĐT Admin" required>
+                        <div class="input-group"><input type="password" name="password" placeholder="Mật khẩu" required>
+                        </div>
+                        <div class="input-group"><input type="email" name="email" placeholder="Email" required></div>
+                        <div class="input-group"><input type="text" name="phone" placeholder="SĐT" required>
                         </div>
                         <button type="submit" class="btn-login">Xác nhận</button>
                     </form>
