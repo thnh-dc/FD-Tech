@@ -29,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if (isset($_POST['verify_step_2'])) {
         if ($_POST['code'] === ADMIN_CODE) {
-            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['user_id'] = 1;
+            $_SESSION['role'] = 'admin';
             unset($_SESSION['pending_admin_login'], $_SESSION['admin_step']);
             header("Location: ../admin/admin_dashboard.php");
             exit();
