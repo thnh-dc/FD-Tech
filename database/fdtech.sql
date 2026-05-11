@@ -1,4 +1,3 @@
---lưu account
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -15,7 +14,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL
 );
---danh mục các sản phẩm
+
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -25,13 +24,13 @@ CREATE TABLE categories (
     FOREIGN KEY (parent_id) REFERENCES categories(id)
         ON DELETE SET NULL
 );
--- lưu cá thẻ sale, new
+
 CREATE TABLE tags (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
--- tt sản phẩm
+
 CREATE TABLE products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT,
@@ -48,7 +47,7 @@ CREATE TABLE products (
         ON DELETE SET NULL 
         ON UPDATE CASCADE
 );
--- gán tag cho product
+
 CREATE TABLE product_tags (
     product_id INT,
     tag_id INT,
@@ -56,7 +55,7 @@ CREATE TABLE product_tags (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 );
---đơn hàng
+
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -71,7 +70,7 @@ CREATE TABLE orders (
         ON DELETE SET NULL
 );
 
---sản phẩm trong đơn hàng
+
 CREATE TABLE order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
@@ -86,7 +85,7 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(id) 
         ON DELETE SET NULL
 );
---lưu item giỏ hàng
+
 CREATE TABLE cart_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -100,7 +99,7 @@ CREATE TABLE cart_items (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
---lưu phần thanh toán
+
 CREATE TABLE payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,

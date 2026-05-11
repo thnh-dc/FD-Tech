@@ -1,6 +1,6 @@
 <?php
 $host = "localhost";
-$dbname = "fd_tech";
+$dbname = "fd-tech";
 $user = "root";
 $password = "";
 
