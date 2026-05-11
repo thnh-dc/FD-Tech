@@ -68,12 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
                     <span class="auth-brand">FD<span>TECH</span></span>
                 </a>
-                <span
-                    style="font-size: 24px; margin-left: 15px; padding-left: 15px; border-left: 1px solid #ccc; color:#ee4d2d;">Hệ
-                    thống quản trị</span>
-            </div>
-            <div class="auth-header-right">
-                <a href="#">Bạn cần giúp đỡ?</a>
             </div>
         </div>
     </header>
@@ -89,16 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="login-form-box">
                 <div class="form-header">
                     <h2 class="form-title"><?php echo ($step == 1) ? 'Xác thực thông tin' : 'Mã PIN bảo mật'; ?></h2>
-                    <div class="qr-login" title="Trợ giúp">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
                 </div>
 
                 <?php if ($step == 1): ?>
                     <form action="" method="POST">
                         <input type="hidden" name="verify_step_1" value="1">
-                        <div class="input-group"><input type="text" name="username" placeholder="Tên đăng nhập" required>
-                        </div>
+                        <div class="input-group"><input type="text" name="username" placeholder="Tên đăng nhập"
+                                required></div>
                         <div class="input-group"><input type="password" name="password" placeholder="Mật khẩu" required>
                         </div>
                         <div class="input-group"><input type="email" name="email" placeholder="Email" required></div>
