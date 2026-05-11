@@ -43,7 +43,6 @@
 
       <div class="header-auth">
     <?php 
-    // Đảm bảo có dòng này ở đầu file header.php nhé: session_start();
     if (isset($_SESSION['user_id'])): 
     ?>
         <div class="user-profile-wrapper">
@@ -82,17 +81,19 @@
                 <div class="category-dropdown" id="categoryDropdown">
                     <div class="category-list">
                         <?php 
-                            // Lưu ý: Đảm bảo các giá trị 'id' này khớp với ID danh mục trong database của bạn
+                            // BẢNG MAP ID: CHÚ Ý SỬA CÁC SỐ 3, 4, 5 CHO KHỚP VỚI DATABASE
                             $categories = [
-                            ['id' => '3', 'name' => 'Xây dựng cấu hình'],
-                            ['id' => '4', 'name' => 'MÀN HÌNH MÁY TÍNH'],
-                            ['id' => '5', 'name' => 'LOA - TAI NGHE'],
-                            ['id' => '6', 'name' => 'BÀN PHÍM CƠ'],
+                            ['id' => '1', 'name' => 'LAPTOP'],
+                            ['id' => '2', 'name' => 'LINH KIỆN'],
+                            ['id' => '3', 'name' => 'MÀN HÌNH MÁY TÍNH'],
+                            ['id' => '4', 'name' => 'TAI NGHE'],
+                            ['id'=> '5', 'name'=> 'LOA'],
+                            ['id' => '6', 'name' => 'BÀN PHÍM'],
                             ['id' => '7', 'name' => 'CHUỘT'],
                             ['id' => '8', 'name' => 'PHỤ KIỆN KHÁC'],
                        ];
                         foreach ($categories as $category): ?>
-                            <a href="/FD-Tech/user/product_list.php?cat=<?php echo $category['id']; ?>" class="category-item">
+                            <a href="/FD-Tech/user/product_list.php?cat=<?php echo $category['id']; ?>&cname=<?php echo urlencode($category['name']); ?>" class="category-item">
                                 <span><?php echo $category['name']; ?></span>
                                 <i class="fas fa-chevron-right"></i>
                             </a>

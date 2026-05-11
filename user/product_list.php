@@ -16,12 +16,12 @@ $products = [];
 $category_name = '';
 
 $menu_categories = [
-    1 => 'KHUYẾN MÃI',
-    2 => 'SẢN PHẨM NỔI BẬT',
-    3 => 'XÂY DỰNG CẤU HÌNH',
-    4 => 'MÀN HÌNH MÁY TÍNH',
-    5 => 'LOA - TAI NGHE',
-    6 => 'BÀN PHÍM CƠ',
+    1 => 'LAPTOP',
+    2 => 'LINH KIỆN',
+    3 => 'MÀN HÌNH MÁY TÍNH',
+    4 => 'TAI NGHE',
+    5 => 'LOA',
+    6 => 'BÀN PHÍM',
     7 => 'CHUỘT',
     8 => 'PHỤ KIỆN KHÁC'
 ];
