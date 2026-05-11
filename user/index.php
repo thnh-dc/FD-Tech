@@ -1,6 +1,6 @@
 <?php 
     include '../includes/header.php'; 
-    include '../includes/db.php'; 
+    require_once '../config/database.php';
 ?>
 
 <link rel="stylesheet" href="../assets/css/index.css">
