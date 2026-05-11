@@ -214,9 +214,6 @@ if ($has_custom_avatar) {
                 <li><a href="profile.php" class="menu-link"><i class="far fa-user"></i> Tài khoản của tôi</a></li>
                 <li><a href="profile_order.php" class="menu-link active"><i class="fas fa-clipboard-list"></i> Đơn
                         mua</a></li>
-                <li><a href="#" class="menu-link"><i class="far fa-bell"></i> Thông báo</a></li>
-                <li><a href="#" class="menu-link"><i class="fas fa-ticket-alt"></i> Kho Voucher</a></li>
-                <li><a href="#" class="menu-link"><i class="far fa-heart"></i> Sản phẩm yêu thích</a></li>
                 <li style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
                     <a href="../auth/logout.php" style="color: #DB4437;"><i class="fas fa-sign-out-alt"></i> Đăng
                         xuất</a>
