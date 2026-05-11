@@ -18,7 +18,7 @@
             $product_pages = ['add.php', 'edit.php', 'list_products.php'];
             $is_product_active = in_array(basename($_SERVER['PHP_SELF']), $product_pages);
         ?>
-        <li class="menu-item has-submenu <?= $is_product_active ? 'rotate-arrow' : '' ?>">
+        <li class="menu-item has-submenu">
             <a href="#" class="submenu-toggle">
                 <i class="fa-solid fa-box-open"></i> Danh mục sản phẩm
                 <i class="fa-solid fa-chevron-down arrow-icon"></i>
