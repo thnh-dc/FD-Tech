@@ -3,30 +3,40 @@ session_start();
 include '../config/database.php';
 
 $search = $_GET['search'] ?? '';
+$category_id = $_GET['category_id'] ?? ''; 
 
 try {
+    // Lấy danh sách danh mục cho ô Select
+    $categories = $pdo->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt = $pdo->prepare("
-        SELECT 
-            p.id,
-            p.name,
-            p.price,
-            p.stock_quantity,
-            p.image_url,
-            p.description,
-            c.name AS cat_name
-        FROM products p
-        LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.name LIKE ?
-        ORDER BY p.id DESC
-    ");
+    // Chuẩn bị câu SQL cơ bản
+    $sql = "SELECT 
+                p.id,
+                p.name,
+                p.price,
+                p.stock_quantity,
+                p.image_url,
+                p.description,
+                c.name AS cat_name
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.name LIKE ?";
+    
+    $params = ["%$search%"];
 
-    $stmt->execute(["%$search%"]);
+    // Nếu người dùng có chọn danh mục, nối thêm điều kiện AND vào câu SQL
+    if (!empty($category_id)) {
+        $sql .= " AND p.category_id = ?";
+        $params[] = $category_id;
+    }
 
+    $sql .= " ORDER BY p.id DESC";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch(PDOException $e) {
-
     die("Lỗi query: " . $e->getMessage());
 }
 ?>
@@ -200,6 +210,15 @@ placeholder="Tìm sản phẩm..."
 value="<?= htmlspecialchars($search) ?>"
 >
 
+<select name="category_id" class="form-control" style="width: 180px;" onchange="this.form.submit()">
+    <option value="">Tất cả danh mục</option>
+    <?php foreach($categories as $cat): ?>
+        <option value="<?= $cat['id'] ?>" <?= ($category_id == $cat['id']) ? 'selected' : '' ?>>
+            <?= htmlspecialchars($cat['name']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+
 <button class="btn btn-primary">
 <i class="fa-solid fa-search"></i>
 </button>
@@ -237,10 +256,15 @@ Thêm sản phẩm
 <tr>
 
 <td>
-
+<?php 
+    $img = $p['image_url'];
+    $src = (strpos($img, 'http') !== false) ? $img : "../upload/product_image/".$img;
+    if(empty($img)) $src = "../assets/images/logo-fd.jpg";
+?>
 <img
-src="<?= htmlspecialchars($p['image_url']) ?>"
+src="<?= htmlspecialchars($src) ?>"
 class="product-image"
+onerror="this.src='../assets/images/logo-fd.jpg'"
 >
 
 </td>
