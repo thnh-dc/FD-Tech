@@ -9,10 +9,10 @@
     <title>FD Tech</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style_chung.css">
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/index.css">
+    <!--Hàm tự động thêm css cho các trang khác(nếu có)-->
     <?php
         if (isset($custom_css)) {
             echo $custom_css;
@@ -20,10 +20,6 @@
     ?>
 </head>
 <body>
-<?php
-    $brand_name = "FD"; 
-    $cart_count = 0;   
-?>
     <div class="main-header">
     <div class="container header-flex">
         <div class="logo">

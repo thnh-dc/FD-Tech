@@ -59,39 +59,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập - FD Tech</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style_login.css">
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-</head>
-
-<body>
-
-    <header class="auth-header">
-        <div class="auth-header-container">
-            <div class="auth-header-left">
-                <a href="/FD-Tech/user/index.php" class="auth-logo">
-                    <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                    <span class="auth-brand">FD<span>TECH</span></span>
-                </a>
-            </div>
-        </div>
-    </header>
+<?php
+$page_title = "Đăng nhập - FD Tech";
+include '../auth/includes/auth_header.php';
+?>
 
     <div class="login-wrapper">
         <div class="login-container">
             <div class="login-branding">
                 <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
                 <h1>FD TECH</h1>
-                <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
+                <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game dành cho bạn</p>
             </div>
 
             <div class="login-form-box">
@@ -112,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <a href="forgot_password.php" class="forgot-pw">Quên mật khẩu</a>
 
-                    <div class="register-link" style="margin-top: 25px;">
+                    <div class="register-link">
                         Bạn mới biết đến FD Tech? <a href="register.php">Đăng ký</a>
                     </div>
                 </form>
@@ -120,14 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 
-    <?php include '../includes/footer.php'; ?>
-
     <?php if (!empty($alert_msg)): ?>
         <script>
             alert('<?php echo $alert_msg; ?>');
         </script>
     <?php endif; ?>
 
-</body>
-
-</html>
+<?php include '../includes/footer.php'; ?>

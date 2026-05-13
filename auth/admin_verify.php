@@ -42,35 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xác minh Admin - FD Tech</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="../assets/css/style_login.css">
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-
-<body>
-
-    <header class="auth-header">
-        <div class="auth-header-container">
-            <div class="auth-header-left">
-                <a href="/FD-Tech/user/index.php" class="auth-logo">
-                    <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                    <span class="auth-brand">FD<span>TECH</span></span>
-                </a>
-            </div>
-        </div>
-    </header>
+<?php
+$page_title = "Xác minh Admin - FD Tech";
+$use_sweetalert = true;
+include('../auth/includes/auth_header.php');
+?>
 
     <div class="login-wrapper">
         <div class="login-container">
@@ -118,19 +94,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <?php include '../includes/footer.php'; ?>
-
-    <?php if (isset($_SESSION['flash_msg'])): ?>
-        <script>
-            Swal.fire({
-                icon: '<?php echo $_SESSION['flash_type']; ?>',
-                text: '<?php echo $_SESSION['flash_msg']; ?>',
-                timer: 1500, showConfirmButton: false, toast: true, position: 'top-end'
-            });
-        </script>
-        <?php unset($_SESSION['flash_msg']);
-        unset($_SESSION['flash_type']); ?>
-    <?php endif; ?>
-
-</body>
-
-</html>

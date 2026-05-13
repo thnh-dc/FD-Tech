@@ -10,6 +10,7 @@ $stmt = $pdo->prepare("
         id,
         name,
         price,
+        stock_quantity,
         image_url,
         description
     FROM products 
@@ -59,7 +60,10 @@ if (!$sp) {
                 <input type="hidden" name="product_id" value="<?= $id; ?>">
 
                 <div class="quantity-group">
-                    <label>Số lượng:</label>
+                    <label><B>Tồn kho: </B><?= $sp['stock_quantity'] ?? '0' ?></label>
+                </div>
+                <div class="quantity-group">
+                    <label><B>Số lượng mua:</B></label>
                     <input type="number" name="quantity" value="1" min="1" class="quantity-input">
                 </div>
 

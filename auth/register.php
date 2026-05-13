@@ -1,89 +1,68 @@
 <?php
 session_start();
-include '../config/database.php';
+require_once '../config/database.php';
 
-// Biến lưu trạng thái thông báo hiển thị tại trang
 $alert_msg = '';
 
-// --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ ---
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
-    $confirm_password = trim($_POST['confirm_password']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // 1. KIỂM TRA ĐỊNH DẠNG DỮ LIỆU (VALIDATION BẰNG PHP)
-    // Regex: Bắt đầu bằng chữ cái (a-z, A-Z), theo sau là chữ hoặc số, tổng độ dài 3-20
+    $username = trim($_POST['username'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirm = $_POST['confirm_password'] ?? '';
+
+    // VALIDATION
     if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]{2,19}$/', $username)) {
-        $alert_msg = 'Tên đăng nhập phải từ 3-20 ký tự, không chứa ký tự đặc biệt và phải bắt đầu bằng chữ cái!';
-    }
-    // Kiểm tra độ dài mật khẩu
-    elseif (strlen($password) < 6) {
-        $alert_msg = 'Mật khẩu phải có ít nhất 6 ký tự!';
-    }
-    // Kiểm tra 2 mật khẩu có khớp nhau không
-    elseif ($password !== $confirm_password) {
-        $alert_msg = 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.';
+        $alert_msg = 'Tên đăng nhập không hợp lệ!';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $alert_msg = 'Email không hợp lệ!';
+    } elseif (strlen($password) < 6) {
+        $alert_msg = 'Mật khẩu tối thiểu 6 ký tự!';
+    } elseif ($password !== $confirm) {
+        $alert_msg = 'Mật khẩu không khớp!';
     } else {
-        // 2. Nếu mọi thứ hợp lệ -> Mã hóa mật khẩu để bảo mật
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         try {
-            // 3. Kiểm tra xem Username hoặc Email đã bị ai đăng ký chưa
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+            // CHECK tồn tại (tối ưu hơn rowCount)
+            $stmt = $pdo->prepare("SELECT 1 FROM users WHERE username = ? OR email = ? LIMIT 1");
             $stmt->execute([$username, $email]);
 
-            if ($stmt->rowCount() > 0) {
-                $alert_msg = 'Tên đăng nhập hoặc Email này đã có người sử dụng!';
+            if ($stmt->fetch()) {
+                $alert_msg = 'Username hoặc Email đã tồn tại!';
             } else {
-                // 4. Nếu chưa có ai dùng -> Lưu vào Database
-                $stmt = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
-                $stmt->execute([$username, $hashed_password, $email]);
 
-                // Đăng ký thành công -> Lưu lời nhắn vào session và chuyển hướng sang login
-                $_SESSION['flash_msg'] = 'Đăng ký thành công! Vui lòng đăng nhập.';
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO users (username, email, password)
+                    VALUES (?, ?, ?)
+                ");
+                $stmt->execute([$username, $email, $hash]);
+
+                $_SESSION['flash_msg'] = 'Đăng ký thành công!';
                 header("Location: login.php");
                 exit();
             }
+
         } catch (PDOException $e) {
-            $alert_msg = 'Lỗi hệ thống: Không thể đăng ký lúc này.';
             error_log($e->getMessage());
+            $alert_msg = 'Lỗi hệ thống!';
         }
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký - FD Tech</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style_login.css">
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-</head>
-
-<body>
-    <header class="auth-header">
-        <div class="auth-header-container">
-            <div class="auth-header-left">
-                <a href="/FD-Tech/user/index.php" class="auth-logo">
-                    <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                    <span class="auth-brand">FD<span>TECH</span></span>
-                </a>
-            </div>
-        </div>
-    </header>
+<?php
+$page_title = "Đăng kí - FD Tech";
+include '../auth/includes/auth_header.php';
+?>
 
     <div class="login-wrapper">
         <div class="login-container">
             <div class="login-branding">
                 <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
                 <h1>FD TECH</h1>
-                <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
+                <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game dành cho bạn</p>
             </div>
 
             <div class="login-form-box">
@@ -116,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <button type="submit" class="btn-login">ĐĂNG KÝ</button>
 
-                    <div class="register-link" style="margin-top: 25px;">
+                    <<div class="register-link">
                         Bạn đã có tài khoản? <a href="login.php">Đăng nhập</a>
                     </div>
                 </form>
@@ -124,14 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 
-    <?php include '../includes/footer.php'; ?>
-
     <?php if (!empty($alert_msg)): ?>
         <script>
             alert('<?php echo $alert_msg; ?>');
         </script>
     <?php endif; ?>
-
-</body>
-
-</html>
+<?php include '../includes/footer.php'; ?>
