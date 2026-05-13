@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'check_login.php'; // Chắc chắn user đã login
-include '../config/database.php'; // Gọi file cấu hình PDO của bạn
+require_once '../../auth/check_login.php'; // Chắc chắn user đã login
+include '../../config/database.php'; // Gọi file cấu hình PDO của bạn
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user_id = $_SESSION['user_id'];
@@ -32,13 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // 2. Xử lý điều hướng dựa trên nút người dùng bấm
     if ($action_type === 'add_to_cart') {
         // Trở về trang giỏ hàng
-        header("Location: cart.php");
+        header("Location: ../cart.php");
         exit;
     } elseif ($action_type === 'buy_now') {
         // Trang checkout.php của bạn đang đợi biến $_POST['selected_items']
         // Nên ta in ra một form ẩn và dùng JS tự động submit ngay lập tức
         echo "
-        <form id='redirectForm' action='checkout.php' method='POST'>
+        <form id='redirectForm' action='../checkout.php' method='POST'>
             <input type='hidden' name='selected_items' value='{$cart_item_id}'>
         </form>
         <script>

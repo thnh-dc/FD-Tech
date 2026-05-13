@@ -173,19 +173,3 @@
     font-weight: 600;
     text-decoration: none;
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-    .login-container {
-        flex-direction: column;
-        justify-content: center;
-        gap: 40px;
-    }
-    .login-branding {
-        display: none; 
-    }
-    .login-form-box {
-        width: 100%;
-        max-width: 400px;
-    }
-}

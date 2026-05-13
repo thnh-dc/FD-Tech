@@ -1,6 +1,9 @@
-<?php 
+<?php
+    session_start();
+    require_once '../auth/user_only.php';
     include '../includes/header.php'; 
     require_once '../config/database.php';
+    
 ?>
 
 <link rel="stylesheet" href="../assets/css/index.css">
