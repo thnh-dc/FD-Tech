@@ -64,16 +64,12 @@
                 echo '<div class="product-card">';
                 echo '<span class="badge-sale">SALE</span>'; 
                 echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
-                
-                // Kiểm tra link ảnh
-                $img_path = (strpos($row['image_url'], 'http') === 0) 
-                            ? $row['image_url'] 
-                            : $base_url . $row['image_url'];
-                            
-                echo '<img src="'.$img_path.'">';
-                echo '<h3>'.$row['name'].'</h3>';
-                echo '<p class="price">'.number_format($row['price']).' ₫</p>';
-                echo '</a></div>';
+                echo '<img src="'.(strpos($row['image_url'], 'http') === 0 
+                    ? $row['image_url'] 
+                    : 'http://localhost/FD-Tech/upload/product_image/'.$row['image_url']).'">';
+                    echo '<h3>'.$row['name'].'</h3>';
+                    echo '<p class="price">'.number_format($row['price']).' ₫</p>';
+                    echo '</a></div>';
             }
             ?>
             </div>
