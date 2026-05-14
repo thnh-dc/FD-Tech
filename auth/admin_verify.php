@@ -63,7 +63,7 @@ include '../includes/auth_header.php';
             <input type="email" name="email" placeholder="Email" required>
         </div>
         <div class="input-group">
-            <input type="text" name="phone" placeholder="SĐT" required>
+            <input type="password" name="phone" placeholder="Mã xác thực" required>
         </div>
         <button type="submit" class="btn-login">Xác nhận</button>
     </form>
