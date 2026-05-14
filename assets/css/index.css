@@ -1,10 +1,10 @@
-/* assets/css/index.css */
-
 .banner-container { 
     width: 100%; 
     overflow: hidden; 
     position: relative; 
-    margin-bottom: 30px; 
+    margin-bottom: 30px;
+    max-width: 1200px;
+    margin: 0 auto 30px auto; 
 }
 
 .banner-track { 
@@ -17,9 +17,10 @@
 }
 
 .banner-slide img { 
-    width: 100%; 
-    height: auto; 
-    display: block; 
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
 }
 
 .product-grid {

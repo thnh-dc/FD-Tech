@@ -1,9 +1,9 @@
 <?php
-    session_start();
-    require_once '../auth/user_only.php';
-    require_once '../config/database.php';
+session_start();
+require_once '../auth/user_only.php';
+require_once '../config/database.php';
 
-    $id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
 
 $stmt = $pdo->prepare("
     SELECT 
@@ -25,8 +25,8 @@ if (!$sp) {
     die("<h2 class='text-center'>Sản phẩm không tồn tại!</h2>");
 }
 
-    $custom_css = '<link rel="stylesheet" href="../assets/css/style_product_detail.css">';
-    include '../includes/header.php';
+$custom_css = '<link rel="stylesheet" href="../assets/css/style_product_detail.css">';
+include '../includes/header.php';
 ?>
 
 <main class="container product-detail-container">
@@ -37,12 +37,25 @@ if (!$sp) {
     <div class="product-layout">
 
         <div class="product-image-section">
-            <?php 
-                $img_src = !empty($sp['image_url']) 
-                    ? $sp['image_url'] 
-                    : 'https://via.placeholder.com/500x500?text=Chua+Co+Anh';
+            <?php
+                $img = $sp['image_url'] ?? '';
+
+                if (empty($img)) {
+                    $img_src = "../assets/images/logo-fd.jpg";
+                } elseif (filter_var($img, FILTER_VALIDATE_URL)) {
+                    $img_src = $img;
+                } elseif (strpos($img, 'upload/product_image/') === 0) {
+                    $img_src = "../" . $img;
+                } else {
+                    $img_src = "../upload/product_image/" . $img;
+                }
             ?>
-            <img src="<?= htmlspecialchars($img_src); ?>" alt="<?= htmlspecialchars($sp['name']); ?>">
+
+            <img 
+                src="<?= htmlspecialchars($img_src); ?>" 
+                alt="<?= htmlspecialchars($sp['name']); ?>"
+                onerror="this.src='../assets/images/logo-fd.jpg'"
+            >
         </div>
 
         <div class="product-info-section">
@@ -60,10 +73,11 @@ if (!$sp) {
                 <input type="hidden" name="product_id" value="<?= $id; ?>">
 
                 <div class="quantity-group">
-                    <label><B>Tồn kho: </B><?= $sp['stock_quantity'] ?? '0' ?></label>
+                    <label><b>Tồn kho: </b><?= $sp['stock_quantity'] ?? '0' ?></label>
                 </div>
+
                 <div class="quantity-group">
-                    <label><B>Số lượng mua:</B></label>
+                    <label><b>Số lượng mua:</b></label>
                     <input type="number" name="quantity" value="1" min="1" class="quantity-input">
                 </div>
 
