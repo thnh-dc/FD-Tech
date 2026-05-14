@@ -1,6 +1,7 @@
 <?php
     session_start();
-    require_once 'check_login.php';
+    require_once '../auth/user_only.php';
+    require_once '../auth/check_login.php';
     include '../config/database.php';
 
 
@@ -58,7 +59,7 @@
     <!-- checkout -->
     <div class="checkout-layout">
 
-    <form action="process_checkout.php" method="POST">
+    <form action="../user/action_checkout/process_checkout.php" method="POST">
         <input type="hidden" name="selected_items" value="<?= htmlspecialchars($selectedItems) ?>">
         <!-- THÔNG TIN -->
         <div class="checkout-section">

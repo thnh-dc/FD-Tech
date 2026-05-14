@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 if (!isset($_SESSION['user_id'])) {
     echo "<script>
             alert('Oppss, bạn chưa đăng nhập rồi!');
-            window.location.href = '../auth/login.php';
+            window.location.href = 'http://localhost/FD-Tech/auth/login.php';
           </script>";
     exit();
 }

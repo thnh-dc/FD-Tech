@@ -14,7 +14,7 @@
     
     <!-- LEFT -->
     <div class="footer-left">
-      <h2 class="logo">FD-TECH</h2>
+      <h2 class="logo">FD TECH</h2>
 
       <div class="support">
         <div class="icon">🎧</div>
@@ -24,7 +24,8 @@
         </div>
       </div>
       <div class="address">
-        <strong>FD-TECH@gmail.com</strong>
+        <strong>Email liên hệ</strong>
+        <p>fdtech@gmail.com | fivedev@gmail.com</p>
       </div>
       <div class="address">
         <strong>Địa chỉ</strong>
@@ -65,7 +66,7 @@
   <!-- BOTTOM -->
   <div class="footer-bottom">
     <div class="container bottom-flex">
-      <p>©FD-Techshop.vn - All Rights Reserved</p>
+      <p>©FD Tech - All Rights Reserved</p>
     </div>
   </div>
 </footer>
