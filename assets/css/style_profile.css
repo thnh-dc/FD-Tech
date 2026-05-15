@@ -268,25 +268,3 @@
     margin-bottom: 15px;
     color: #ddd;
 }
-
-/* Responsive Media Queries */
-@media (max-width: 768px) {
-    .profile-container {
-        flex-direction: column;
-    }
-
-    .profile-sidebar {
-        width: 100%;
-    }
-
-    .profile-body-split {
-        flex-direction: column-reverse;
-    }
-
-    .profile-avatar-area {
-        width: 100%;
-        border-left: none;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 20px;
-    }
-}
