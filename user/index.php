@@ -3,7 +3,8 @@
     require_once '../auth/user_only.php';
     require_once '../config/database.php';
     $custom_css='
-        <link rel="stylesheet" href="../assets/css/index.css">';
+        <link rel="stylesheet" href="../assets/css/index.css">
+        <link rel="stylesheet" href="../assets/css/style_ai_assistant.css">';
     include '../includes/header.php'; 
     
 ?>
@@ -74,4 +75,5 @@
             ?>
             </div>
 </div>
+<?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>
