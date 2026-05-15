@@ -1,51 +1,61 @@
 <?php
-    session_start();
-    require_once '../auth/user_only.php';
-    require_once '../config/database.php';
+session_start();
+require_once '../auth/user_only.php';
+require_once '../config/database.php';
 
-    $cat = isset($_GET['cat']) ? (int)$_GET['cat'] : 0;
-    $products = [];
-    $category_name = '';
+$cat = isset($_GET['cat']) ? (int)$_GET['cat'] : 0;
+$products = [];
+$category_name = '';
 
-    $menu_categories = [
-        1 => 'LAPTOP',
-        2 => 'LINH KIỆN',
-        3 => 'MÀN HÌNH MÁY TÍNH',
-        4 => 'TAI NGHE',
-        5 => 'LOA',
-        6 => 'BÀN PHÍM',
-        7 => 'CHUỘT',
-        8 => 'PHỤ KIỆN KHÁC'
-    ];
+$menu_categories = [
+    1 => 'LAPTOP',
+    2 => 'LINH KIỆN',
+    3 => 'MÀN HÌNH MÁY TÍNH',
+    4 => 'TAI NGHE',
+    5 => 'LOA',
+    6 => 'BÀN PHÍM',
+    7 => 'CHUỘT',
+    8 => 'PHỤ KIỆN KHÁC'
+];
 
-    try {
-        if ($cat > 0) {
-            if (isset($menu_categories[$cat])) {
-                $category_name = $menu_categories[$cat];
-            } else {
-                $stmt_cat = $pdo->prepare("SELECT name FROM categories WHERE id = :cat");
-                $stmt_cat->execute(['cat' => $cat]);
-                $cat_data = $stmt_cat->fetch(PDO::FETCH_ASSOC);
-                if ($cat_data && !empty($cat_data['name'])) {
-                    $category_name = $cat_data['name'];
-                }
-            }
-
-            $stmt = $pdo->prepare("SELECT id, name, price, image_url, description FROM products WHERE category_id = :cat ORDER BY id DESC");
-            $stmt->execute(['cat' => $cat]);
+try {
+    if ($cat > 0) {
+        if (isset($menu_categories[$cat])) {
+            $category_name = $menu_categories[$cat];
         } else {
-            $stmt = $pdo->prepare("SELECT id, name, price, image_url, description FROM products ORDER BY id DESC");
-            $stmt->execute();
+            $stmt_cat = $pdo->prepare("SELECT name FROM categories WHERE id = :cat");
+            $stmt_cat->execute(['cat' => $cat]);
+            $cat_data = $stmt_cat->fetch(PDO::FETCH_ASSOC);
+
+            if ($cat_data && !empty($cat_data['name'])) {
+                $category_name = $cat_data['name'];
+            }
         }
 
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        die("<h3 style='color:red; text-align:center;'>Lỗi truy vấn SQL: " . $e->getMessage() . "</h3>");
+        $stmt = $pdo->prepare("
+            SELECT id, name, price, image_url, description 
+            FROM products 
+            WHERE category_id = :cat 
+            ORDER BY id DESC
+        ");
+        $stmt->execute(['cat' => $cat]);
+    } else {
+        $stmt = $pdo->prepare("
+            SELECT id, name, price, image_url, description 
+            FROM products 
+            ORDER BY id DESC
+        ");
+        $stmt->execute();
     }
 
-    $custom_css = '<link rel="stylesheet" href="../assets/css/style_product_list.css">';
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("<h3 style='color:red; text-align:center;'>Lỗi truy vấn SQL: " . $e->getMessage() . "</h3>");
+}
 
-    include '../includes/header.php'; 
+$custom_css = '<link rel="stylesheet" href="../assets/css/style_product_list.css">';
+
+include '../includes/header.php';
 ?>
 
 <main class="container">
@@ -60,14 +70,28 @@
     <div class="product-grid">
         <?php if (!empty($products)): ?>
             <?php foreach ($products as $row): ?>
+                <?php
+                    $img = $row['image_url'] ?? '';
+
+                    if (empty($img)) {
+                        $src = "../assets/images/logo-fd.jpg";
+                    } elseif (filter_var($img, FILTER_VALIDATE_URL)) {
+                        $src = $img;
+                    } elseif (strpos($img, 'upload/product_image/') === 0) {
+                        $src = "../" . $img;
+                    } else {
+                        $src = "../upload/product_image/" . $img;
+                    }
+                ?>
+
                 <div class="product-card">
                     <a href="product_detail.php?id=<?= $row['id'] ?>">
 
-                        <?php if(isset($row['is_promotion']) && $row['is_promotion'] == 1): ?>
-                            <span class="product-badge">SALE</span>
-                        <?php endif; ?>
-
-                        <img src="<?= htmlspecialchars($row['image_url']) ?>">
+                        <img
+                            src="<?= htmlspecialchars($src) ?>"
+                            alt="<?= htmlspecialchars($row['name']) ?>"
+                            onerror="this.src='../assets/images/logo-fd.jpg'"
+                        >
 
                         <h3><?= htmlspecialchars($row['name']) ?></h3>
 

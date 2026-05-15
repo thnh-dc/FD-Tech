@@ -1,21 +1,28 @@
-/* ===== BASE ===== */
 body {
     margin: 0;
-    background: var(--bg-light);
+    background-color: #f5f5f5;
 }
 
-/* ===== HEADER ===== */
 .auth-header {
-    background: #fff;
+    background-color: #ffffff;
     height: 84px;
     display: flex;
     align-items: center;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .auth-header-container {
+    width: 1200px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 15px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+.auth-header-left {
+    display: flex;
     align-items: center;
 }
 
@@ -31,134 +38,133 @@ body {
 }
 
 .auth-brand {
-    font-size: var(--text-xl);
-    font-weight: 700;
-    color: var(--text-dark);
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
 }
 
 .auth-brand span {
-    color: var(--secondary);
+    color: #00a8ff;
 }
 
-/* ===== WRAPPER ===== */
+.auth-header-right a {
+    color: #00a8ff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.auth-header-right a:hover {
+    text-decoration: underline;
+}
+
 .login-wrapper {
-    background: var(--primary);
+    background-color: var(--primary);
     min-height: 600px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-xl) var(--space-md);
+    padding: 40px 20px;
 }
 
-/* ===== CONTAINER ===== */
 .login-container {
     display: flex;
     width: 100%;
     max-width: 1040px;
+    margin: 0 auto;
     align-items: center;
     justify-content: space-between;
 }
 
-/* ===== BRANDING ===== */
 .login-branding {
     width: 400px;
     text-align: center;
-    color: #fff;
+    color: white;
 }
 
 .login-branding img {
     width: 250px;
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--space-lg);
-    box-shadow: var(--shadow-hover);
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .login-branding h1 {
-    font-size: var(--text-xl);
+    font-size: 28px;
     font-weight: 700;
+    margin-bottom: 10px;
 }
 
 .login-branding p {
-    font-size: var(--text-base);
+    font-size: 16px;
     opacity: 0.9;
 }
 
-/* ===== FORM ===== */
 .login-form-box {
     width: 400px;
-    background: #fff;
-    border-radius: var(--radius-md);
-    padding: var(--space-xl);
-    box-shadow: var(--shadow-card);
+    background: white;
+    border-radius: 8px;
+    padding: 35px 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .form-header {
-    margin-bottom: var(--space-lg);
+    margin-bottom: 25px;
 }
 
 .form-title {
-    font-size: var(--text-lg);
+    font-size: 20px;
     font-weight: 600;
     color: var(--text-dark);
+    margin: 0;
 }
 
-/* ===== INPUT ===== */
 .input-group {
-    margin-bottom: var(--space-md);
+    margin-bottom: 15px;
+    position: relative;
 }
 
 .input-group input {
     width: 100%;
-    padding: var(--space-md);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
+    padding: 14px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
     outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
 }
 
-.input-group input:focus {
-    border-color: var(--secondary);
-}
-
-/* ===== BUTTON ===== */
 .btn-login {
     width: 100%;
-    padding: var(--space-md);
+    padding: 14px;
     background: var(--secondary);
-    color: #fff;
+    color: white;
     border: none;
-    border-radius: var(--radius-sm);
-    font-weight: 700;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
     cursor: pointer;
     text-transform: uppercase;
+    margin-bottom: 15px;
+    margin-top: 10px;
 }
 
-.btn-login:hover {
-    opacity: 0.9;
-}
-
-/* ===== LINKS ===== */
 .forgot-pw {
-    display: inline-block;
-    margin: var(--space-sm) 0;
-    font-size: var(--text-sm);
+    text-align: left;
+    font-size: 13px;
     color: var(--secondary);
     text-decoration: none;
+    display: inline-block;
+    margin-bottom: 20px;
 }
 
 .register-link {
     text-align: center;
-    font-size: var(--text-sm);
-    color: var(--text-muted);
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.54);
 }
 
 .register-link a {
     color: var(--secondary);
     font-weight: 600;
     text-decoration: none;
-}
-.login-branding img {
-    width: 250px;
-    border-radius: 20px; /* GIỮ NGUYÊN */
-    margin-bottom: var(--space-lg);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* GIỮ NGUYÊN */
 }
