@@ -1,4 +1,3 @@
-/* --- style_profile.css --- */
 .profile-wrapper {
     background-color: #f5f5fa;
     padding: 40px 20px;
@@ -13,7 +12,6 @@
     align-items: flex-start;
 }
 
-/* --- MENU TRÁI --- */
 .profile-sidebar {
     width: 250px;
     background: white;
@@ -36,14 +34,14 @@
     height: 50px;
     border-radius: 50%;
     margin-right: 15px;
-    border: 2px solid var(--secondary, #1a9bb8);
+    border: 2px solid #1a9bb8;
     object-fit: cover;
 }
 
 .user-brief h3 {
     font-size: 16px;
     margin: 0 0 5px;
-    color: var(--text-dark, #333);
+    color: #333;
     font-weight: 600;
 }
 
@@ -67,7 +65,7 @@
 .profile-menu li a:hover,
 .profile-menu li a.active {
     background-color: #f0f8ff;
-    color: var(--secondary, #1a9bb8);
+    color: #1a9bb8;
     font-weight: 600;
 }
 
@@ -79,10 +77,9 @@
 
 .profile-menu li a.active i,
 .profile-menu li a:hover i {
-    color: var(--secondary, #1a9bb8);
+    color: #1a9bb8;
 }
 
-/* --- NỘI DUNG PHẢI --- */
 .profile-content {
     flex: 1;
     background: white;
@@ -109,29 +106,14 @@
     margin-top: 5px;
 }
 
-/* Tab Content - Quan trọng nhất để ẩn hiện nội dung */
 .tab-content {
     display: none;
-    animation: fadeIn 0.3s ease-in-out;
 }
 
 .tab-content.active {
     display: block;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Bố cục chia form và avatar */
 .profile-body-split {
     display: flex;
     gap: 30px;
@@ -171,7 +153,7 @@
 
 .btn-save {
     padding: 12px 30px;
-    background: var(--secondary, #1a9bb8);
+    background: #1a9bb8;
     color: white;
     border: none;
     border-radius: 4px;
@@ -186,7 +168,6 @@
     background: #147a91;
 }
 
-/* Khu vực đổi Avatar */
 .profile-avatar-area {
     width: 250px;
     border-left: 1px solid #eee;
@@ -232,29 +213,8 @@
     text-align: center;
 }
 
-/* CSS cho Đổi mật khẩu */
 .pw-form {
     max-width: 500px;
-}
-
-/* CSS cho Đơn mua (Shopee Style) */
-.order-tabs {
-    display: flex;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 20px;
-}
-
-.order-tabs span {
-    flex: 1;
-    text-align: center;
-    padding: 15px 0;
-    font-size: 14px;
-    cursor: pointer;
-    color: #555;
-}
-
-.order-tabs span:hover {
-    color: var(--secondary, #1a9bb8);
 }
 
 .empty-state {
@@ -267,4 +227,41 @@
     font-size: 60px;
     margin-bottom: 15px;
     color: #ddd;
+}
+
+.order-filter-tabs {
+    display: flex;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.order-filter-tabs a {
+    flex: 1;
+    text-align: center;
+    padding: 12px 10px;
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+    border-right: 1px solid #eee;
+    transition: 0.2s;
+}
+
+.order-filter-tabs a:last-child {
+    border-right: none;
+}
+
+.order-filter-tabs a:hover {
+    background: #f9f9f9;
+    color: #1a9bb8;
+}
+
+.order-filter-tabs a.active {
+    color: #1a9bb8;
+    border-bottom: 2px solid #1a9bb8;
+    font-weight: bold;
+    background: #f0f8ff;
 }
