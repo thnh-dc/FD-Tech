@@ -1,6 +1,7 @@
 <?php 
     session_start();
-    require_once 'check_login.php';
+    require_once '../auth/user_only.php';
+    require_once '../auth/check_login.php';
     require_once '../config/database.php';
 
     $custom_css='
@@ -53,6 +54,8 @@
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th>
+                            <input type="checkbox" id="check-all"></th>
                         <th>Sản phẩm</th>
                         <th>Đơn giá</th>
                         <th>Số lượng</th>
@@ -63,7 +66,10 @@
 
                 <tbody>
                 <?php foreach($cartItems as $item): ?>
-                    <tr class="cart-item"> 
+                    <tr class="cart-item">
+                        <td>
+                            <input type="checkbox" class="item-check" value="<?= $item['id'] ?>">
+                        </td> 
                         <td class="product-info">
                             <div class="product-box">
                                 <img src="<?= $item['image_url'] ?>" class="product-img">
@@ -92,13 +98,14 @@
                     <b>Tổng thanh toán: </b>
                     <span class="price-highlight"><?= number_format($total) ?>vn₫</span>
                 </p>
-                    
-                <a href="checkout.php">
-                    <br/>
-                    <button class="btn btn-primary btn-large">
+                </br>
+                <form id="checkout-form" method="POST" action="checkout.php">
+                    <input type="hidden" name="selected_items" id="selected-items">
+
+                    <button type="submit" class="btn btn-primary btn-large">
                         Tiến Hành Đặt Hàng
                     </button>
-                </a>
+                </form>
             </div>
 
         <?php else: ?> <!-- Ngược lại ko có sản phẩm thì hiện giỏ hàng trống -->

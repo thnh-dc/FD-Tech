@@ -1,21 +1,30 @@
 <?php
     session_start();
-    require_once 'check_login.php';
+    require_once '../auth/user_only.php';
+    require_once '../auth/check_login.php';
     include '../config/database.php';
 
 
     $custom_css='<link rel="stylesheet" href="/FD-Tech/assets/css/style_checkout.css">';
     include '../includes/header.php';
 
+    $selectedItems = $_POST['selected_items'] ?? '';
+    // chuyển thành mảng
+    $selectedArray = explode(',', $selectedItems);
+    // tạo placeholder ?,?,?
+    $placeholders = implode(',', array_fill(0, count($selectedArray), '?'));
+
     $stmt = $pdo->prepare("
-        SELECT c.quantity, p.name, p.price, p.image_url
-        FROM cart_items c
-        JOIN products p ON c.product_id = p.id
-        WHERE c.user_id = ?
+    SELECT c.id, c.quantity, p.name, p.price, p.image_url
+    FROM cart_items c
+    JOIN products p ON c.product_id = p.id
+    WHERE c.user_id = ?
+    AND c.id IN ($placeholders)
     ");
 
     $id = $_SESSION['user_id'] ?? 0;
-    $stmt->execute([$id]);
+    $par = array_merge([$id], $selectedArray);
+    $stmt->execute($par);
     // lấy thông tin user
     $stmtUser = $pdo->prepare("SELECT full_name, phone, address FROM users WHERE id = ?");
     $stmtUser->execute([$id]);
@@ -50,8 +59,8 @@
     <!-- checkout -->
     <div class="checkout-layout">
 
-    <form action="process_checkout.php" method="POST">
-
+    <form action="../user/action_checkout/process_checkout.php" method="POST">
+        <input type="hidden" name="selected_items" value="<?= htmlspecialchars($selectedItems) ?>">
         <!-- THÔNG TIN -->
         <div class="checkout-section">
             <h3>📍 Thông tin nhận hàng</h3>
