@@ -22,7 +22,5 @@ $stmt2->execute([$item['product_id']]);
 $price = $stmt2->fetchColumn();
 
 echo json_encode([
-    'success' => true,
-    'quantity' => $newQty,
-    'subtotal' => number_format($price * $newQty)
+    'success' => true
 ]);

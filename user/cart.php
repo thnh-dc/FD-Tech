@@ -66,14 +66,34 @@
 
                 <tbody>
                 <?php foreach($cartItems as $item): ?>
+                    <?php
+                        $img = $item['image_url'] ?? '';
+
+                        if (empty($img)) {
+                            $img_src = "../assets/images/logo-fd.jpg";
+                        } elseif (filter_var($img, FILTER_VALIDATE_URL)) {
+                            $img_src = $img;
+                        } elseif (strpos($img, 'upload/product_image/') === 0) {
+                            $img_src = "../" . $img;
+                        } else {
+                            $img_src = "../upload/product_image/" . $img;
+                        }
+                    ?>
+
                     <tr class="cart-item">
                         <td>
                             <input type="checkbox" class="item-check" value="<?= $item['id'] ?>">
                         </td> 
+
                         <td class="product-info">
                             <div class="product-box">
-                                <img src="<?= $item['image_url'] ?>" class="product-img">
-                                <span class="product-name"><?= $item['name'] ?></span>
+                                <img 
+                                    src="<?= htmlspecialchars($img_src) ?>" 
+                                    class="product-img"
+                                    alt="<?= htmlspecialchars($item['name']) ?>"
+                                    onerror="this.src='../assets/images/logo-fd.jpg'"
+                                >
+                                <span class="product-name"><?= htmlspecialchars($item['name']) ?></span>
                             </div>
                         </td>
                         <td class="item-price"><?= number_format($item['price']) ?> vn₫</td>
