@@ -9,9 +9,9 @@
         <?php if (isset($_SESSION['user_id'])): ?>
             Xin chào <?= htmlspecialchars($_SESSION['username'] ??'bạn') ?>! Mình là FD Bot, hỏi mình nếu bạn cần hỗ trợ nhé.
         <?php else: ?>
-            Xin chào! Mình chưa thể hỗ trợ vì bạn chưa đăng nhập.
+            Xin chào bạn! Có vẻ bạn chưa đăng nhập
             <div class="ai-auth-links">
-                Hãy <a href="../auth/login.php">đăng nhập</a> nhé !
+                <a href="../auth/login.php">Đăng nhập</a> để được hỗ trợ tốt hơn nhé!
             </div>
         <?php endif; ?>
     </div>

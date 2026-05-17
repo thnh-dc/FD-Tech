@@ -4,7 +4,7 @@
   <div class="footer-top">
     <div class="container top-flex">
       <div class="top-text">
-         Thế Giới Thiết Bị, Phụ Kiện Công Nghệ
+         Thế giới công nghệ - Khởi đầu đam mê
       </div>
     </div>
   </div>

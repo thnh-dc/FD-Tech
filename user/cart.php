@@ -1,7 +1,7 @@
 <?php 
     session_start();
-    require_once '../auth/user_only.php';
     require_once '../auth/check_login.php';
+    require_once '../auth/user_only.php';
     require_once '../config/database.php';
 
     $custom_css='
