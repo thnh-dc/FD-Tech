@@ -53,11 +53,12 @@
       </div>
 
       <div class="col">
-        <h4>Danh mục</h4>
-        <a href="#">Phụ kiện</a>
-        <a href="#">Linh kiện PC</a>
-        <a href="#">Chuột</a>
-        <a href="#">Bàn phím</a>
+        <h4>Thành viên phát triển</h4>
+        <a href="#">Nguyễn Thành Được</a>
+        <a href="#">Nguyễn Huỳnh Quốc Tịnh</a>
+        <a href="#">Lê Vũ Hoài Niệm</a>
+        <a href="#">Lê Quốc Thắng</a>
+        <a href="#">Nguyễn Văn Khôi</a>
       </div>
 
     </div>
