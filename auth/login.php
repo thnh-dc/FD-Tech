@@ -85,7 +85,11 @@ include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đâ
 </div> <?php include '../includes/footer.php'; ?>
 
 <?php if (!empty($alert_msg)): ?>
-    <script>alert('<?php echo $alert_msg; ?>');</script>
+    <script>
+        setTimeout(function() {
+            alert('<?php echo $alert_msg; ?>');
+        }, 20);
+    </script>
 <?php endif; ?>
 
 </body>
