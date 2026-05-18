@@ -1,6 +1,6 @@
 <?php
     session_start();
-    require_once '../config/database.php';
+    require_once '../../config/database.php';
 
     $user_id = $_SESSION['user_id'] ?? 0;
 
@@ -74,7 +74,7 @@
         $stmt->execute($params);
         $pdo->commit();
 
-        header("Location: checkout.php?status=success");
+        header("Location: ../checkout.php?status=success");
         exit;
 
     } catch (Exception $e) {

@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         } else {
             $_SESSION['flash_msg'] = 'Thông tin xác minh sai!';
-            $_SESSION['flash_type'] = 'error';
         }
     }
     if (isset($_POST['verify_step_2'])) {
@@ -36,100 +35,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         } else {
             $_SESSION['flash_msg'] = 'Mã PIN không đúng!';
-            $_SESSION['flash_type'] = 'error';
         }
     }
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
+<?php
+$page_title = 'Xác minh Admin - FD Tech';
+$is_admin = true; // Bật cờ này lên để file auth_header.php đổi chữ thành ADMIN
+include '../includes/auth_header.php';
+?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xác minh Admin - FD Tech</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<div class="form-header">
+    <h2 class="form-title"><?php echo ($step == 1) ? 'Xác thực thông tin' : 'Mã PIN bảo mật'; ?></h2>
+</div>
 
-    <link rel="stylesheet" href="../assets/css/style_login.css">
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-
-<body>
-
-    <header class="auth-header">
-        <div class="auth-header-container">
-            <div class="auth-header-left">
-                <a href="/FD-Tech/user/index.php" class="auth-logo">
-                    <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                    <span class="auth-brand">FD<span>TECH</span></span>
-                </a>
-            </div>
+<?php if ($step == 1): ?>
+    <form action="" method="POST">
+        <input type="hidden" name="verify_step_1" value="1">
+        <div class="input-group">
+            <input type="text" name="username" placeholder="Tên đăng nhập" required>
         </div>
-    </header>
-
-    <div class="login-wrapper">
-        <div class="login-container">
-            <div class="login-branding">
-                <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                <h1>FD TECH ADMIN</h1>
-                <p>Khu vực xác thực bảo mật 2 lớp<br>dành riêng cho Quản trị viên</p>
-            </div>
-
-            <div class="login-form-box">
-                <div class="form-header">
-                    <h2 class="form-title"><?php echo ($step == 1) ? 'Xác thực thông tin' : 'Mã PIN bảo mật'; ?></h2>
-                </div>
-
-                <?php if ($step == 1): ?>
-                    <form action="" method="POST">
-                        <input type="hidden" name="verify_step_1" value="1">
-                        <div class="input-group"><input type="text" name="username" placeholder="Tên đăng nhập"
-                                required></div>
-                        <div class="input-group"><input type="password" name="password" placeholder="Mật khẩu" required>
-                        </div>
-                        <div class="input-group"><input type="email" name="email" placeholder="Email" required></div>
-                        <div class="input-group"><input type="text" name="phone" placeholder="SĐT" required>
-                        </div>
-                        <button type="submit" class="btn-login">Xác nhận</button>
-                    </form>
-                <?php else: ?>
-                    <form action="" method="POST">
-                        <input type="hidden" name="verify_step_2" value="1">
-                        <div class="input-group">
-                            <input type="text" name="code" placeholder="Mã PIN (6 số)" maxlength="6"
-                                style="text-align:center; letter-spacing: 5px; font-weight: bold; font-size: 18px;"
-                                required>
-                        </div>
-                        <button type="submit" class="btn-login"
-                            style="background-color: #26aa99; border-color: #26aa99;">Vào trang quản trị</button>
-                    </form>
-                <?php endif; ?>
-
-                <div class="register-link" style="margin-top: 25px;">
-                    <a href="login.php" style="color: #555;"><i class="fas fa-times"></i> Hủy xác minh</a>
-                </div>
-            </div>
+        <div class="input-group">
+            <input type="password" name="password" placeholder="Mật khẩu" required>
         </div>
-    </div>
+        <div class="input-group">
+            <input type="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+            <input type="password" name="phone" placeholder="Mã xác thực" required>
+        </div>
+        <button type="submit" class="btn-login">Xác nhận</button>
+    </form>
+<?php else: ?>
+    <form action="" method="POST">
+        <input type="hidden" name="verify_step_2" value="1">
+        <div class="input-group">
+            <input type="text" name="code" placeholder="Nhập mã PIN" maxlength="6" required>
+        </div>
+        <button type="submit" class="btn-login" style="background-color: #1a9bb8;">Vào trang quản trị</button>
+    </form>
+<?php endif; ?>
 
-    <?php include '../includes/footer.php'; ?>
+<div class="register-link" style="margin-top: 25px;">
+    <a href="login.php" style="color: #555;">Hủy xác minh</a>
+</div>
 
-    <?php if (isset($_SESSION['flash_msg'])): ?>
-        <script>
-            Swal.fire({
-                icon: '<?php echo $_SESSION['flash_type']; ?>',
-                text: '<?php echo $_SESSION['flash_msg']; ?>',
-                timer: 1500, showConfirmButton: false, toast: true, position: 'top-end'
-            });
-        </script>
-        <?php unset($_SESSION['flash_msg']);
-        unset($_SESSION['flash_type']); ?>
-    <?php endif; ?>
+</div>
+</div>
+</div> <?php include '../includes/footer.php'; ?>
+
+<?php if (isset($_SESSION['flash_msg'])): ?>
+    <script>
+        alert('<?php echo $_SESSION['flash_msg']; ?>');
+    </script>
+    <?php unset($_SESSION['flash_msg']); ?>
+<?php endif; ?>
 
 </body>
 
