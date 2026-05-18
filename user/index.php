@@ -3,15 +3,16 @@
     require_once '../auth/user_only.php';
     require_once '../config/database.php';
     $custom_css='
-        <link rel="stylesheet" href="../assets/css/index.css">';
+        <link rel="stylesheet" href="../assets/css/index.css">
+        <link rel="stylesheet" href="../assets/css/style_ai_assistant.css">';
     include '../includes/header.php'; 
     
 ?>
 
 <div class="banner-container">
     <div class="banner-track" id="bannerTrack">
-        <div class="banner-slide"><img src="../assets/images/banner.jpg"></div>
         <div class="banner-slide"><img src="../assets/images/banner1.jpg"></div>
+        <div class="banner-slide"><img src="../assets/images/banner.jpg"></div>
     </div>
 </div>
 <div class="container"> 
@@ -74,4 +75,5 @@
             ?>
             </div>
 </div>
+<?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>

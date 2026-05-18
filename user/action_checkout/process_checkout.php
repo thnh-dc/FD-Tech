@@ -5,10 +5,7 @@
     $user_id = $_SESSION['user_id'] ?? 0;
 
     // lấy dữ liệu form
-    $fullname = $_POST['fullname'];
-    $phone = $_POST['phone'];
     $address = $_POST['address'];
-    $payment_method = $_POST['payment_method'];
 
     $selectedItems = $_POST['selected_items'] ?? '';
 
