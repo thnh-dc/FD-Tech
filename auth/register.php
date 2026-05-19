@@ -23,12 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         try {
-            // 2. Kiểm tra xem Username hoặc Email đã bị ai đăng ký chưa
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-            $stmt->execute([$username, $email]);
+            // 2. Kiểm tra xem Username đã bị ai đăng ký chưa
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+            $stmt->execute([$username]);
 
             if ($stmt->rowCount() > 0) {
-                $alert_msg = 'Tên đăng nhập hoặc Email này đã có người sử dụng!';
+                $alert_msg = 'Tên đăng nhập đã tồn tại!';
             } else {
                 // 3. Lưu vào Database
                 $stmt = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <?php
 $page_title = 'Đăng Ký - FD Tech';
-include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đây
+include '../includes/auth_header.php';
 ?>
 
 <div class="form-header">
@@ -89,7 +89,9 @@ include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đâ
 
 <?php if (!empty($alert_msg)): ?>
     <script>
-        alert('<?php echo $alert_msg; ?>');
+        setTimeout(function() {
+            alert('<?php echo $alert_msg; ?>');
+        }, 20);
     </script>
 <?php endif; ?>
 
