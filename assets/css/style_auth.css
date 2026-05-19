@@ -5,25 +5,15 @@ body {
 
 .auth-header {
     background-color: #ffffff;
-    height: 84px;
+    height: 72px;
     display: flex;
     align-items: center;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .auth-header-container {
     width: 1200px;
     max-width: 100%;
     margin: 0 auto;
-    padding: 0 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.auth-header-left {
-    display: flex;
-    align-items: center;
 }
 
 .auth-logo {
@@ -33,36 +23,25 @@ body {
 }
 
 .auth-logo img {
-    height: 45px;
-    margin-right: 10px;
+    height: 60px;
 }
 
 .auth-brand {
-    font-size: 28px;
+    font-size: 25px;
     font-weight: bold;
     color: #333;
+    transform: translateY(5px);
 }
 
 .auth-brand span {
     color: #00a8ff;
 }
 
-.auth-header-right a {
-    color: #00a8ff;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.auth-header-right a:hover {
-    text-decoration: underline;
-}
-
 .login-wrapper {
     background-color: var(--primary);
-    min-height: 600px;
+    min-height: 550px;
     display: flex;
     align-items: center;
-    justify-content: center;
     padding: 40px 20px;
 }
 
@@ -83,9 +62,8 @@ body {
 
 .login-branding img {
     width: 250px;
-    border-radius: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 200px;
+    margin-bottom: 1px;
 }
 
 .login-branding h1 {
@@ -104,7 +82,6 @@ body {
     background: white;
     border-radius: 8px;
     padding: 35px 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .form-header {
@@ -126,9 +103,8 @@ body {
 .input-group input {
     width: 100%;
     padding: 14px 15px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #d2cfcf;
     border-radius: 4px;
-    outline: none;
     font-size: 14px;
     box-sizing: border-box;
 }
@@ -142,7 +118,6 @@ body {
     border-radius: 4px;
     font-weight: bold;
     font-size: 14px;
-    cursor: pointer;
     text-transform: uppercase;
     margin-bottom: 15px;
     margin-top: 10px;
@@ -160,7 +135,6 @@ body {
 .register-link {
     text-align: center;
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.54);
 }
 
 .register-link a {
