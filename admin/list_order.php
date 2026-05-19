@@ -95,12 +95,12 @@ try {
                                                 <?php 
                                                     // Xử lý Badge dựa trên status từ database
                                                     $status = $row['status'];
-                                                    $badge_class = 'badge-info';
+                                                 $badge_class = 'badge-info';
                                                     $status_vi = $status;
 
                                                     if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ xử lý'; }
                                                     elseif ($status == 'processing') { $badge_class = 'badge-warning'; $status_vi = 'Đang xử lí'; }
-                                                    elseif ($status == 'shipped') { $badge_class = 'badge-warning'; $status_vi = 'Đang vận chuyển'; }
+                                                    elseif ($status == 'shipped') { $badge_class = 'badge-depending'; $status_vi = 'Đang vận chuyển'; }
                                                     elseif ($status == 'completed') { $badge_class = 'badge-success'; $status_vi = 'Hoàn thành'; }
                                                     elseif ($status == 'cancelled') { $badge_class = 'badge-danger'; $status_vi = 'Đã hủy'; }
                                                 ?>
