@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 $user_id = $_SESSION['user_id'];
-require_once '../auth/user_only.php';
+
 // 2. LẤY THÔNG TIN USER TỪ DATABASE
 try {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
@@ -79,7 +79,6 @@ if (file_exists($file_path)) {
 
         <div class="profile-content">
             <?php
-            // Nếu phương thức là GET (chỉ hiển thị form), ta include lại để in HTML ra đây
             if (file_exists($file_path)) {
                 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                     include $file_path;
@@ -94,13 +93,11 @@ if (file_exists($file_path)) {
 </div>
 
 <script>
-    // Bắt và hiển thị thông báo toàn cục (thường được gán bên trong các file action)
     <?php if (isset($_SESSION['flash_msg'])): ?>
         alert('<?php echo $_SESSION['flash_msg']; ?>');
         <?php unset($_SESSION['flash_msg']); ?>
     <?php endif; ?>
 
-    // Hàm Preview Ảnh ngay khi chọn (cho upload Avatar)
     function previewImage(event) {
         var reader = new FileReader();
         reader.onload = function () {

@@ -1,5 +1,5 @@
 <?php
-// --- XỬ LÝ LƯU DỮ LIỆU HỒ SƠ ---
+// XỬ LÝ LƯU DỮ LIỆU HỒ SƠ 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action']) && $_POST['form_action'] == 'update_profile') {
     $full_name = trim($_POST['fullname']);
     $email = trim($_POST['email']);
@@ -83,3 +83,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action']) && $_PO
         <button type="button" class="btn-upload" onclick="document.getElementById('file-upload').click()">Chọn Ảnh</button>
     </div>
 </form>
+
+<?php 
+
+if (isset($_SESSION['flash_msg'])): 
+?>
+    <script>
+        setTimeout(function() {
+            alert('<?php echo $_SESSION['flash_msg']; ?>');
+        }, 20);
+    </script>
+<?php 
+    unset($_SESSION['flash_msg']); 
+endif; 
+?>
