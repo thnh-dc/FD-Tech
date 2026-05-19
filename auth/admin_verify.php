@@ -71,7 +71,7 @@ include '../includes/auth_header.php';
     <form action="" method="POST">
         <input type="hidden" name="verify_step_2" value="1">
         <div class="input-group">
-            <input type="text" name="code" placeholder="Nhập mã PIN" maxlength="6" required>
+            <input type="password" name="code" placeholder="Nhập mã PIN" maxlength="6" required>
         </div>
         <button type="submit" class="btn-login" style="background-color: #1a9bb8;">Vào trang quản trị</button>
     </form>

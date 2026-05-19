@@ -100,7 +100,9 @@ include '../includes/auth_header.php';
 
 <?php if (!empty($alert_msg)): ?>
     <script>
-        alert('<?php echo $alert_msg; ?>');
+        setTimeout(function() {
+            alert('<?php echo $alert_msg; ?>');
+        }, 20);
     </script>
 <?php endif; ?>
 

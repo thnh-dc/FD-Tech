@@ -35,3 +35,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action']) && $_PO
     <div class="form-group"><label>Xác nhận mật khẩu</label><input type="password" name="confirm_password" required></div>
     <button type="submit" class="btn-save">Xác Nhận Đổi</button>
 </form>
+
+<?php 
+
+if (isset($_SESSION['flash_msg'])): 
+?>
+    <script>
+        setTimeout(function() {
+            alert('<?php echo $_SESSION['flash_msg']; ?>');
+        }, 20);
+    </script>
+<?php 
+    unset($_SESSION['flash_msg']); 
+endif; 
+?>
