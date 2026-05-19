@@ -9,7 +9,6 @@ session_unset();
 session_destroy();
 
 // Chuyển hướng người dùng về trang chủ
-// Lưu ý: Nếu trang chủ của bạn tên khác hoặc nằm ở thư mục khác, bạn nhớ đổi "../index.php" cho đúng nhé
 header("Location: ../user/index.php");
 exit();
 ?>

@@ -45,15 +45,6 @@ body {
 
 .auth-brand span {
     color: #00a8ff;
-
-}
-
-.auth-title {
-    font-size: 24px;
-    color: #222;
-    margin-left: 15px;
-    padding-left: 15px;
-    border-left: 1px solid #e0e0e0;
 }
 
 .auth-header-right a {
@@ -68,7 +59,6 @@ body {
 
 .login-wrapper {
     background-color: var(--primary);
-    /* Sử dụng màu xanh đen chủ đạo */
     min-height: 600px;
     display: flex;
     align-items: center;
@@ -81,24 +71,19 @@ body {
     width: 100%;
     max-width: 1040px;
     margin: 0 auto;
-    /* Căn giữa toàn bộ cụm đăng nhập */
     align-items: center;
     justify-content: space-between;
-    /* Đẩy Logo kịch trái, Form kịch phải */
 }
 
 .login-branding {
     width: 400px;
-    /* Chốt cứng kích thước để khối này nép hẳn sang trái */
     text-align: center;
     color: white;
 }
 
 .login-branding img {
     width: 250px;
-    /* Chỉnh kích thước logo vừa phải */
     border-radius: 20px;
-    /* Bo góc logo cho mượt vì ảnh logo của bạn có nền */
     margin-bottom: 25px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -123,10 +108,7 @@ body {
 }
 
 .form-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .form-title {
@@ -136,14 +118,8 @@ body {
     margin: 0;
 }
 
-.qr-login {
-    color: var(--secondary);
-    font-size: 24px;
-    cursor: pointer;
-}
-
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     position: relative;
 }
 
@@ -154,18 +130,13 @@ body {
     border-radius: 4px;
     outline: none;
     font-size: 14px;
-    transition: border-color 0.3s;
-}
-
-.input-group input:focus {
-    border-color: var(--secondary);
+    box-sizing: border-box;
 }
 
 .btn-login {
     width: 100%;
     padding: 14px;
     background: var(--secondary);
-    /* Màu xanh dương sáng */
     color: white;
     border: none;
     border-radius: 4px;
@@ -174,11 +145,7 @@ body {
     cursor: pointer;
     text-transform: uppercase;
     margin-bottom: 15px;
-    transition: background-color 0.3s;
-}
-
-.btn-login:hover {
-    background: #1a9bb8;
+    margin-top: 10px;
 }
 
 .forgot-pw {
@@ -188,61 +155,6 @@ body {
     text-decoration: none;
     display: inline-block;
     margin-bottom: 20px;
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #ccc;
-    font-size: 12px;
-    margin-bottom: 20px;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #eee;
-}
-
-.divider::before {
-    margin-right: 15px;
-}
-
-.divider::after {
-    margin-left: 15px;
-}
-
-.social-login {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
-}
-
-.btn-social {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    background: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: #555;
-    font-size: 14px;
-    transition: 0.3s;
-}
-
-.btn-social:hover {
-    background: #f9f9f9;
-}
-
-.btn-social.facebook i {
-    color: #1877F2;
-    font-size: 18px;
 }
 
 .register-link {
@@ -255,23 +167,4 @@ body {
     color: var(--secondary);
     font-weight: 600;
     text-decoration: none;
-}
-
-/* Reponsive cho điện thoại */
-@media (max-width: 768px) {
-    .login-container {
-        flex-direction: column;
-        justify-content: center;
-        gap: 40px;
-    }
-
-    .login-branding {
-        display: none;
-        /* Ẩn logo to trên điện thoại để tiết kiệm diện tích */
-    }
-
-    .login-form-box {
-        width: 100%;
-        max-width: 400px;
-    }
 }

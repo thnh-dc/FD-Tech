@@ -1,84 +1,99 @@
-<?php  
+<?php
+session_start();
+require_once '../auth/user_only.php';
+require_once '../config/database.php';
+
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
 
-$host = 'localhost';
-$dbname = 'fd-tech';
-$username = 'root';
-$password = '';
+$stmt = $pdo->prepare("
+    SELECT 
+        id,
+        name,
+        price,
+        stock_quantity,
+        image_url,
+        description
+    FROM products 
+    WHERE id = :id
+    LIMIT 1
+");
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Lỗi kết nối: " . $e->getMessage());
+$stmt->execute(['id' => $id]);
+$sp = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$sp) {
+    die("<h2 class='text-center'>Sản phẩm không tồn tại!</h2>");
 }
 
-try {
-    $stmt = $pdo->prepare("SELECT * FROM products WHERE id = :id");
-    $stmt->execute(['id' => $id]);
-    $sp = $stmt->fetch();
-
-    if (!$sp) {
-        die("<h2 style='text-align:center; margin-top:50px;'>Sản phẩm không tồn tại!</h2>");
-    }
-} catch (PDOException $e) {
-    die("Lỗi truy vấn: " . $e->getMessage());
-}
-
+$custom_css = '<link rel="stylesheet" href="../assets/css/style_product_detail.css">';
 include '../includes/header.php';
 ?>
-<link rel="stylesheet" href="../assets/css/product_style.css?v=<?php echo time(); ?>">
-
-<header class="header">
-    <div class="container header-flex">
-        <h2>FD TECH</h2>
-    </div>
-</header>
 
 <main class="container product-detail-container">
-    <div class="product-layout" style="display: flex; gap: 40px; margin-top: 20px;">
-        <div class="product-image-section" style="flex: 1;">
-            <?php 
-                $img_src = ''; 
-                
-                if (!empty($sp['image_url'])) {
-                    $img_src = $sp['image_url'];
+    <div class="container">
+        <h2 class="section-title">Chi tiết sản phẩm</h2>
+    </div>
+
+    <div class="product-layout">
+
+        <div class="product-image-section">
+            <?php
+                $img = $sp['image_url'] ?? '';
+
+                if (empty($img)) {
+                    $img_src = "../assets/images/logo-fd.jpg";
+                } elseif (filter_var($img, FILTER_VALIDATE_URL)) {
+                    $img_src = $img;
+                } elseif (strpos($img, 'upload/product_image/') === 0) {
+                    $img_src = "../" . $img;
                 } else {
-                    $img_src = 'https://via.placeholder.com/500x500?text=Chua+Co+Anh'; 
+                    $img_src = "../upload/product_image/" . $img;
                 }
             ?>
-            <img src="<?= htmlspecialchars($img_src); ?>" alt="<?= htmlspecialchars($sp['name'] ?? 'Sản phẩm'); ?>" style="width: 100%; border-radius: 8px; object-fit: contain;">
+
+            <img 
+                src="<?= htmlspecialchars($img_src); ?>" 
+                alt="<?= htmlspecialchars($sp['name']); ?>"
+                onerror="this.src='../assets/images/logo-fd.jpg'"
+            >
         </div>
 
-        <div class="product-info-section" style="flex: 1;">
+        <div class="product-info-section">
             <h1><?= htmlspecialchars($sp['name'] ?? 'Đang cập nhật'); ?></h1>
-            <div style="font-size: 24px; color: #d9534f; font-weight: bold; margin: 15px 0;">
+
+            <div class="product-price">
                 <?= number_format($sp['price'] ?? 0, 0, ',', '.'); ?> VNĐ
             </div>
-            
-            <p style="color: #666; line-height: 1.6; margin-bottom: 30px;">
-                <?= $sp['desc'] ?? 'Đang cập nhật mô tả chi tiết cho sản phẩm này...'; ?>
+
+            <p class="product-desc">
+                <?= $sp['description'] ?? 'Đang cập nhật mô tả...' ?>
             </p>
 
-            <form action="../user/action_cart.php" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+            <form action="../user/action_product_detail/action_product.php" method="POST" class="product-form">
                 <input type="hidden" name="product_id" value="<?= $id; ?>">
-                
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label>Số lượng:</label>
-                    <input type="number" name="quantity" value="1" min="1" style="width: 60px; padding: 5px; text-align: center;">
+
+                <div class="quantity-group">
+                    <label><b>Tồn kho: </b><?= $sp['stock_quantity'] ?? '0' ?></label>
                 </div>
 
-                <div style="display: flex; gap: 15px; margin-top: 10px;">
-                    <button type="submit" name="action_type" value="add_to_cart" style="flex: 1; padding: 12px; background: #fff; color: #333; border: 1px solid #ccc; cursor: pointer; font-weight: bold;">
+                <div class="quantity-group">
+                    <label><b>Số lượng mua:</b></label>
+                    <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                </div>
+
+                <div class="product-actions">
+                    <button type="submit" name="action_type" value="add_to_cart" class="btn-outline">
                         THÊM VÀO GIỎ HÀNG
                     </button>
-                    <button type="submit" name="action_type" value="buy_now" style="flex: 1; padding: 12px; background: #007bff; color: white; border: none; cursor: pointer; font-weight: bold;">
+
+                    <button type="submit" name="action_type" value="buy_now" class="btn btn-primary btn-buy">
                         MUA NGAY
                     </button>
                 </div>
             </form>
         </div>
+
     </div>
 </main>
+
 <?php include '../includes/footer.php'; ?>

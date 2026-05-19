@@ -1,6 +1,7 @@
 <?php
     session_start();
-    require_once 'check_login.php';
+    require_once '../auth/check_login.php';
+    require_once '../auth/user_only.php';
     include '../config/database.php';
 
 
@@ -58,7 +59,7 @@
     <!-- checkout -->
     <div class="checkout-layout">
 
-    <form action="process_checkout.php" method="POST">
+    <form action="../user/action_checkout/process_checkout.php" method="POST">
         <input type="hidden" name="selected_items" value="<?= htmlspecialchars($selectedItems) ?>">
         <!-- THÔNG TIN -->
         <div class="checkout-section">
@@ -95,7 +96,10 @@
 
             <label>
                 <input type="radio" name="payment_method" value="cod" checked>
-                Thanh toán khi nhận hàng
+                Thanh toán khi nhận hàng </label>
+            <label>
+                <input type="radio" name="payment_method" value="cod">
+                Chuyển khoản qua ngân hàng
             </label>
         </div>
         <!-- tổng -->
@@ -115,8 +119,7 @@
     <!-- Nếu chưa có sản phẩm thì ... -->
     <div class="empty-cart-container">
         <h2>Oppss, bạn chưa có sản phẩm để thanh toán.</h2>
-        <button onclick="window.location.href='cart.php'" 
-                    class="btn btn-primary">
+        <button onclick="window.location.href='cart.php'" class="btn btn-primary">
                 Quay lại giỏ hàng của bạn 
             </button>
     </div>

@@ -39,7 +39,7 @@
 .badge-warning { background-color: var(--warning); color: var(--text-dark); }
 .badge-success { background-color: var(--success); }
 .badge-danger {background-color: var(--danger);}
-
+.badge-depending{background-color: var(--depending); color:var(--text-dark);}
 /*style cho menu thao tác đơn hàng */
 .action-menu {
     display: none;
