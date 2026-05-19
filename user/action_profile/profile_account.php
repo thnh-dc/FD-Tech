@@ -1,5 +1,5 @@
 <?php
-// --- XỬ LÝ LƯU DỮ LIỆU HỒ SƠ ---
+// XỬ LÝ LƯU DỮ LIỆU HỒ SƠ 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action']) && $_POST['form_action'] == 'update_profile') {
     $full_name = trim($_POST['fullname']);
     $email = trim($_POST['email']);

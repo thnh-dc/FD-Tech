@@ -1,16 +1,27 @@
 <?php
-// --- 1. XỬ LÝ HỦY ĐƠN HÀNG ---
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'cancel_order') {
-    try {
-        $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending'");
-        $stmt->execute([$_POST['order_id'], $user_id]);
-    } catch (PDOException $e) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
+    // Xử lý Hủy đơn
+    if ($_POST['action'] == 'cancel_order') {
+        try {
+            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending'");
+            $stmt->execute([$_POST['order_id'], $user_id]);
+        } catch (PDOException $e) {
+        }
+        echo "<script>window.location.href='profile.php?action=orders';</script>";
+        exit();
+    } 
+    // Xử lý Xác nhận đã nhận hàng
+    elseif ($_POST['action'] == 'confirm_received') {
+        try {
+            $stmt = $pdo->prepare("UPDATE orders SET status = 'completed' WHERE id = ? AND user_id = ? AND status = 'shipped'");
+            $stmt->execute([$_POST['order_id'], $user_id]);
+        } catch (PDOException $e) {
+        }
+        echo "<script>window.location.href='profile.php?action=orders';</script>";
+        exit();
     }
-    echo "<script>window.location.href='profile.php?action=orders';</script>";
-    exit();
 }
 
-// --- 2. LẤY DANH SÁCH ĐƠN HÀNG ---
 $current_status = $_GET['status'] ?? 'all';
 
 try {
@@ -38,7 +49,6 @@ try {
     $orders = [];
 }
 
-// --- HÀM DỊCH TRẠNG THÁI (Màu xanh Shopee) ---
 function translateOrderStatus($status)
 {
     $labels = [
@@ -151,6 +161,12 @@ function translateOrderStatus($status)
                                 <input type="hidden" name="action" value="cancel_order">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                                 <button type="submit" class="btn-cancel-order">Hủy đơn hàng</button>
+                            </form>
+                        <?php elseif ($order['status'] == 'shipped'): ?>
+                            <form action="" method="POST" onsubmit="return confirm('Bạn xác nhận đã nhận được đơn hàng này?');" style="margin: 0;">
+                                <input type="hidden" name="action" value="confirm_received">
+                                <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                <button type="submit" class="btn-confirm-received" style="background-color: #26aa99; color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-left: 10px;">Đã nhận được hàng</button>
                             </form>
                         <?php endif; ?>
                     </div>
