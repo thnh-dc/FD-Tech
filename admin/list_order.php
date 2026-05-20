@@ -77,7 +77,7 @@ include 'includes/header.php';
                                                  $badge_class = 'badge-info';
                                                     $status_vi = $status;
 
-                                                    if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ xử lý'; }
+                                                    if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ xác nhận'; }
                                                     elseif ($status == 'processing') { $badge_class = 'badge-warning'; $status_vi = 'Đang xử lí'; }
                                                     elseif ($status == 'shipped') { $badge_class = 'badge-depending'; $status_vi = 'Đang vận chuyển'; }
                                                     elseif ($status == 'completed') { $badge_class = 'badge-success'; $status_vi = 'Hoàn thành'; }
