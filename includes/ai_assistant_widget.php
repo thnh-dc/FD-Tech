@@ -2,25 +2,27 @@
 $is_logged_in = isset($_SESSION['user_id']);
 ?>
 
-<div class="ai-welcome-popup" id="aiWelcomePopup">
-    <div class="ai-welcome-header">
-        <strong>FD Bot</strong>
-        <button type="button" class="ai-welcome-close" id="aiWelcomeClose">&times;</button>
+<div class="ai-widget-wrapper">
+    <div class="ai-welcome-popup" id="aiWelcomePopup">
+        <div class="ai-welcome-header">
+            <strong>FD Bot</strong>
+        </div>
+        <div class="ai-welcome-body">
+            <?php if (isset($_SESSION['user_id'])): ?>
+                Xin chào <?= htmlspecialchars($_SESSION['username'] ?? 'bạn') ?>!
+                Mình là FD Bot, hỏi mình nếu bạn cần hỗ trợ hoặc liên hệ với người bán tại đây nhé!
+            <?php else: ?>
+                Xin chào bạn! Có vẻ bạn chưa đăng nhập.
+                <div class="ai-auth-links">
+                    <a href="../auth/login.php">Đăng nhập</a> để được hỗ trợ tốt hơn nhé!
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
-    <div class="ai-welcome-body">
-        <?php if (isset($_SESSION['user_id'])): ?>
-            Xin chào <?= htmlspecialchars($_SESSION['username'] ??'bạn') ?> ! Mình là FD Bot, hỏi mình nếu bạn cần hỗ trợ hoặc liên hệ với người bán tại đây nhé !
-        <?php else: ?>
-            Xin chào bạn! Có vẻ bạn chưa đăng nhập
-            <div class="ai-auth-links">
-                <a href="../auth/login.php">Đăng nhập</a> để được hỗ trợ tốt hơn nhé!
-            </div>
-        <?php endif; ?>
-    </div>
+    <button type="button" class="ai-floating-btn" id="aiFloatingBtn">
+        <img src="/FD-Tech/assets/images/ai-bot.png" alt="FD Bot">
+    </button>
 </div>
-<button type="button" class="ai-floating-btn" id="aiFloatingBtn">
-    <img src="/FD-Tech/assets/images/ai-bot.png" alt="FD Bot">
-</button>
 <div class="ai-chat-box" id="aiChatBox">
     <div class="ai-chat-header">
         <div>
