@@ -11,7 +11,7 @@
         </li>
 
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'list_order.php') ? 'active' : '' ?>">
-            <a href="list_order.php"><i class="fa-solid fa-cart-shopping"></i> Danh sách đơn hàng</a>
+            <a href="list_order.php"><i class="fa-solid fa-cart-shopping"></i> Quản lí đơn hàng</a>
         </li>
 
         <?php 
@@ -27,6 +27,9 @@
                 <li><a href="add.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-plus"></i> Thêm sản phẩm</a></li>
                 <li><a href="list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_products.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-trash"></i> Quản lí sản phẩm</a></li>
             </ul>
+        </li>
+        <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'list_users.php' || basename($_SERVER['PHP_SELF']) == 'user_detail.php') ? 'active' : '' ?>">
+            <a href="list_users.php"><i class="fa-solid fa-users"></i> Quản lí người dùng</a>
         </li>
     </ul>
 
