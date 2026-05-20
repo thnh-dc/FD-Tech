@@ -59,38 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
+<?php
+$page_title = 'Thêm sản phẩm';
+$page_icon = 'fa-solid fa-users';
+$custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_add_product.css">';
 
-<head>
-    <meta charset="UTF-8">
-    <title>Thêm sản phẩm</title>
-
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/style_dashboard.css">
-    <link rel="stylesheet" href="../assets/css/style_add_product.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-
-<body>
-
-<div class="dashboard-layout">
-
-    <?php include 'includes/sidebar.php'; ?>
-
-    <main class="main-content">
-
-        <div class="top-navbar">
-            <h1 class="page-title">Thêm sản phẩm</h1>
-
-            <div class="admin-profile">
-                <span class="text-muted">
-                    Xin chào, <b>Admin</b>
-                </span>
-                <img src="../assets/images/logo-fd.jpg" alt="Admin">
-            </div>
-        </div>
+include 'includes/header.php';
+?>
 
         <div class="dashboard-container">
             <div class="card">

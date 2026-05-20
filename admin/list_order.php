@@ -31,34 +31,13 @@ try {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Đơn Hàng - Admin FD Tech</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/style_dashboard.css">
-    <link rel="stylesheet" href="../assets/css/style_sidebar.css">
-    <link rel="stylesheet" href="../assets/css/style_list_oder.css">
-</head>
-<body>
+<?php
+$page_title = 'Quản lí đơn hàng';
+$page_icon = 'fa-solid fa-users';
+$custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_list_oder.css">';
 
-    <div class="dashboard-layout">
-        <?php include 'includes/sidebar.php'; ?>
-
-        <main class="main-content">
-            <div class="top-navbar">
-                <h1 class="page-title">Danh Sách Đơn Hàng</h1>
-                <div class="admin-profile">
-                    <span class="text-muted">Xin chào, <b>Admin</b></span>
-                    <img src="../assets/images/logo-fd.jpg" alt="Avatar">
-                </div>
-            </div>
+include 'includes/header.php';
+?>
 
             <div class="container dashboard-container">
                 <section class="section-block">
