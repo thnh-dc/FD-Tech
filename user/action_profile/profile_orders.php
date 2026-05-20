@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     // Xử lý Hủy đơn
     if ($_POST['action'] == 'cancel_order') {
         try {
-            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending'");
+            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending' or 'processing'");
             if ($stmt->execute([$_POST['order_id'], $user_id])) {
                 $_SESSION['noti_message'] = 'Đã hủy đơn hàng thành công!';
                 $_SESSION['noti_type'] = 'success';
@@ -203,7 +203,7 @@ function translateOrderStatus($status)
                             <span class="order-total-amount"><?= number_format($order['total_amount'], 0, ',', '.') ?>đ</span>
                         </div>
 
-                        <?php if ($order['status'] == 'pending'): ?>
+                        <?php if ($order['status'] == 'pending' or 'processing'): ?>
                             <form id="form-cancel-<?= $order['id'] ?>" action="" method="POST" style="margin: 0;">
                                 <input type="hidden" name="action" value="cancel_order">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
