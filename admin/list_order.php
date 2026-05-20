@@ -33,7 +33,7 @@ try {
 
 <?php
 $page_title = 'Quản lí đơn hàng';
-$page_icon = 'fa-solid fa-users';
+$page_icon = 'fa-solid fa-cart-shopping';
 $custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_list_oder.css">';
 
 include 'includes/header.php';
