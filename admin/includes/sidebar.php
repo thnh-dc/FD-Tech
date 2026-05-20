@@ -13,7 +13,9 @@
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'list_order.php') ? 'active' : '' ?>">
             <a href="list_order.php"><i class="fa-solid fa-cart-shopping"></i> Quản lí đơn hàng</a>
         </li>
-
+        <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'chat_list.php' || basename($_SERVER['PHP_SELF']) == 'chat_detail.php') ? 'active' : '' ?>">
+            <a href="chat_list.php"><i class="fa-solid fa-comments"></i> Tin nhắn khách hàng</a>
+        </li>
         <?php 
             $product_pages = ['add.php', 'edit.php', 'list_products.php'];
             $is_product_active = in_array(basename($_SERVER['PHP_SELF']), $product_pages);
@@ -32,7 +34,6 @@
             <a href="list_users.php"><i class="fa-solid fa-users"></i> Quản lí người dùng</a>
         </li>
     </ul>
-
     <div class="sidebar-footer">
         <a href="/FD-Tech/auth/logout.php" class="btn btn-danger logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
