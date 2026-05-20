@@ -3,7 +3,6 @@ session_start();
 include '../config/database.php';
 
 $step = $_SESSION['reset_step'] ?? 1;
-$alert_msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // BƯỚC 1: KIỂM TRA DATA
@@ -20,10 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header("Location: forgot_password.php");
                 exit();
             } else {
-                $alert_msg = 'Không tìm thấy Email hoặc Số điện thoại này trong hệ thống!';
+                $_SESSION['noti_message'] = 'Email hoặc Số điện thoại không tồn tại!';
+                $_SESSION['noti_type'] = 'error';
             }
         } catch (PDOException $e) {
-            $alert_msg = 'Lỗi hệ thống: Không thể xử lý yêu cầu lúc này.';
+            $_SESSION['noti_message'] = 'Lỗi hệ thống: Không thể xử lý yêu cầu lúc này.';
+            $_SESSION['noti_type'] = 'error';
         }
     }
 
@@ -41,14 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 unset($_SESSION['reset_step'], $_SESSION['reset_user_id']);
 
-                $_SESSION['flash_msg'] = 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.';
+                $_SESSION['noti_message'] = 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.';
+                $_SESSION['noti_type'] = 'success';
                 header("Location: login.php");
                 exit();
             } catch (PDOException $e) {
-                $alert_msg = 'Lỗi cập nhật mật khẩu!';
+                $_SESSION['noti_message'] = 'Lỗi cập nhật mật khẩu!';
+                $_SESSION['noti_type'] = 'error';
             }
         } else {
-            $alert_msg = 'Mật khẩu xác nhận không khớp!';
+            $_SESSION['noti_message'] = 'Mật khẩu xác nhận không khớp!';
+            $_SESSION['noti_type'] = 'error';
         }
     }
 }
@@ -91,21 +95,16 @@ include '../includes/auth_header.php';
 <?php endif; ?>
 
 <div class="register-link" style="margin-top: 25px;">
-    <a href="?action=cancel"><i class="fas fa-arrow-left"></i> Quay lại Đăng nhập</a>
+    <a href="?action=cancel"><i class="fas fa-arrow-left"></i> Quay lại </a>
 </div>
 
 </div>
 </div>
-</div> <?php include '../includes/footer.php'; ?>
+</div> 
 
-<?php if (!empty($alert_msg)): ?>
-    <script>
-        setTimeout(function() {
-            alert('<?php echo $alert_msg; ?>');
-        }, 20);
-    </script>
-<?php endif; ?>
+<?php include '../includes/footer.php'; ?>
+
+<?php include '../includes/notification.php'; ?>
 
 </body>
-
 </html>
