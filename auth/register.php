@@ -2,9 +2,6 @@
 session_start();
 include '../config/database.php';
 
-// Biến lưu trạng thái thông báo hiển thị tại trang
-$alert_msg = '';
-
 // --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
@@ -14,11 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // 1. KIỂM TRA ĐỊNH DẠNG DỮ LIỆU
     if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]{2,19}$/', $username)) {
-        $alert_msg = 'Tên đăng nhập phải từ 3-20 ký tự, không chứa ký tự đặc biệt và phải bắt đầu bằng chữ cái!';
+        $_SESSION['noti_message'] = 'Tên đăng nhập phải từ 3-20 ký tự, không chứa ký tự đặc biệt và phải bắt đầu bằng chữ cái!';
+        $_SESSION['noti_type'] = 'error';
     } elseif (strlen($password) < 6) {
-        $alert_msg = 'Mật khẩu phải có ít nhất 6 ký tự!';
+        $_SESSION['noti_message'] = 'Mật khẩu phải có ít nhất 6 ký tự!';
+        $_SESSION['noti_type'] = 'error';
     } elseif ($password !== $confirm_password) {
-        $alert_msg = 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.';
+        $_SESSION['noti_message'] = 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.';
+        $_SESSION['noti_type'] = 'error';
     } else {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
@@ -28,19 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute([$username]);
 
             if ($stmt->rowCount() > 0) {
-                $alert_msg = 'Tên đăng nhập đã tồn tại!';
+                $_SESSION['noti_message'] = 'Tên đăng nhập đã tồn tại!';
+                $_SESSION['noti_type'] = 'error';
             } else {
                 // 3. Lưu vào Database
                 $stmt = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
                 $stmt->execute([$username, $hashed_password, $email]);
 
                 // Đăng ký thành công -> Gán session và nhảy sang Login
-                $_SESSION['flash_msg'] = 'Đăng ký thành công! Vui lòng đăng nhập.';
+                $_SESSION['noti_message'] = 'Đăng ký thành công! Vui lòng đăng nhập.';
+                $_SESSION['noti_type'] = 'success';
                 header("Location: login.php");
                 exit();
             }
         } catch (PDOException $e) {
-            $alert_msg = 'Lỗi hệ thống: Không thể đăng ký lúc này.';
+            $_SESSION['noti_message'] = 'Lỗi hệ thống: Không thể đăng ký lúc này.';
+            $_SESSION['noti_type'] = 'error';
         }
     }
 }
@@ -85,15 +88,9 @@ include '../includes/auth_header.php';
 
 </div>
 </div>
-</div> <?php include '../includes/footer.php'; ?>
-
-<?php if (!empty($alert_msg)): ?>
-    <script>
-        setTimeout(function() {
-            alert('<?php echo $alert_msg; ?>');
-        }, 20);
-    </script>
-<?php endif; ?>
+</div>
+<?php include '../includes/footer.php'; ?>
+<?php include '../includes/notification.php'; ?>
 
 </body>
 

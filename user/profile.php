@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 $user_id = $_SESSION['user_id'];
-require_once '../auth/user_only.php';
+
 // 2. LẤY THÔNG TIN USER TỪ DATABASE
 try {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
