@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php
 $page_title = 'Thêm sản phẩm';
-$page_icon = 'fa-solid fa-users';
+$page_icon = 'fa-solid fa-plus';
 $custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_add_product.css">';
 
 include 'includes/header.php';

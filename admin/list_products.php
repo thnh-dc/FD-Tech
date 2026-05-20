@@ -66,7 +66,7 @@ function getStockClass($stock)
 
 <?php
 $page_title = 'Quản lí sản phẩm';
-$page_icon = 'fa-solid fa-users';
+$page_icon = 'fa-solid fa-box-open';
 $custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_list_product.css">';
 
 include 'includes/header.php';
