@@ -25,13 +25,13 @@ $is_logged_in = isset($_SESSION['user_id']);
     <div class="ai-chat-header">
         <div>
             <strong id="chatBoxTitle">FD Bot</strong>
-            <p id="chatBoxSubTitle">Trợ lí AI hỗ trợ mua hàng</p>
+            <p id="chatBoxSubTitle">Trợ lí hỗ trợ mua hàng</p>
         </div>
         <button type="button" id="aiChatClose">&times;</button>
     </div>
     <div class="ai-chat-tabs">
         <button type="button" class="ai-tab-btn active" data-mode="ai">
-            Trợ lí AI
+            Trợ lí FD Bot
         </button>
         <button type="button" class="ai-tab-btn" data-mode="seller">
             Nhắn với người bán

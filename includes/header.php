@@ -140,7 +140,7 @@
                 </form>
 
                 <div class="header-icons">
-                    <a href="#"><i class="far fa-heart"></i></a>
+                    <a href="/FD-Tech/user/profile.php?action=notifications"><i class="far fa-bell"></i></a>
                     <a href="/FD-Tech/user/cart.php" class="cart-icon">
                         <i class="fas fa-shopping-bag"></i>
                         <span class="cart-text">Giỏ hàng</span>
