@@ -60,7 +60,6 @@ include '../../includes/header.php';
                 <div class="bank-info-box">
                     <p><b>Ngân hàng:</b> Ngân hàng TMCP quân đội MB Bank</p>
                     <p><b>Chủ sở hữu:</b> FD TECH</p>
-                    <p><b>Tên người thụ hưởng:</b> Nguyễn Thành Được</p>
                     <p><b>Số tài khoản:</b> 686 102 6666</p>
                     <p><b>Số tiền:</b> <?= number_format($total, 0, ',', '.') ?>₫</p>
                     <p><b>Nội dung chuyển khoản:</b> <?= htmlspecialchars($paymentContent) ?></p>
