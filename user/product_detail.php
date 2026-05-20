@@ -95,5 +95,5 @@ include '../includes/header.php';
 
     </div>
 </main>
-
+<?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>
