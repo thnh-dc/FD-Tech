@@ -26,13 +26,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role'] = $user['role'];
-                $_SESSION['avatar'] = $user['avatar'];
+                
+                if (isset($user['status']) && $user['status'] === 'blocked') {
+                    $_SESSION['noti_message'] = 'Tài khoản bạn bị khoá vui lòng dùng tài khoản khác!';
+                    $_SESSION['noti_type'] = 'error';
+                } else {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['role'] = $user['role'];
+                    $_SESSION['avatar'] = $user['avatar'];
 
-                header("Location: ../user/index.php");
-                exit();
+                    header("Location: ../user/index.php");
+                    exit();
+                }
+
             } else {
                 $_SESSION['noti_message'] = 'Sai tên đăng nhập hoặc mật khẩu!';
                 $_SESSION['noti_type'] = 'error';
@@ -47,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <?php
 $page_title = 'Đăng nhập - FD Tech';
-include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đây
+include '../includes/auth_header.php'; 
 ?>
 
 <div class="form-header">
@@ -77,7 +84,6 @@ include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đâ
 </div>
 </div> 
 <?php include '../includes/footer.php'; ?>
-
 <?php include '../includes/notification.php'; ?>
 
 </body>
