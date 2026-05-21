@@ -3,10 +3,8 @@ session_start();
 include '../config/database.php';
 require_once __DIR__ . '/check_admin.php';
 
-// Lấy ID sản phẩm
 $id = $_GET['id'] ?? $_POST['id'] ?? 0;
 
-// Lấy thông tin sản phẩm
 $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
 $stmt->execute([$id]);
 $product = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -16,15 +14,37 @@ if (!$product) {
     exit;
 }
 
-// Lấy danh sách tag hiện tại
+// --- XỬ LÝ XÓA ẢNH PHỤ KHI BẤM NÚT XÓA ---
+if (isset($_POST['delete_gallery_image_id'])) {
+    $del_img_id = (int)$_POST['delete_gallery_image_id'];
+    
+    $stmt_find = $pdo->prepare("SELECT image_url FROM product_images WHERE id = ? AND product_id = ?");
+    $stmt_find->execute([$del_img_id, $id]);
+    $file_to_delete = $stmt_find->fetchColumn();
+    
+    if ($file_to_delete) {
+        $file_path = "../upload/product_gallery/" . $file_to_delete;
+        if (file_exists($file_path)) {
+            @unlink($file_path);
+        }
+        $pdo->prepare("DELETE FROM product_images WHERE id = ?")->execute([$del_img_id]);
+    }
+    header("Location: edit.php?id=" . $id . "&msg=Đã xóa ảnh phụ");
+    exit;
+}
+
 $stmt_tags = $pdo->prepare("SELECT tag_id FROM product_tags WHERE product_id = ?");
 $stmt_tags->execute([$id]);
 $current_tags = $stmt_tags->fetchAll(PDO::FETCH_COLUMN);
 
+// Lấy toàn bộ album ảnh phụ hiện có
+$stmt_gallery = $pdo->prepare("SELECT * FROM product_images WHERE product_id = ?");
+$stmt_gallery->execute([$id]);
+$gallery_images = $stmt_gallery->fetchAll(PDO::FETCH_ASSOC);
+
 $categories = $pdo->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
-// Xử lý cập nhật
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_gallery_image_id'])) {
 
     $image_url = trim($_POST['image_url'] ?? '');
 
@@ -54,7 +74,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // --- XỬ LÝ GIÁ FLASH SALE KHI EDIT ---
+    // --- UPLOAD THÊM ẢNH PHỤ MỚI ---
+    if (isset($_FILES['product_gallery']) && !empty($_FILES['product_gallery']['name'][0])) {
+        $gallery_dir = "../upload/product_gallery/";
+        if (!is_dir($gallery_dir)) {
+            mkdir($gallery_dir, 0777, true);
+        }
+
+        $stmt_gallery_ins = $pdo->prepare("INSERT INTO product_images (product_id, image_url) VALUES (?, ?)");
+        foreach ($_FILES['product_gallery']['name'] as $key => $name) {
+            if ($_FILES['product_gallery']['error'][$key] == 0) {
+                $g_ext = pathinfo($name, PATHINFO_EXTENSION);
+                $g_file_name = time() . "_gal_" . $key . "." . $g_ext;
+                if (move_uploaded_file($_FILES['product_gallery']['tmp_name'][$key], $gallery_dir . $g_file_name)) {
+                    $stmt_gallery_ins->execute([$id, $g_file_name]);
+                }
+            }
+        }
+    }
+
     $tags = $_POST['tags'] ?? [];
     $discount_price = (in_array('2', $tags) && !empty($_POST['discount_price'])) ? $_POST['discount_price'] : null;
 
@@ -172,13 +210,13 @@ include 'includes/header.php';
 
                     <div class="form-group">
                         <label class="form-label">Ảnh hiện tại</label>
-
                         <div class="current-image-box">
                             <img
                                 src="<?= htmlspecialchars($src) ?>"
                                 class="current-product-image"
                                 alt="<?= htmlspecialchars($product['name']) ?>"
                                 onerror="this.src='../assets/images/logo-fd.jpg'"
+                                style="max-width: 150px; border-radius: 4px;"
                             >
                         </div>
                     </div>
@@ -192,16 +230,31 @@ include 'includes/header.php';
                             placeholder="https://i.ibb.co/..."
                             value="<?= filter_var($product['image_url'], FILTER_VALIDATE_URL) ? htmlspecialchars($product['image_url']) : '' ?>"
                         >
-                        <p class="image-help">
-                            Có thể dán link ảnh online hoặc upload ảnh bên dưới.
-                            Nếu chọn cả hai, ảnh upload local sẽ được ưu tiên.
-                        </p>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Upload ảnh local</label>
                         <input type="file" name="product_image" class="form-control" accept="image/*">
-                        <p class="image-help">Để trống nếu muốn giữ nguyên ảnh cũ.</p>
+                    </div>
+
+                    <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0; margin-top: 20px;">
+                        <label class="form-label" style="color: #10b981; font-weight: bold;">📸 Album ảnh phụ hiện tại</label>
+                        
+                        <?php if (empty($gallery_images)): ?>
+                            <p style="color: #94a3b8; font-style: italic; font-size: 0.9rem;">Sản phẩm chưa có ảnh phụ.</p>
+                        <?php else: ?>
+                            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px;">
+                                <?php foreach ($gallery_images as $g_img): ?>
+                                    <div style="position: relative; width: 80px; height: 80px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px; background: #fff;">
+                                        <img src="../upload/product_gallery/<?= $g_img['image_url'] ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 2px;">
+                                        <button type="submit" name="delete_gallery_image_id" value="<?= $g_img['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa ảnh phụ này?')" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <label class="form-label" style="color: #10b981; font-weight: bold; margin-top: 10px; display: block;">Upload thêm ảnh phụ mới</label>
+                        <input type="file" name="product_gallery[]" class="form-control" accept="image/*" multiple>
                     </div>
 
                     <div class="form-group">

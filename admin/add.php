@@ -52,6 +52,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $product_id = $pdo->lastInsertId();
 
+    // --- XỬ LÝ UPLOAD NHIỀU ẢNH PHỤ (ALBUM) ---
+    if (isset($_FILES['product_gallery']) && !empty($_FILES['product_gallery']['name'][0])) {
+        $gallery_dir = "../upload/product_gallery/";
+        if (!is_dir($gallery_dir)) {
+            mkdir($gallery_dir, 0777, true);
+        }
+
+        $stmt_gallery = $pdo->prepare("INSERT INTO product_images (product_id, image_url) VALUES (?, ?)");
+
+        foreach ($_FILES['product_gallery']['name'] as $key => $name) {
+            if ($_FILES['product_gallery']['error'][$key] == 0) {
+                $g_ext = pathinfo($name, PATHINFO_EXTENSION);
+                $g_file_name = time() . "_gal_" . $key . "." . $g_ext;
+                $g_target_file = $gallery_dir . $g_file_name;
+
+                if (move_uploaded_file($_FILES['product_gallery']['tmp_name'][$key], $g_target_file)) {
+                    $stmt_gallery->execute([$product_id, $g_file_name]);
+                }
+            }
+        }
+    }
+
     if (!empty($_POST['tags'])) {
         $stmt_tags = $pdo->prepare("INSERT INTO product_tags (product_id, tag_id) VALUES (?, ?)");
         foreach ($_POST['tags'] as $tag_id) {
@@ -113,23 +135,21 @@ include 'includes/header.php';
                         <input name="discount_price" type="number" step="any" min="0" class="form-control" placeholder="Nhập giá bán riêng cho Flash Sale...">
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Link ảnh online</label>
+                    <div class="form-group" style="border-left: 3px solid #3b82f6; padding-left: 10px;">
+                        <label class="form-label" style="font-weight: bold; color: #3b82f6;">🖼️ Ảnh Đại Diện (Ảnh chính)</label>
                         <input
                             type="url"
                             name="image_url"
                             class="form-control"
                             placeholder="https://i.ibb.co/..."
                         >
-                        <p class="image-help">
-                            Có thể dán link ảnh online hoặc upload ảnh local bên dưới.
-                            Nếu chọn cả hai, ảnh upload local sẽ được ưu tiên.
-                        </p>
+                        <input type="file" name="product_image" class="form-control" accept="image/*" style="margin-top: 8px;">
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Upload ảnh local</label>
-                        <input type="file" name="product_image" class="form-control" accept="image/*">
+                    <div class="form-group" style="border-left: 3px solid #10b981; padding-left: 10px; background: #f0fdf4; padding: 10px; border-radius: 4px;">
+                        <label class="form-label" style="font-weight: bold; color: #10b981;">📸 Thêm Album Ảnh Phụ (Chọn nhiều ảnh)</label>
+                        <input type="file" name="product_gallery[]" class="form-control" accept="image/*" multiple>
+                        <small style="color: #666;">Nhấn giữ nút <b>Ctrl</b> (hoặc Command trên Mac) để chọn nhiều ảnh cùng lúc.</small>
                     </div>
 
                     <div class="form-group">

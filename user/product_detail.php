@@ -13,6 +13,7 @@ if (!$sp) {
     die("<h2 class='text-center'>Sản phẩm không tồn tại!</h2>");
 }
 
+// Lấy danh sách ảnh phụ từ bảng product_images
 $stmtImages = $pdo->prepare("SELECT image_url FROM product_images WHERE product_id = :id");
 $stmtImages->execute(['id' => $id]);
 $extraImages = $stmtImages->fetchAll(PDO::FETCH_COLUMN);
@@ -37,10 +38,10 @@ try {
     }
 }
 
-// Đã cập nhật tham số chống cache tại đây
 $custom_css = '<link rel="stylesheet" href="../assets/css/style_product_detail.css?v=' . time() . '">' . "\n" . '<link rel="stylesheet" href="../assets/css/style_notification.css?v=' . time() . '">';
 include '../includes/header.php';
 
+// Xử lý ảnh đại diện chính
 $img = $sp['image_url'] ?? '';
 if (empty($img)) {
     $img_src = "../assets/images/logo-fd.jpg";
@@ -52,14 +53,16 @@ if (empty($img)) {
     $img_src = "../upload/product_image/" . $img;
 }
 
+// Gom toàn bộ ảnh vào Gallery (Ảnh chính ở vị trí đầu tiên)
 $image_gallery = [$img_src];
 foreach ($extraImages as $eImg) {
     if (filter_var($eImg, FILTER_VALIDATE_URL)) {
         $image_gallery[] = $eImg;
-    } elseif (strpos($eImg, 'upload/product_image/') === 0) {
+    } elseif (strpos($eImg, 'upload/product_gallery/') === 0) {
         $image_gallery[] = "../" . $eImg;
     } else {
-        $image_gallery[] = "../upload/product_image/" . $eImg;
+        // Định tuyến đúng về folder gallery dành cho ảnh phụ
+        $image_gallery[] = "../upload/product_gallery/" . $eImg;
     }
 }
 ?>
@@ -71,14 +74,14 @@ foreach ($extraImages as $eImg) {
 
     <div class="product-layout">
         <div class="product-gallery">
-            <div class="main-image-container">
+            <div class="main-image-container" style="position: relative;">
                 <button type="button" id="prev-img-btn" class="nav-arrow left-arrow"><i class="fas fa-chevron-left"></i></button>
-                <img id="main-product-image" src="<?= htmlspecialchars($img_src); ?>" alt="<?= htmlspecialchars($sp['name']); ?>" onerror="this.src='../assets/images/logo-fd.jpg'">
+                <img id="main-product-image" src="<?= htmlspecialchars($img_src); ?>" alt="<?= htmlspecialchars($sp['name']); ?>" onerror="this.src='../assets/images/logo-fd.jpg'" style="transition: opacity 0.2s ease;">
                 <button type="button" id="next-img-btn" class="nav-arrow right-arrow"><i class="fas fa-chevron-right"></i></button>
             </div>
             <div class="thumbnail-list">
                 <?php foreach($image_gallery as $index => $thumb): ?>
-                    <img src="<?= htmlspecialchars($thumb) ?>" class="thumb-item <?= $index === 0 ? 'active' : '' ?>" data-index="<?= $index ?>" alt="Thumbnail">
+                    <img src="<?= htmlspecialchars($thumb) ?>" class="thumb-item <?= $index === 0 ? 'active' : '' ?>" data-index="<?= $index ?>" alt="Thumbnail" onerror="this.src='../assets/images/logo-fd.jpg'">
                 <?php endforeach; ?>
             </div>
         </div>
@@ -192,7 +195,51 @@ foreach ($extraImages as $eImg) {
 </main>
 
 <script>
+    // Truyền mảng ảnh chuẩn vào biến JS
     const productImages = <?= json_encode($image_gallery); ?>;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentIndex = 0;
+        const mainImg = document.getElementById('main-product-image');
+        const prevBtn = document.getElementById('prev-img-btn');
+        const nextBtn = document.getElementById('next-img-btn');
+        const thumbs = document.querySelectorAll('.thumb-item');
+
+        function changeImage(index) {
+            if(index < 0) index = productImages.length - 1;
+            if(index >= productImages.length) index = 0;
+            
+            currentIndex = index;
+            
+            mainImg.style.opacity = '0.4';
+            setTimeout(() => {
+                mainImg.src = productImages[currentIndex];
+                mainImg.style.opacity = '1';
+            }, 100);
+
+            thumbs.forEach((t, i) => {
+                if(i === currentIndex) {
+                    t.classList.add('active');
+                } else {
+                    t.classList.remove('active');
+                }
+            });
+        }
+
+        if(prevBtn) {
+            prevBtn.addEventListener('click', () => changeImage(currentIndex - 1));
+        }
+        if(nextBtn) {
+            nextBtn.addEventListener('click', () => changeImage(currentIndex + 1));
+        }
+
+        thumbs.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                changeImage(idx);
+            });
+        });
+    });
 </script>
 <script src="../assets/js/product_detail.js?v=<?= time() ?>"></script>
 
