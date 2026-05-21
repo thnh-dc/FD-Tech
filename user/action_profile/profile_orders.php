@@ -1,5 +1,4 @@
 <?php
-// Bắt buộc phải có session_start() ở đầu file gốc (nếu file profile.php đã có thì không cần thêm)
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -8,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     // Xử lý Hủy đơn
     if ($_POST['action'] == 'cancel_order') {
         try {
-            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending' or 'processing'");
+            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status IN ('pending', 'processing')");
             if ($stmt->execute([$_POST['order_id'], $user_id])) {
                 $_SESSION['noti_message'] = 'Đã hủy đơn hàng thành công!';
                 $_SESSION['noti_type'] = 'success';
@@ -85,7 +84,7 @@ function translateOrderStatus($status)
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0, 0, 0, 0.4);
-        display: none; /* Ẩn mặc định */
+        display: none;
         align-items: center;
         justify-content: center;
         z-index: 10000;
@@ -134,12 +133,10 @@ function translateOrderStatus($status)
 <?php else: ?>
     <div>
         <?php foreach ($orders as $order):
-            // CHỈ CẦN SELECT TỪ BẢNG order_items, KHÔNG CẦN JOIN NỮA
             $st_items = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
             $st_items->execute([$order['id']]);
             $items = $st_items->fetchAll(PDO::FETCH_ASSOC);
 
-            // Lấy tên sản phẩm đầu tiên từ order_items
             $first_name = !empty($items) ? $items[0]['product_name'] : 'Đơn hàng #' . $order['id'];
             ?>
             <div class="order-card">
@@ -180,7 +177,6 @@ function translateOrderStatus($status)
                     </div>
 
                     <?php foreach ($items as $it):
-                        // Lấy ảnh và tên trực tiếp từ order_items
                         $img_link = !empty($it['product_image']) ? $it['product_image'] : '';
                         $p_name = !empty($it['product_name']) ? $it['product_name'] : 'Sản phẩm không xác định';
                         ?>
@@ -203,7 +199,7 @@ function translateOrderStatus($status)
                             <span class="order-total-amount"><?= number_format($order['total_amount'], 0, ',', '.') ?>đ</span>
                         </div>
 
-                        <?php if ($order['status'] == 'pending' or 'processing'): ?>
+                        <?php if ($order['status'] == 'pending' || $order['status'] == 'processing'): ?>
                             <form id="form-cancel-<?= $order['id'] ?>" action="" method="POST" style="margin: 0;">
                                 <input type="hidden" name="action" value="cancel_order">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
@@ -235,7 +231,7 @@ function translateOrderStatus($status)
 </div>
 
 <script>
-    // Toggle xem chi tiết đơn hàng
+    // xem chi tiết đơn hàng
     function toggleOrder(id, btn) {
         var box = document.getElementById('detail-' + id);
         if (box.style.display === "none" || box.style.display === "") {
