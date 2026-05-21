@@ -150,7 +150,7 @@ include '../includes/auth_header.php';
 <?php endif; ?>
 
 <div class="register-link" style="margin-top: 25px;">
-    <a href="?action=cancel"><i class="fas fa-arrow-left"></i> Hủy bỏ & Quay lại</a>
+    <a href="?action=cancel"><i class="fas fa-arrow-left"></i>Hủy bỏ</a>
 </div>
 
 </div>
