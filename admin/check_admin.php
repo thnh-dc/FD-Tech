@@ -50,12 +50,25 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
         }
         .error-box a:hover {
             opacity: 0.85;
-        }
+        }.warning-icon {
+                width: 78px;
+                height: 78px;
+                margin: 0 auto 18px;
+                border-radius: 50%;
+                background: #dcfce7;
+                color: #a31616;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 40px;
+                font-weight: bold;
+            }
     </style>
 </head>
 <body>
     <div class="error-box">
-        <h1>🚫 CẢNH BÁO</h1>
+        <div class="warning-icon">!</div>
+        <h1>CẢNH BÁO</h1>
         <p>Bạn không phải Quản trị viên</p>
         <p>Bạn không có quyền truy cập khu vực này !</p>
         <a href="/FD-Tech/user/index.php">Quay về trang người dùng</a>
