@@ -171,3 +171,8 @@
 .bank-info-box p {
     margin: 6px 0;
 }
+.old-price {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 13px;
+}

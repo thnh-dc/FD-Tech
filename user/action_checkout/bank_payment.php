@@ -23,11 +23,8 @@ if (empty($selectedArray)) {
 $placeholders = implode(',', array_fill(0, count($selectedArray), '?'));
 $stmt = $pdo->prepare("
     SELECT 
-        c.id,
-        c.quantity,
-        p.name,
-        p.price,
-        p.image_url
+        c.id, c.quantity, p.name, p.price, p.discount_price,
+        COALESCE(NULLIF(p.discount_price, 0), p.price) AS display_price, p.image_url
     FROM cart_items c
     JOIN products p ON c.product_id = p.id
     WHERE c.user_id = ?
@@ -41,7 +38,7 @@ $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $total = 0;
 
 foreach ($cartItems as $item) {
-    $total += $item['price'] * $item['quantity'];
+    $total += $item['display_price'] * $item['quantity'];
 }
 
 $custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_checkout.css">';
@@ -52,10 +49,17 @@ include '../../includes/header.php';
     <div class="checkout-layout">
         <div class="checkout-section">
             <h3>💳 Thông tin thanh toán</h3>
-            <p>Vui lòng chuyển khoản theo thông tin bên dưới. Sau khi chuyển khoản xong, bấm nút <b>Xác nhận đã thanh toán</b> để hoàn tất đặt hàng.</p>
+            <p>
+                Vui lòng chuyển khoản theo thông tin bên dưới. 
+                Sau khi chuyển khoản xong, bấm nút <b>Xác nhận đã thanh toán</b> để hoàn tất đặt hàng.
+            </p>
             <div class="bank-payment-box">
                 <div class="bank-qr-box">
-                    <img src="/FD-Tech/assets/images/qr-payment.jpg" alt="QR thanh toán" class="bank-qr-img">
+                    <img 
+                        src="/FD-Tech/assets/images/qr-payment.jpg" 
+                        alt="QR thanh toán" 
+                        class="bank-qr-img"
+                    >
                 </div>
                 <div class="bank-info-box">
                     <p><b>Ngân hàng:</b> Ngân hàng TMCP quân đội MB Bank</p>
@@ -69,12 +73,42 @@ include '../../includes/header.php';
         <div class="checkout-section">
             <h3>📦 Sản phẩm thanh toán</h3>
             <?php foreach ($cartItems as $item): ?>
+                <?php
+                    $img = $item['image_url'] ?? '';
+                    if (empty($img)) {
+                        $img_src = "/FD-Tech/assets/images/logo-fd.jpg";
+                    } elseif (filter_var($img, FILTER_VALIDATE_URL)) {
+                        $img_src = $img;
+                    } elseif (strpos($img, 'upload/product_image/') === 0) {
+                        $img_src = "/FD-Tech/" . $img;
+                    } else {
+                        $img_src = "/FD-Tech/upload/product_image/" . $img;
+                    }
+                ?>
                 <div class="checkout-item">
-                    <img src="<?= htmlspecialchars($item['image_url']) ?>" class="checkout-img">
+                    <img 
+                        src="<?= htmlspecialchars($img_src) ?>" 
+                        class="checkout-img"
+                        alt="<?= htmlspecialchars($item['name']) ?>"
+                        onerror="this.src='/FD-Tech/assets/images/logo-fd.jpg'"
+                    >
                     <div class="checkout-info">
-                        <p class="checkout-name"><?= htmlspecialchars($item['name']) ?></p>
+                        <p class="checkout-name">
+                            <?= htmlspecialchars($item['name']) ?>
+                        </p>
                         <p class="checkout-price">
-                            <?= number_format($item['price'], 0, ',', '.') ?>₫ x <?= $item['quantity'] ?>
+                            <?php if (!empty($item['discount_price']) && $item['discount_price'] > 0): ?>
+                                <span class="old-price">
+                                    <?= number_format($item['price'], 0, ',', '.') ?>₫
+                                </span>
+                                <br>
+                                <span class="discount-price">
+                                    <?= number_format($item['discount_price'], 0, ',', '.') ?>₫
+                                </span>
+                            <?php else: ?>
+                                <?= number_format($item['price'], 0, ',', '.') ?>₫
+                            <?php endif; ?>
+                            x <?= $item['quantity'] ?>
                         </p>
                     </div>
                 </div>
