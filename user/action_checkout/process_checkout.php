@@ -39,7 +39,7 @@ if ($action === 'confirm_bank_payment') {
         exit();
     }
     $payment_note = 'Thanh toán khi nhận hàng';
-    $order_status = 'processing';
+    $order_status = 'pending';
 }
 if (empty($selectedItems)) {
     header("Location: ../cart.php?error=no_items");
