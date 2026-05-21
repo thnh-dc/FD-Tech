@@ -4,7 +4,9 @@
     require_once '../auth/user_only.php';
     require_once '../config/database.php';
 
-    $custom_css = '<link rel="stylesheet" href="../assets/css/style_cart.css">';
+    $custom_css = '
+    <link rel="stylesheet" href="/FD-Tech/assets/css/style_cart.css">
+    <link rel="stylesheet" href="/FD-Tech/assets/css/style_notification.css">';
     include '../includes/header.php';
 
     $user_id = $_SESSION['user_id'] ?? 0;
