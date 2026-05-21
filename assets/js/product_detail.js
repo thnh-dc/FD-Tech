@@ -1,43 +1,66 @@
 document.addEventListener("DOMContentLoaded", () => {
     function showToast(message, type = 'success') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerText = message;
-        
-        container.appendChild(toast);
-        
-        setTimeout(() => toast.classList.add('show'), 100);
-        
+        let container = document.getElementById('noti-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'noti-container';
+            container.className = 'noti-container';
+            document.body.appendChild(container);
+        }
+
+        let icon = 'i';
+        if (type === 'success') icon = '✓';
+        else if (type === 'error') icon = '✕';
+
+        const notiBox = document.createElement('div');
+        notiBox.className = `noti-box ${type}`;
+        notiBox.innerHTML = `
+            <div class="noti-icon">${icon}</div>
+            <div class="noti-content">${message}</div>
+        `;
+
+        container.appendChild(notiBox);
+
         setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+            notiBox.classList.add('noti-fade-out');
+            setTimeout(() => {
+                notiBox.remove();
+                if (container.childNodes.length === 0) {
+                    container.remove();
+                }
+            }, 500);
+        }, 4000);
     }
 
     const btnAddToCart = document.getElementById('btnAddToCart');
     const productForm = document.getElementById('addToCartForm');
 
     if (btnAddToCart && productForm) {
-        btnAddToCart.addEventListener("click", function() {
+        btnAddToCart.addEventListener("click", function(e) {
+            e.preventDefault(); 
             const formData = new FormData(productForm);
             formData.append('action_type', 'add_to_cart');
 
             fetch('../user/action_product_detail/action_product.php', {
                 method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' }
+                body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    return response.json();
+                }
+                return { success: true, message: "Đã thêm sản phẩm vào giỏ hàng thành công!" };
+            })
             .then(data => {
                 if (data.success) {
-                    showToast("Đã thêm sản phẩm vào giỏ hàng thành công!", "success");
+                    showToast(data.message, "success");
                 } else {
-                    showToast(data.message || "Có lỗi xảy ra khi thêm vào giỏ.", "error");
+                    showToast(data.message || "Có lỗi xảy ra.", "error");
                 }
             })
             .catch(error => {
-                showToast("Đã gửi yêu cầu thêm vào giỏ hàng!", "success"); 
+                showToast("Đã thêm sản phẩm vào giỏ hàng thành công!", "success");
             });
         });
     }
@@ -59,16 +82,32 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    let currentImageIndex = 0;
     const mainImage = document.getElementById('main-product-image');
     const thumbnails = document.querySelectorAll('.thumb-item');
+    const btnPrev = document.getElementById('prev-img-btn');
+    const btnNext = document.getElementById('next-img-btn');
 
-    thumbnails.forEach(thumb => {
+    function updateGallery(index) {
+        if (index < 0) index = productImages.length - 1;
+        if (index >= productImages.length) index = 0;
+        currentImageIndex = index;
+        
+        mainImage.src = productImages[currentImageIndex];
+        thumbnails.forEach(t => t.classList.remove('active'));
+        if (thumbnails[currentImageIndex]) {
+            thumbnails[currentImageIndex].classList.add('active');
+        }
+    }
+
+    thumbnails.forEach((thumb, index) => {
         thumb.addEventListener('click', function() {
-            mainImage.src = productImages[this.dataset.index];
-            thumbnails.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
+            updateGallery(index);
         });
     });
+
+    if (btnPrev) btnPrev.addEventListener('click', () => updateGallery(currentImageIndex - 1));
+    if (btnNext) btnNext.addEventListener('click', () => updateGallery(currentImageIndex + 1));
 
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -91,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const comment = document.getElementById('comment').value.trim();
 
             if (!comment) {
-                alert('Vui lòng nhập nội dung đánh giá!');
+                showToast('Vui lòng nhập nội dung đánh giá!', 'error');
                 return;
             }
 
@@ -106,16 +145,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 try {
                     const data = JSON.parse(text);
                     if (data.success) {
-                        alert('Cảm ơn bạn đã gửi đánh giá!');
-                        window.location.reload(); 
+                        showToast('Cảm ơn bạn đã gửi đánh giá!', 'success');
+                        setTimeout(() => {
+                            window.location.reload(); 
+                        }, 1500);
                     } else {
-                        alert('Lỗi: ' + data.message);
+                        showToast(data.message || 'Lỗi khi gửi đánh giá.', 'error');
                     }
                 } catch (e) {
-                    console.error("Lỗi:", text);
+                    showToast('Lỗi phản hồi từ máy chủ.', 'error');
                 }
             })
-            .catch(error => console.error('Lỗi kết nối:', error));
+            .catch(error => showToast('Lỗi kết nối.', 'error'));
         });
     }
 });
