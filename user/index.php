@@ -39,9 +39,18 @@
             echo '<img src="'.(strpos($row['image_url'], 'http') === 0 
                 ? $row['image_url'] 
                 : 'http://localhost/FD-Tech/upload/product_image/'.$row['image_url']).'">';
-                echo '<h3>'.$row['name'].'</h3>';
+            echo '<h3>'.$row['name'].'</h3>';
+            if (isset($row['discount_price']) && $row['discount_price'] > 0) {
+                echo '<div class="price-container">';
+                echo '<p class="price">'.number_format($row['discount_price']).' ₫</p>';
+                echo '<p class="old-price">'.number_format($row['price']).' ₫</p>';
+                echo '</div>';
+            } else {
+                echo '<div class="price-container">';
                 echo '<p class="price">'.number_format($row['price']).' ₫</p>';
-                echo '</a></div>';
+                echo '</div>';
+    }
+    echo '</a></div>';
             }
             ?>
         </div>  
@@ -68,11 +77,50 @@
                     ? $row['image_url'] 
                     : 'http://localhost/FD-Tech/upload/product_image/'.$row['image_url']).'">';
                     echo '<h3>'.$row['name'].'</h3>';
-                    echo '<p class="price">'.number_format($row['price']).' ₫</p>';
-                    echo '</a></div>';
+                    if (isset($row['discount_price']) && $row['discount_price'] > 0) {
+                        echo '<div class="price-container">';
+                        echo '<p class="price">'.number_format($row['discount_price']).' ₫</p>';
+                        echo '<p class="old-price">'.number_format($row['price']).' ₫</p>';
+                        echo '</div>';
+                    } else {
+                        echo '<div class="price-container">';
+                        echo '<p class="price">'.number_format($row['price']).' ₫</p>';
+                        echo '</div>';
+            }
+    echo '</a></div>';
             }
             ?>
             </div>
+            <h2 id="san-pham-dang-ban" class="section-title">🛒 Sản phẩm đang bán</h2>
+        <div class="product-grid">
+            <?php
+            $sql_random = "SELECT * FROM products 
+                           ORDER BY RAND() 
+                           LIMIT 8";
+                    
+            $stmt_random = $pdo->query($sql_random);
+
+            while($row = $stmt_random->fetch()) { 
+                echo '<div class="product-card">';
+                echo '<a href="product_detail.php?id='.$row['id'].'" style="text-decoration:none; color:#333;">';
+                echo '<img src="'.(strpos($row['image_url'], 'http') === 0 
+                    ? $row['image_url'] 
+                    : 'http://localhost/FD-Tech/upload/product_image/'.$row['image_url']).'">';
+                    echo '<h3>'.$row['name'].'</h3>';
+                    if (isset($row['discount_price']) && $row['discount_price'] > 0) {
+                        echo '<div class="price-container">';
+                        echo '<p class="price">'.number_format($row['discount_price']).' ₫</p>';
+                        echo '<p class="old-price">'.number_format($row['price']).' ₫</p>';
+                        echo '</div>';
+                    } else {
+                        echo '<div class="price-container">';
+                        echo '<p class="price">'.number_format($row['price']).' ₫</p>';
+                        echo '</div>';
+                    }
+                    echo '</a></div>';
+            }
+            ?>
+        </div>
 </div>
 <?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>
