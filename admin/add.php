@@ -52,6 +52,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $product_id = $pdo->lastInsertId();
 
+    // --- XỬ LÝ LƯU THÔNG SỐ KỸ THUẬT ĐỘNG ---
+    if (!empty($_POST['spec_names']) && !empty($_POST['spec_values'])) {
+        $spec_names = $_POST['spec_names'];
+        $spec_values = $_POST['spec_values'];
+        
+        $stmt_spec = $pdo->prepare("INSERT INTO product_specs (product_id, spec_name, spec_value, sort_order) VALUES (?, ?, ?, ?)");
+        $sort_order = 1;
+
+        foreach ($spec_names as $index => $name) {
+            $name = trim($name);
+            $value = trim($spec_values[$index] ?? '');
+
+            if (!empty($name)) {
+                $stmt_spec->execute([$product_id, $name, $value, $sort_order]);
+                $sort_order++;
+            }
+        }
+    }
+
     // --- XỬ LÝ UPLOAD NHIỀU ẢNH PHỤ (ALBUM) ---
     if (isset($_FILES['product_gallery']) && !empty($_FILES['product_gallery']['name'][0])) {
         $gallery_dir = "../upload/product_gallery/";
@@ -178,6 +197,22 @@ include 'includes/header.php';
                         <textarea name="description" class="form-control" rows="4"></textarea>
                     </div>
 
+                    <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
+                        <label class="form-label" style="font-weight: bold; color: #1e293b; display: block; margin-bottom: 10px;">⚙️ Thông số kỹ thuật sản phẩm</label>
+                        
+                        <div id="specs-wrapper">
+                            <div class="spec-item" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <input type="text" name="spec_names[]" class="form-control" placeholder="Tên thông số (VD: Kết nối)" style="flex: 1;">
+                                <input type="text" name="spec_values[]" class="form-control" placeholder="Giá trị (VD: Không dây 2.4Ghz)" style="flex: 2;">
+                                <button type="button" class="btn btn-danger remove-spec-btn" style="background: #ef4444; color: #fff; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer;">Xóa</button>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="add-spec-btn" class="btn" style="background: #2563eb; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-top: 5px;">
+                            <i class="fa-solid fa-plus"></i> Thêm dòng thông số
+                        </button>
+                    </div>
+
                     <button class="btn btn-primary">
                         <i class="fa-solid fa-save"></i>
                         Lưu sản phẩm
@@ -193,6 +228,7 @@ include 'includes/header.php';
 <script src="../assets/js/script_dashboard.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý ẩn hiện Flash Sale
     const flashSaleCheckbox = document.getElementById('flash-sale-checkbox');
     const flashSalePriceGroup = document.getElementById('flash-sale-price-group');
     
@@ -206,6 +242,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Xử lý thêm/xóa dòng thông số kỹ thuật động
+    const specsWrapper = document.getElementById('specs-wrapper');
+    const addSpecBtn = document.getElementById('add-spec-btn');
+
+    addSpecBtn.addEventListener('click', function() {
+        const div = document.createElement('div');
+        div.className = 'spec-item';
+        div.style = 'display: flex; gap: 10px; margin-bottom: 10px;';
+        div.innerHTML = `
+            <input type="text" name="spec_names[]" class="form-control" placeholder="Tên thông số" style="flex: 1;">
+            <input type="text" name="spec_values[]" class="form-control" placeholder="Giá trị" style="flex: 2;">
+            <button type="button" class="btn btn-danger remove-spec-btn" style="background: #ef4444; color: #fff; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer;">Xóa</button>
+        `;
+        specsWrapper.appendChild(div);
+    });
+
+    specsWrapper.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-spec-btn')) {
+            e.target.parentElement.remove();
+        }
+    });
 });
 </script>
 </body>

@@ -42,6 +42,11 @@ $stmt_gallery = $pdo->prepare("SELECT * FROM product_images WHERE product_id = ?
 $stmt_gallery->execute([$id]);
 $gallery_images = $stmt_gallery->fetchAll(PDO::FETCH_ASSOC);
 
+// LẤY TOÀN BỘ THÔNG SỐ KỸ THUẬT HIỆN TẠI CỦA SẢN PHẨM
+$stmt_get_specs = $pdo->prepare("SELECT * FROM product_specs WHERE product_id = ? ORDER BY sort_order ASC");
+$stmt_get_specs->execute([$id]);
+$current_specs = $stmt_get_specs->fetchAll(PDO::FETCH_ASSOC);
+
 $categories = $pdo->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_gallery_image_id'])) {
@@ -112,6 +117,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_gallery_image
         $image_url,
         $id
     ]);
+
+    // --- XỬ LÝ ĐÈ LẠI THÔNG SỐ KỸ THUẬT MỚI KHI EDIT ---
+    $pdo->prepare("DELETE FROM product_specs WHERE product_id = ?")->execute([$id]);
+    if (!empty($_POST['spec_names']) && !empty($_POST['spec_values'])) {
+        $spec_names = $_POST['spec_names'];
+        $spec_values = $_POST['spec_values'];
+        
+        $stmt_spec_ins = $pdo->prepare("INSERT INTO product_specs (product_id, spec_name, spec_value, sort_order) VALUES (?, ?, ?, ?)");
+        $sort_order = 1;
+        
+        foreach ($spec_names as $index => $name) {
+            $name = trim($name);
+            $value = trim($spec_values[$index] ?? '');
+            if (!empty($name)) {
+                $stmt_spec_ins->execute([$id, $name, $value, $sort_order]);
+                $sort_order++;
+            }
+        }
+    }
 
     $pdo->prepare("DELETE FROM product_tags WHERE product_id = ?")->execute([$id]);
 
@@ -297,6 +321,32 @@ include 'includes/header.php';
                         <textarea name="description" class="form-control" rows="4"><?= htmlspecialchars($product['description']) ?></textarea>
                     </div>
 
+                    <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
+                        <label class="form-label" style="font-weight: bold; color: #1e293b; display: block; margin-bottom: 10px;">⚙️ Thông số kỹ thuật sản phẩm</label>
+                        
+                        <div id="specs-wrapper">
+                            <?php if (!empty($current_specs)): ?>
+                                <?php foreach ($current_specs as $spec): ?>
+                                    <div class="spec-item" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                        <input type="text" name="spec_names[]" value="<?= htmlspecialchars($spec['spec_name']) ?>" class="form-control" placeholder="Tên thông số" style="flex: 1;">
+                                        <input type="text" name="spec_values[]" value="<?= htmlspecialchars($spec['spec_value']) ?>" class="form-control" placeholder="Giá trị" style="flex: 2;">
+                                        <button type="button" class="btn btn-danger remove-spec-btn" style="background: #ef4444; color: #fff; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer;">Xóa</button>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="spec-item" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                    <input type="text" name="spec_names[]" class="form-control" placeholder="Tên thông số (VD: Kết nối)" style="flex: 1;">
+                                    <input type="text" name="spec_values[]" class="form-control" placeholder="Giá trị (VD: Không dây)" style="flex: 2;">
+                                    <button type="button" class="btn btn-danger remove-spec-btn" style="background: #ef4444; color: #fff; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer;">Xóa</button>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <button type="button" id="add-spec-btn" class="btn" style="background: #2563eb; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-top: 5px;">
+                            <i class="fa-solid fa-plus"></i> Thêm dòng thông số
+                        </button>
+                    </div>
+
                     <button class="btn btn-primary">
                         <i class="fa-solid fa-save"></i>
                         Cập nhật sản phẩm
@@ -313,6 +363,7 @@ include 'includes/header.php';
 <script src="../assets/js/script_dashboard.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý ẩn hiện Flash Sale
     const flashSaleCheckbox = document.getElementById('flash-sale-checkbox');
     const flashSalePriceGroup = document.getElementById('flash-sale-price-group');
     
@@ -326,6 +377,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Xử lý thêm/xóa dòng thông số kỹ thuật động
+    const specsWrapper = document.getElementById('specs-wrapper');
+    const addSpecBtn = document.getElementById('add-spec-btn');
+
+    addSpecBtn.addEventListener('click', function() {
+        const div = document.createElement('div');
+        div.className = 'spec-item';
+        div.style = 'display: flex; gap: 10px; margin-bottom: 10px;';
+        div.innerHTML = `
+            <input type="text" name="spec_names[]" class="form-control" placeholder="Tên thông số" style="flex: 1;">
+            <input type="text" name="spec_values[]" class="form-control" placeholder="Giá trị" style="flex: 2;">
+            <button type="button" class="btn btn-danger remove-spec-btn" style="background: #ef4444; color: #fff; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer;">Xóa</button>
+        `;
+        specsWrapper.appendChild(div);
+    });
+
+    specsWrapper.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-spec-btn')) {
+            e.target.parentElement.remove();
+        }
+    });
 });
 </script>
 </body>
