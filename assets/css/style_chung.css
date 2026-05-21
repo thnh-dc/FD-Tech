@@ -9,9 +9,9 @@
     
     /* Status */
     --success: #28A745;
-    --danger: #DC3545;
+    --danger: #ff0019;
     --warning: #FFC107;
-
+    --depending:#00ffea;
     /* Typography */
     --text-xs: 12px;
     --text-sm: 14px;

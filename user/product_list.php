@@ -1,30 +1,40 @@
 <?php
-$host = 'localhost';
-$dbname = 'fd-tech';
-$username = 'root';
-$password = '';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Lỗi kết nối: " . $e->getMessage());
-}
+session_start();
+require_once '../auth/user_only.php';
+require_once '../config/database.php';
 
 $cat = isset($_GET['cat']) ? (int)$_GET['cat'] : 0;
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'featured';
 $products = [];
 $category_name = '';
 
 $menu_categories = [
-    1 => 'LAPTOP',
-    2 => 'LINH KIỆN',
-    3 => 'MÀN HÌNH MÁY TÍNH',
-    4 => 'TAI NGHE',
-    5 => 'LOA',
-    6 => 'BÀN PHÍM',
-    7 => 'CHUỘT',
-    8 => 'PHỤ KIỆN KHÁC'
+    1 => 'LAPTOP', 2 => 'LINH KIỆN', 3 => 'MÀN HÌNH MÁY TÍNH', 
+    4 => 'TAI NGHE', 5 => 'LOA', 6 => 'BÀN PHÍM', 7 => 'CHUỘT', 8 => 'PHỤ KIỆN KHÁC'
 ];
+
+$orderBy = "id DESC";
+switch ($sort) {
+    case 'price_asc':
+        $orderBy = "price ASC";
+        break;
+    case 'price_desc':
+        $orderBy = "price DESC";
+        break;
+    case 'newest':
+        $orderBy = "id DESC";
+        break;
+    case 'bestseller':
+        $orderBy = "id ASC"; 
+        break;
+    case 'discount':
+        $orderBy = "price ASC";
+        break;
+    case 'featured':
+    default:
+        $orderBy = "id DESC";
+        break;
+}
 
 try {
     if ($cat > 0) {
@@ -34,69 +44,83 @@ try {
             $stmt_cat = $pdo->prepare("SELECT name FROM categories WHERE id = :cat");
             $stmt_cat->execute(['cat' => $cat]);
             $cat_data = $stmt_cat->fetch(PDO::FETCH_ASSOC);
-            
             if ($cat_data && !empty($cat_data['name'])) {
                 $category_name = $cat_data['name'];
             }
         }
-
-        $stmt = $pdo->prepare("SELECT id, name, price, image_url, description FROM products WHERE category_id = :cat ORDER BY id DESC");
+        $stmt = $pdo->prepare("SELECT id, name, price, image_url, description FROM products WHERE category_id = :cat ORDER BY $orderBy");
         $stmt->execute(['cat' => $cat]);
     } else {
-        $stmt = $pdo->prepare("SELECT id, name, price, image_url, description FROM products ORDER BY id DESC");
+        $stmt = $pdo->prepare("SELECT id, name, price, image_url, description FROM products ORDER BY $orderBy");
         $stmt->execute();
     }
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("<h3 style='color:red; text-align:center;'>Lỗi truy vấn SQL: " . $e->getMessage() . "</h3>");
 }
+
+$custom_css = '<link rel="stylesheet" href="../assets/css/style_product_list.css?v=' . time() . '">';
+include '../includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>FD Tech - Danh sách sản phẩm</title>
-    <link rel="stylesheet" href="../assets/css/style.css"> 
-    <style>
-        .product-card { position: relative; border: 1px solid #eee; padding: 10px; border-radius: 8px; }
-        .product-card a { text-decoration: none; color: inherit; display: block; }
-        .product-card:hover { transform: translateY(-5px); transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    </style>
-</head>
-<body>
-    <?php include '../includes/header.php'; ?>
 
-    <main class="container" style="margin-top: 30px;">
+<main class="container">
+    <div class="page-header">
         <h2 class="section-title">
-            <?php 
-                if ($category_name !== '') {
-                    echo '<span style="border-left: 4px solid #007bff; padding-left: 10px;">DANH MỤC: ' . htmlspecialchars(mb_strtoupper($category_name, 'UTF-8')) . '</span>';
-                } else {
-                    echo '<span style="border-left: 4px solid #007bff; padding-left: 10px;">TẤT CẢ SẢN PHẨM</span>';
-                }
-            ?>
+            <?= $category_name !== '' ? htmlspecialchars(mb_strtoupper($category_name, 'UTF-8')) : 'TẤT CẢ SẢN PHẨM' ?>
         </h2>
-        
-        <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 20px;">
-            <?php if (!empty($products)): ?>
-                <?php foreach ($products as $row): ?>
-                    <div class="product-card">
-                        <a href="product_detail.php?id=<?= $row['id'] ?>">
-                            <?php if(isset($row['is_promotion']) && $row['is_promotion'] == 1): ?>
-                                <span style="position:absolute; top:5px; left:5px; background:red; color:white; padding:2px 8px; font-size:10px; border-radius:4px; z-index:1;">SALE</span>
-                            <?php endif; ?>
-                            <img src="<?= htmlspecialchars($row['image_url']) ?>" style="width: 100%; height: 180px; object-fit: contain; margin-bottom: 10px; border-radius: 8px;">
-                            <h3 style="font-size: 14px; margin-bottom: 8px; font-weight: normal; line-height: 1.4; height: 40px; overflow: hidden;"><?= htmlspecialchars($row['name']) ?></h3>
-                            <p style="color: #ee4d2d; font-weight: bold; font-size: 16px;"><?= number_format($row['price'], 0, ',', '.') ?> VNĐ</p>
-                        </a>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p style="grid-column: span 4; text-align: center; color: #666; padding: 50px 0;">Chưa có sản phẩm nào trong danh mục này.</p>
-            <?php endif; ?>
-        </div>
-    </main>
+    </div>
 
-    <?php include '../includes/footer.php'; ?>
-</body>
-</html>
+    <div class="sort-bar">
+        <span class="sort-label">Sắp xếp theo:</span>
+        <a href="?cat=<?= $cat ?>&sort=featured" class="sort-item <?= $sort == 'featured' ? 'active' : '' ?>">Nổi bật</a>
+        <span class="separator">•</span>
+        <a href="?cat=<?= $cat ?>&sort=bestseller" class="sort-item <?= $sort == 'bestseller' ? 'active' : '' ?>">Bán chạy</a>
+        <span class="separator">•</span>
+        <a href="?cat=<?= $cat ?>&sort=discount" class="sort-item <?= $sort == 'discount' ? 'active' : '' ?>">Giảm giá</a>
+        <span class="separator">•</span>
+        <a href="?cat=<?= $cat ?>&sort=newest" class="sort-item <?= $sort == 'newest' ? 'active' : '' ?>">Mới</a>
+        <span class="separator">•</span>
+        
+        <div class="sort-dropdown">
+            <span class="sort-item <?= strpos($sort, 'price') !== false ? 'active' : '' ?>" style="cursor: pointer;">
+                Giá <?= strpos($sort, 'price') !== false ? ($sort == 'price_asc' ? ' (Thấp - Cao)' : ' (Cao - Thấp)') : '' ?> 
+                <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 3px;"></i>
+            </span>
+            <div class="dropdown-content">
+                <a href="?cat=<?= $cat ?>&sort=price_asc" class="<?= $sort == 'price_asc' ? 'active' : '' ?>">Giá: Thấp đến Cao</a>
+                <a href="?cat=<?= $cat ?>&sort=price_desc" class="<?= $sort == 'price_desc' ? 'active' : '' ?>">Giá: Cao đến Thấp</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-grid">
+        <?php if (!empty($products)): ?>
+            <?php foreach ($products as $row): ?>
+                <?php
+                    $img = $row['image_url'] ?? '';
+                    if (empty($img)) $src = "../assets/images/logo-fd.jpg";
+                    elseif (filter_var($img, FILTER_VALIDATE_URL)) $src = $img;
+                    elseif (strpos($img, 'upload/product_image/') === 0) $src = "../" . $img;
+                    else $src = "../upload/product_image/" . $img;
+                ?>
+                <div class="product-card">
+                    <a href="product_detail.php?id=<?= $row['id'] ?>" class="card-link">
+                        <div class="img-wrapper">
+                            <img src="<?= htmlspecialchars($src) ?>" alt="<?= htmlspecialchars($row['name']) ?>" onerror="this.src='../assets/images/logo-fd.jpg'">
+                        </div>
+                        <div class="card-body">
+                            <h3><?= htmlspecialchars($row['name']) ?></h3>
+                            <p class="price"><?= number_format($row['price'], 0, ',', '.') ?> VNĐ</p>
+                        </div>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="product-empty">
+                <p>Hiện tại chưa có sản phẩm nào trong danh mục này.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+</main>
+<?php include '../includes/ai_assistant_widget.php'; ?>
+<?php include '../includes/footer.php'; ?>

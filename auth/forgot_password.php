@@ -3,29 +3,28 @@ session_start();
 include '../config/database.php';
 
 $step = $_SESSION['reset_step'] ?? 1;
-$alert_msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // BƯỚC 1: KIỂM TRA DATA
     if (isset($_POST['step_1'])) {
         $user_input = trim($_POST['user_input']);
         try {
-            // Đã đổi: Kiểm tra Email hoặc Số điện thoại (phone)
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? OR phone = ?");
             $stmt->execute([$user_input, $user_input]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
-                // Nếu tìm thấy, chuyển sang bước 2 để đặt mật khẩu mới
                 $_SESSION['reset_step'] = 2;
                 $_SESSION['reset_user_id'] = $user['id'];
                 header("Location: forgot_password.php");
                 exit();
             } else {
-                $alert_msg = 'Không tìm thấy Email hoặc Số điện thoại này trong hệ thống!';
+                $_SESSION['noti_message'] = 'Email hoặc Số điện thoại không tồn tại!';
+                $_SESSION['noti_type'] = 'error';
             }
         } catch (PDOException $e) {
-            $alert_msg = 'Lỗi hệ thống: Không thể xử lý yêu cầu lúc này.';
+            $_SESSION['noti_message'] = 'Lỗi hệ thống: Không thể xử lý yêu cầu lúc này.';
+            $_SESSION['noti_type'] = 'error';
         }
     }
 
@@ -38,114 +37,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $hashed_password = password_hash($new_pass, PASSWORD_DEFAULT);
             $user_id = $_SESSION['reset_user_id'];
             try {
-                // Cập nhật mật khẩu mới vào Database
                 $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
                 $stmt->execute([$hashed_password, $user_id]);
 
-                // Hủy session khôi phục
-                unset($_SESSION['reset_step']);
-                unset($_SESSION['reset_user_id']);
+                unset($_SESSION['reset_step'], $_SESSION['reset_user_id']);
 
-                // Gửi thông báo thành công và đá về trang Đăng nhập
-                $_SESSION['flash_msg'] = 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.';
+                $_SESSION['noti_message'] = 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.';
+                $_SESSION['noti_type'] = 'success';
                 header("Location: login.php");
                 exit();
             } catch (PDOException $e) {
-                $alert_msg = 'Lỗi cập nhật mật khẩu!';
+                $_SESSION['noti_message'] = 'Lỗi cập nhật mật khẩu!';
+                $_SESSION['noti_type'] = 'error';
             }
         } else {
-            $alert_msg = 'Mật khẩu xác nhận không khớp!';
+            $_SESSION['noti_message'] = 'Mật khẩu xác nhận không khớp!';
+            $_SESSION['noti_type'] = 'error';
         }
     }
 }
 
-// Xử lý khi người dùng bấm "Quay lại"
 if (isset($_GET['action']) && $_GET['action'] == 'cancel') {
-    unset($_SESSION['reset_step']);
-    unset($_SESSION['reset_user_id']);
+    unset($_SESSION['reset_step'], $_SESSION['reset_user_id']);
     header("Location: login.php");
     exit();
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
+<?php
+$page_title = 'Quên mật khẩu - FD Tech';
+include '../includes/auth_header.php';
+?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quên mật khẩu - FD Tech</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style_login.css">
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-</head>
+<div class="form-header">
+    <h2 class="form-title"><?php echo ($step == 1) ? 'Lấy lại mật khẩu' : 'Mật khẩu mới'; ?></h2>
+</div>
 
-<body>
-
-    <header class="auth-header">
-        <div class="auth-header-container">
-            <div class="auth-header-left">
-                <a href="/FD-Tech/user/index.php" class="auth-logo">
-                    <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                    <span class="auth-brand">FD<span>TECH</span></span>
-                </a>
-            </div>
+<?php if ($step == 1): ?>
+    <form action="" method="POST">
+        <input type="hidden" name="step_1" value="1">
+        <div class="input-group">
+            <input type="text" name="user_input" placeholder="Nhập Email hoặc Số điện thoại" required>
         </div>
-    </header>
-
-    <div class="login-wrapper">
-        <div class="login-container">
-            <div class="login-branding">
-                <img src="../assets/images/logo-fd.jpg" alt="FD Tech Logo" onerror="this.style.display='none'">
-                <h1>FD TECH</h1>
-                <p>Nền tảng mua sắm đồ chơi công nghệ<br>và phụ kiện chơi game hàng đầu</p>
-            </div>
-
-            <div class="login-form-box">
-                <div class="form-header">
-                    <h2 class="form-title"><?php echo ($step == 1) ? 'Lấy lại mật khẩu' : 'Mật khẩu mới'; ?></h2>
-                </div>
-
-                <?php if ($step == 1): ?>
-                    <form action="" method="POST">
-                        <input type="hidden" name="step_1" value="1">
-                        <div class="input-group">
-                            <input type="text" name="user_input" placeholder="Nhập Email hoặc Số điện thoại" required>
-                        </div>
-                        <button type="submit" class="btn-login">Kiểm tra thông tin</button>
-                    </form>
-                <?php else: ?>
-                    <form action="" method="POST">
-                        <input type="hidden" name="step_2" value="1">
-                        <div class="input-group">
-                            <input type="password" name="new_password" placeholder="Mật khẩu mới" required minlength="6">
-                        </div>
-                        <div class="input-group">
-                            <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required
-                                minlength="6">
-                        </div>
-                        <button type="submit" class="btn-login"
-                            style="background-color: #26aa99; border-color: #26aa99;">Đổi mật khẩu</button>
-                    </form>
-                <?php endif; ?>
-
-                <div class="register-link" style="margin-top: 25px;">
-                    <a href="?action=cancel"><i class="fas fa-arrow-left"></i> Quay lại Đăng nhập</a>
-                </div>
-            </div>
+        <button type="submit" class="btn-login">Kiểm tra thông tin</button>
+    </form>
+<?php else: ?>
+    <form action="" method="POST">
+        <input type="hidden" name="step_2" value="1">
+        <div class="input-group">
+            <input type="password" name="new_password" placeholder="Mật khẩu mới" required minlength="6">
         </div>
-    </div>
+        <div class="input-group">
+            <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required minlength="6">
+        </div>
+        <button type="submit" class="btn-login" style="background-color: #1a9bb8; border-color: #1a9bb8;">Đổi mật khẩu</button>
+    </form>
+<?php endif; ?>
 
-    <?php include '../includes/footer.php'; ?>
+<div class="register-link" style="margin-top: 25px;">
+    <a href="?action=cancel"><i class="fas fa-arrow-left"></i> Quay lại </a>
+</div>
 
-    <?php if (!empty($alert_msg)): ?>
-        <script>
-            alert('<?php echo $alert_msg; ?>');
-        </script>
-    <?php endif; ?>
+</div>
+</div>
+</div> 
+
+<?php include '../includes/footer.php'; ?>
+
+<?php include '../includes/notification.php'; ?>
 
 </body>
-
 </html>

@@ -10,6 +10,7 @@
             oi.quantity, 
             oi.price,
             o.shipping_address,
+            o.note,
             u.full_name,
             u.phone
         FROM order_items oi
@@ -34,6 +35,7 @@
             <p><b>Người nhận:</b> '.$info['full_name'].'</p>
             <p><b>Số điện thoại:</b> '.$info['phone'].'</p>
             <p><b>Địa chỉ nhận:</b> '.$info['shipping_address'].'</p>
+            <p><b> Thông tin thanh toán:</b> '.$info['note'].'</p>
         </div>
         ';
     }
