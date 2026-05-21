@@ -128,7 +128,7 @@ include '../includes/auth_header.php';
     <form action="" method="POST">
         <input type="hidden" name="step_2" value="1">
         <p style="font-size: 13px; color: #555; margin-bottom: 15px; text-align: center;">
-            Mã xác thực đã được gửi đến thiết bị của bạn. Vui lòng kiểm tra thông báo Toast để lấy mã.
+            Mã xác thực đã được gửi đến thiết bị của bạn. Vui lòng kiểm tra thông báo để lấy mã.
         </p>
         <div class="input-group">
             <input type="text" name="otp_input" placeholder="Nhập mã xác thực gồm 6 số" maxlength="6" required autocomplete="off">
