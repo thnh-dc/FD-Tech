@@ -2,7 +2,7 @@
 session_start();
 include '../config/database.php';
 
-// --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ ---
+//  XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);

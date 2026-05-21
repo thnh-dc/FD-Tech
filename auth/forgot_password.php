@@ -5,7 +5,6 @@ include '../config/database.php';
 $step = $_SESSION['reset_step'] ?? 1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // BƯỚC 1: KIỂM TRA DATA
     if (isset($_POST['step_1'])) {
         $user_input = trim($_POST['user_input']);
         try {
@@ -28,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // BƯỚC 2: ĐỔI MẬT KHẨU
     if (isset($_POST['step_2'])) {
         $new_pass = $_POST['new_password'];
         $conf_pass = $_POST['confirm_password'];
