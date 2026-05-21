@@ -34,12 +34,44 @@
     display: flex;
     justify-content: center;
     background: #fff;
+    position: relative;
 }
 
 .main-image-container img {
     width: 100%;
     max-height: 450px;
     object-fit: contain;
+}
+
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: 0.3s;
+    z-index: 10;
+}
+
+.nav-arrow:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.left-arrow {
+    left: 15px;
+}
+
+.right-arrow {
+    right: 15px;
 }
 
 .thumbnail-list {
@@ -85,8 +117,13 @@
     font-weight: 500;
 }
 
-.text-success { color: #28a745; }
-.text-danger { color: #dc3545; }
+.text-success {
+    color: #28a745;
+}
+
+.text-danger {
+    color: #dc3545;
+}
 
 .qty-control {
     display: inline-flex;
@@ -111,42 +148,54 @@
     outline: none;
 }
 
+/* Khu vực nút bấm - Đã đồng bộ tone xanh chủ đạo */
 .product-actions {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     margin-top: 30px;
 }
 
 .btn {
-    padding: 15px 30px;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 30px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-radius: 8px;
     cursor: pointer;
     text-align: center;
-    transition: 0.3s;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
     flex: 1;
 }
 
 .btn-outline {
-    background: transparent;
-    border: 2px solid var(--primary);
-    color: var(--primary);
+    background: #ffffff;
+    border: 2px solid var(--primary, #1a365d);
+    color: var(--primary, #1a365d);
 }
 
 .btn-outline:hover {
-    background: var(--primary);
-    color: #fff;
+    background: var(--primary, #1a365d);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(26, 54, 93, 0.15);
 }
 
+/* Nút MUA NGAY đổi sang nền màu xanh đậm của hệ thống */
 .btn-buy {
-    background: var(--danger);
-    border: none;
-    color: #fff;
+    background: var(--primary, #1a365d);
+    border: 2px solid var(--primary, #1a365d);
+    color: #ffffff;
 }
 
 .btn-buy:hover {
-    background: #c82333;
+    background: #102a45; /* Tông xanh đậm hơn một chút khi hover để tạo hiệu ứng nhấn */
+    border-color: #102a45;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(26, 54, 93, 0.3);
 }
 
 .product-tabs-section {
@@ -209,6 +258,61 @@
     background: #fcfcfc;
 }
 
+.review-form-container {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+}
+
+.review-form-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.review-form .form-group {
+    margin-bottom: 15px;
+}
+
+.review-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.review-form .form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.review-form .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.btn-submit-review {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-submit-review:hover {
+    background: #0056b3;
+}
+
 .review-box {
     border-bottom: 1px solid #eee;
     padding-bottom: 15px;
@@ -234,31 +338,3 @@
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-#toast-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.toast {
-    background: #333;
-    color: #fff;
-    padding: 15px 25px;
-    border-radius: 5px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    font-weight: 500;
-    transform: translateX(120%);
-    transition: transform 0.3s ease-in-out;
-}
-
-.toast.show {
-    transform: translateX(0);
-}
-
-.toast.success { background: #28a745; }
-.toast.error { background: #dc3545; }

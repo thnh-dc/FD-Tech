@@ -37,7 +37,8 @@ try {
     }
 }
 
-$custom_css = '<link rel="stylesheet" href="../assets/css/style_product_detail.css">';
+// Đã cập nhật tham số chống cache tại đây
+$custom_css = '<link rel="stylesheet" href="../assets/css/style_product_detail.css?v=' . time() . '">' . "\n" . '<link rel="stylesheet" href="../assets/css/style_notification.css?v=' . time() . '">';
 include '../includes/header.php';
 
 $img = $sp['image_url'] ?? '';
@@ -71,7 +72,9 @@ foreach ($extraImages as $eImg) {
     <div class="product-layout">
         <div class="product-gallery">
             <div class="main-image-container">
+                <button type="button" id="prev-img-btn" class="nav-arrow left-arrow"><i class="fas fa-chevron-left"></i></button>
                 <img id="main-product-image" src="<?= htmlspecialchars($img_src); ?>" alt="<?= htmlspecialchars($sp['name']); ?>" onerror="this.src='../assets/images/logo-fd.jpg'">
+                <button type="button" id="next-img-btn" class="nav-arrow right-arrow"><i class="fas fa-chevron-right"></i></button>
             </div>
             <div class="thumbnail-list">
                 <?php foreach($image_gallery as $index => $thumb): ?>
@@ -103,7 +106,7 @@ foreach ($extraImages as $eImg) {
                 </div>
 
                 <div class="product-actions">
-                    <button type="button" class="btn btn-outline" id="btnAddToCart">
+                    <button type="button" name="action_type" value="add_to_cart" class="btn btn-outline" id="btnAddToCart">
                         <i class="fas fa-shopping-cart"></i> THÊM VÀO GIỎ HÀNG
                     </button>
                     <button type="submit" name="action_type" value="buy_now" class="btn btn-primary btn-buy">
@@ -187,8 +190,6 @@ foreach ($extraImages as $eImg) {
         </div>
     </div>
 </main>
-
-<div id="toast-container"></div>
 
 <script>
     const productImages = <?= json_encode($image_gallery); ?>;
