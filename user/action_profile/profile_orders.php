@@ -1,23 +1,38 @@
 <?php
+// Bắt buộc phải có session_start() ở đầu file gốc (nếu file profile.php đã có thì không cần thêm)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     // Xử lý Hủy đơn
     if ($_POST['action'] == 'cancel_order') {
         try {
-            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending'");
-            $stmt->execute([$_POST['order_id'], $user_id]);
+            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending' or 'processing'");
+            if ($stmt->execute([$_POST['order_id'], $user_id])) {
+                $_SESSION['noti_message'] = 'Đã hủy đơn hàng thành công!';
+                $_SESSION['noti_type'] = 'success';
+            }
         } catch (PDOException $e) {
+            $_SESSION['noti_message'] = 'Lỗi khi hủy đơn hàng!';
+            $_SESSION['noti_type'] = 'error';
         }
-        echo "<script>window.location.href='profile.php?action=orders';</script>";
+        header("Location: profile.php?action=orders");
         exit();
     } 
     // Xử lý Xác nhận đã nhận hàng
     elseif ($_POST['action'] == 'confirm_received') {
         try {
             $stmt = $pdo->prepare("UPDATE orders SET status = 'completed' WHERE id = ? AND user_id = ? AND status = 'shipped'");
-            $stmt->execute([$_POST['order_id'], $user_id]);
+            if ($stmt->execute([$_POST['order_id'], $user_id])) {
+                $_SESSION['noti_message'] = 'Xác nhận đã nhận hàng thành công!';
+                $_SESSION['noti_type'] = 'success';
+            }
         } catch (PDOException $e) {
+            $_SESSION['noti_message'] = 'Lỗi khi xác nhận đơn hàng!';
+            $_SESSION['noti_type'] = 'error';
         }
-        echo "<script>window.location.href='profile.php?action=orders';</script>";
+        header("Location: profile.php?action=orders");
         exit();
     }
 }
@@ -64,6 +79,40 @@ function translateOrderStatus($status)
 ?>
 
 <link rel="stylesheet" href="../assets/css/style_profile_order.css">
+
+<style>
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        display: none; /* Ẩn mặc định */
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.2s ease-in-out;
+    }
+    .custom-modal-box {
+        background: #fff;
+        padding: 25px 30px;
+        border-radius: 8px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .custom-modal-box h3 { margin-top: 0; color: #333; font-size: 20px; }
+    .custom-modal-box p { color: #555; margin-bottom: 25px; line-height: 1.5; }
+    .custom-modal-actions { display: flex; justify-content: center; gap: 15px; }
+    .custom-modal-actions button {
+        padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 15px; font-weight: 500; transition: 0.2s;
+    }
+    .btn-modal-cancel { background: #f1f1f1; color: #333; }
+    .btn-modal-cancel:hover { background: #e2e2e2; }
+    .btn-modal-confirm { background: #26aa99; color: #fff; }
+    .btn-modal-confirm:hover { background: #209082; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+
 <div class="profile-orders-header">
     <h2>Đơn hàng của tôi</h2>
     <p>Theo dõi tình trạng các đơn hàng đã đặt</p>
@@ -85,16 +134,13 @@ function translateOrderStatus($status)
 <?php else: ?>
     <div>
         <?php foreach ($orders as $order):
-            $st_items = $pdo->prepare("
-                SELECT oi.*, p.name AS original_name, p.image_url 
-                FROM order_items oi 
-                LEFT JOIN products p ON oi.product_id = p.id 
-                WHERE oi.order_id = ?
-            ");
+            // CHỈ CẦN SELECT TỪ BẢNG order_items, KHÔNG CẦN JOIN NỮA
+            $st_items = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
             $st_items->execute([$order['id']]);
             $items = $st_items->fetchAll(PDO::FETCH_ASSOC);
 
-            $first_name = !empty($items) ? ($items[0]['original_name'] ?? $items[0]['product_name']) : 'Đơn hàng #' . $order['id'];
+            // Lấy tên sản phẩm đầu tiên từ order_items
+            $first_name = !empty($items) ? $items[0]['product_name'] : 'Đơn hàng #' . $order['id'];
             ?>
             <div class="order-card">
                 
@@ -134,12 +180,13 @@ function translateOrderStatus($status)
                     </div>
 
                     <?php foreach ($items as $it):
-                        $img_link = !empty($it['image_url']) ? $it['image_url'] : ($it['product_image'] ?? '');
-                        $p_name = !empty($it['original_name']) ? $it['original_name'] : ($it['product_name'] ?? '');
+                        // Lấy ảnh và tên trực tiếp từ order_items
+                        $img_link = !empty($it['product_image']) ? $it['product_image'] : '';
+                        $p_name = !empty($it['product_name']) ? $it['product_name'] : 'Sản phẩm không xác định';
                         ?>
                         <div class="order-item">
                             <div class="order-item-img">
-                                <img src="<?= $img_link ?>" alt="Product" onerror="this.src='https://via.placeholder.com/70?text=No+Image'">
+                                <img src="<?= htmlspecialchars($img_link) ?>" alt="Product" onerror="this.src='https://via.placeholder.com/70?text=No+Image'">
                             </div>
                             <div class="order-item-info">
                                 <div class="order-item-name"><?= htmlspecialchars($p_name) ?></div>
@@ -156,17 +203,17 @@ function translateOrderStatus($status)
                             <span class="order-total-amount"><?= number_format($order['total_amount'], 0, ',', '.') ?>đ</span>
                         </div>
 
-                        <?php if ($order['status'] == 'pending'): ?>
-                            <form action="" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');" style="margin: 0;">
+                        <?php if ($order['status'] == 'pending' or 'processing'): ?>
+                            <form id="form-cancel-<?= $order['id'] ?>" action="" method="POST" style="margin: 0;">
                                 <input type="hidden" name="action" value="cancel_order">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                                <button type="submit" class="btn-cancel-order">Hủy đơn hàng</button>
+                                <button type="button" class="btn-cancel-order" onclick="openConfirmModal('cancel', <?= $order['id'] ?>)">Hủy đơn hàng</button>
                             </form>
                         <?php elseif ($order['status'] == 'shipped'): ?>
-                            <form action="" method="POST" onsubmit="return confirm('Bạn xác nhận đã nhận được đơn hàng này?');" style="margin: 0;">
+                            <form id="form-receive-<?= $order['id'] ?>" action="" method="POST" style="margin: 0;">
                                 <input type="hidden" name="action" value="confirm_received">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                                <button type="submit" class="btn-confirm-received" style="background-color: #26aa99; color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-left: 10px;">Đã nhận được hàng</button>
+                                <button type="button" class="btn-confirm-received" style="background-color: #26aa99; color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-left: 10px;" onclick="openConfirmModal('receive', <?= $order['id'] ?>)">Đã nhận được hàng</button>
                             </form>
                         <?php endif; ?>
                     </div>
@@ -176,7 +223,19 @@ function translateOrderStatus($status)
     </div>
 <?php endif; ?>
 
+<div id="custom-confirm-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+        <h3 id="modal-title">Xác nhận</h3>
+        <p id="modal-message">Bạn có chắc chắn muốn thực hiện thao tác này?</p>
+        <div class="custom-modal-actions">
+            <button onclick="closeConfirmModal()" class="btn-modal-cancel">Đóng</button>
+            <button id="modal-confirm-btn" onclick="submitConfirmForm()" class="btn-modal-confirm">Xác nhận</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    // Toggle xem chi tiết đơn hàng
     function toggleOrder(id, btn) {
         var box = document.getElementById('detail-' + id);
         if (box.style.display === "none" || box.style.display === "") {
@@ -187,4 +246,41 @@ function translateOrderStatus($status)
             btn.innerText = "Xem chi tiết";
         }
     }
+
+    // Biến lưu trữ form hiện tại cần submit
+    let currentFormIdToSubmit = null;
+
+    // Mở modal xác nhận
+    function openConfirmModal(actionType, orderId) {
+        const modal = document.getElementById('custom-confirm-modal');
+        const title = document.getElementById('modal-title');
+        const message = document.getElementById('modal-message');
+
+        if (actionType === 'cancel') {
+            title.innerText = 'Xác nhận hủy đơn';
+            message.innerHTML = 'Bạn có chắc muốn hủy đơn hàng <strong>#' + orderId + '</strong> này không?';
+            currentFormIdToSubmit = 'form-cancel-' + orderId;
+        } else if (actionType === 'receive') {
+            title.innerText = 'Xác nhận đã nhận hàng';
+            message.innerHTML = 'Bạn xác nhận đã nhận được đơn hàng <strong>#' + orderId + '</strong> này thành công?';
+            currentFormIdToSubmit = 'form-receive-' + orderId;
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    // Đóng modal
+    function closeConfirmModal() {
+        document.getElementById('custom-confirm-modal').style.display = 'none';
+        currentFormIdToSubmit = null;
+    }
+
+    // Submit form sau khi bấm Xác nhận trên Modal
+    function submitConfirmForm() {
+        if (currentFormIdToSubmit) {
+            document.getElementById(currentFormIdToSubmit).submit();
+        }
+    }
 </script>
+
+<?php include '../includes/notification.php'; ?>

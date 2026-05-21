@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 $user_id = $_SESSION['user_id'];
-require_once '../auth/user_only.php';
+
 // 2. LẤY THÔNG TIN USER TỪ DATABASE
 try {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
@@ -107,5 +107,5 @@ if (file_exists($file_path)) {
         if (event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
     }
 </script>
-
+<?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>

@@ -153,4 +153,5 @@
     </section>
 </div>
 <script src="/FD-Tech/assets/js/script_cart.js" ></script>
+<?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>

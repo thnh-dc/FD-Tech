@@ -64,44 +64,13 @@ function getStockClass($stock)
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
+<?php
+$page_title = 'Quản lí sản phẩm';
+$page_icon = 'fa-solid fa-box-open';
+$custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_list_product.css">';
 
-<head>
-    <meta charset="UTF-8">
-    <title>Quản lý sản phẩm</title>
-
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/style_dashboard.css">
-    <link rel="stylesheet" href="../assets/css/style_list_product.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-
-<body>
-
-<div class="dashboard-layout">
-
-    <?php include 'includes/sidebar.php'; ?>
-
-    <main class="main-content">
-
-        <div class="top-navbar">
-
-            <h1 class="page-title">
-                <i class="fa-solid fa-box-open"></i>
-                Quản lý sản phẩm
-            </h1>
-
-            <div class="admin-profile">
-                <span class="text-muted">
-                    Xin chào, <b>Admin</b>
-                </span>
-
-                <img src="../assets/images/logo-fd.jpg" alt="Admin">
-            </div>
-
-        </div>
+include 'includes/header.php';
+?>
 
         <div class="product-wrapper">
 
