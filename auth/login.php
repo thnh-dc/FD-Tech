@@ -1,53 +1,49 @@
 <?php
 session_start();
-include '../config/database.php';
+require_once '../config/database.php';
 
-// --- THÔNG TIN ADMIN CỨNG ---
-define('ADMIN_USER', 'admin');
-define('ADMIN_PASS', 'admin123');
-
-// --- XỬ LÝ ĐĂNG NHẬP ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $login_input = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // 1. KIỂM TRA ADMIN CỨNG
-    if ($login_input === ADMIN_USER && $password === ADMIN_PASS) {
-        $_SESSION['pending_admin_login'] = true;
-        $_SESSION['admin_step'] = 1;
-        header("Location: admin_verify.php");
-        exit();
-    }
-    // 2. KIỂM TRA USER
-    else {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
-            $stmt->execute([$login_input, $login_input]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1");
+        $stmt->execute([$login_input, $login_input]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user && password_verify($password, $user['password'])) {
-                
-                if (isset($user['status']) && $user['status'] === 'blocked') {
-                    $_SESSION['noti_message'] = 'Tài khoản bạn bị khoá vui lòng dùng tài khoản khác!';
-                    $_SESSION['noti_type'] = 'error';
-                } else {
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['username'] = $user['username'];
-                    $_SESSION['role'] = $user['role'];
-                    $_SESSION['avatar'] = $user['avatar'];
-
-                    header("Location: ../user/index.php");
-                    exit();
-                }
-
-            } else {
-                $_SESSION['noti_message'] = 'Sai tên đăng nhập hoặc mật khẩu!';
+        if ($user && password_verify($password, $user['password'])) {
+            
+            if (isset($user['status']) && $user['status'] === 'blocked') {
+                $_SESSION['noti_message'] = 'Tài khoản bạn bị khoá vui lòng dùng tài khoản khác!';
                 $_SESSION['noti_type'] = 'error';
+            } 
+            elseif (isset($user['role']) && $user['role'] === 'admin') {
+                $_SESSION['pending_admin_login'] = true;
+                $_SESSION['admin_step'] = 1;
+
+                $_SESSION['auth_admin_id'] = $user['id']; 
+                
+                header("Location: admin_verify.php");
+                exit();
+            } 
+
+            else {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['avatar'] = $user['avatar'];
+
+                header("Location: ../user/index.php");
+                exit();
             }
-        } catch (PDOException $e) {
-            $_SESSION['noti_message'] = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
+
+        } else {
+            $_SESSION['noti_message'] = 'Sai tên đăng nhập hoặc mật khẩu!';
             $_SESSION['noti_type'] = 'error';
         }
+    } catch (PDOException $e) {
+        $_SESSION['noti_message'] = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
+        $_SESSION['noti_type'] = 'error';
     }
 }
 ?>

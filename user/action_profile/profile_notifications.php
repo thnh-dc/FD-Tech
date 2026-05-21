@@ -1,14 +1,12 @@
 <?php
-// Lấy danh sách 5 đơn hàng có cập nhật mới nhất
 try {
-    $stmt_noti = $pdo->prepare("SELECT id, status, updated_at FROM orders WHERE user_id = ? ORDER BY updated_at DESC LIMIT 5");
+    $stmt_noti = $pdo->prepare("SELECT id, status, updated_at FROM orders WHERE user_id = ? ORDER BY updated_at DESC LIMIT 10");
     $stmt_noti->execute([$user_id]);
     $recent_orders = $stmt_noti->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $recent_orders = [];
 }
 
-// Hàm dịch trạng thái thành 1 câu duy nhất
 function getNotificationText($order) {
     $order_id = str_pad($order['id'], '0', STR_PAD_LEFT);
     $time = date('H:i - d/m/Y', strtotime($order['updated_at'])); 
@@ -33,7 +31,7 @@ function getNotificationText($order) {
 
 <div class="profile-header">
     <h2>Thông báo của tôi</h2>
-    <p>5 cập nhật mới nhất về đơn hàng của bạn</p>
+    <p>Cập nhật mới nhất về đơn hàng của bạn</p>
 </div>
 
 <?php if (empty($recent_orders)): ?>

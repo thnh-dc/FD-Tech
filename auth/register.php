@@ -1,8 +1,8 @@
 <?php
 session_start();
-include '../config/database.php';
+require_once '../config/database.php';
 
-// --- XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ ---
+//  XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT ĐĂNG KÝ 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
@@ -13,6 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]{2,19}$/', $username)) {
         $_SESSION['noti_message'] = 'Tên đăng nhập phải từ 3-20 ký tự, không chứa ký tự đặc biệt và phải bắt đầu bằng chữ cái!';
         $_SESSION['noti_type'] = 'error';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['noti_message'] = 'Định dạng Email không hợp lệ!';
+        $_SESSION['noti_type'] = 'error';
     } elseif (strlen($password) < 6) {
         $_SESSION['noti_message'] = 'Mật khẩu phải có ít nhất 6 ký tự!';
         $_SESSION['noti_type'] = 'error';
@@ -20,22 +23,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['noti_message'] = 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.';
         $_SESSION['noti_type'] = 'error';
     } else {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
         try {
-            // 2. Kiểm tra xem Username đã bị ai đăng ký chưa
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
-            $stmt->execute([$username]);
+            // 2. KIỂM TRA TRÙNG LẶP
+            $stmt = $pdo->prepare("SELECT username, email FROM users WHERE username = ? OR email = ? LIMIT 1");
+            $stmt->execute([$username, $email]);
+            $existing_user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($stmt->rowCount() > 0) {
-                $_SESSION['noti_message'] = 'Tên đăng nhập đã tồn tại!';
+            if ($existing_user) {
+                if ($existing_user['username'] === $username) {
+                    $_SESSION['noti_message'] = 'Tên đăng nhập đã tồn tại!';
+                } else {
+                    $_SESSION['noti_message'] = 'Email này đã được sử dụng bởi tài khoản khác!';
+                }
                 $_SESSION['noti_type'] = 'error';
             } else {
-                // 3. Lưu vào Database
-                $stmt = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+                // 3. LƯU VÀO DATABASE: Gán mặc định role là 'user' và status là 'active'
+                $stmt = $pdo->prepare("INSERT INTO users (username, password, email, role, status) VALUES (?, ?, ?, 'user', 'active')");
                 $stmt->execute([$username, $hashed_password, $email]);
 
-                // Đăng ký thành công -> Gán session và nhảy sang Login
+                // Đăng ký thành công -> Chuyển hướng
                 $_SESSION['noti_message'] = 'Đăng ký thành công! Vui lòng đăng nhập.';
                 $_SESSION['noti_type'] = 'success';
                 header("Location: login.php");
@@ -93,5 +102,4 @@ include '../includes/auth_header.php';
 <?php include '../includes/notification.php'; ?>
 
 </body>
-
 </html>
