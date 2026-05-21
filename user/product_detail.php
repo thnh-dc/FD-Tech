@@ -4,7 +4,6 @@ require_once '../auth/user_only.php';
 require_once '../config/database.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
-
 $stmt = $pdo->prepare("
     SELECT 
         id, name, price, discount_price,
@@ -16,19 +15,15 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute(['id' => $id]);
 $sp = $stmt->fetch(PDO::FETCH_ASSOC);
-
 if (!$sp) {
     die("<h2 class='text-center'>Sản phẩm không tồn tại!</h2>");
 }
-
 $stmtImages = $pdo->prepare("SELECT image_url FROM product_images WHERE product_id = :id");
 $stmtImages->execute(['id' => $id]);
 $extraImages = $stmtImages->fetchAll(PDO::FETCH_COLUMN);
-
 $stmtSpecs = $pdo->prepare("SELECT spec_name, spec_value FROM product_specs WHERE product_id = :id");
 $stmtSpecs->execute(['id' => $id]);
 $specs = $stmtSpecs->fetchAll(PDO::FETCH_ASSOC);
-
 try {
     $stmtReviews = $pdo->prepare("
         SELECT r.*, u.username AS user_name 
@@ -64,12 +59,11 @@ try {
         $reviews = $stmtReviews->fetchAll(PDO::FETCH_ASSOC);
     }
 }
-
 $custom_css = 
     '<link rel="stylesheet" href="../assets/css/style_product_detail.css?v=' . time() . '">' . "\n" .
     '<link rel="stylesheet" href="../assets/css/style_notification.css?v=' . time() . '">';
-
 include '../includes/header.php';
+include '../includes/notification.php';
 $img = $sp['image_url'] ?? '';
 if (empty($img)) {
     $img_src = "../assets/images/logo-fd.jpg";
@@ -80,7 +74,6 @@ if (empty($img)) {
 } else {
     $img_src = "../upload/product_image/" . $img;
 }
-
 $image_gallery = [$img_src];
 foreach ($extraImages as $eImg) {
     if (filter_var($eImg, FILTER_VALIDATE_URL)) {
@@ -266,6 +259,8 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
 </main>
 <script>
     const productImages = <?= json_encode($image_gallery); ?>;
+    const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
+    const loginUrl = '/FD-Tech/auth/login.php';
     document.addEventListener('DOMContentLoaded', function() {
         let currentIndex = 0;
         const mainImg = document.getElementById('main-product-image');
@@ -276,7 +271,6 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
             if (index < 0) {
                 index = productImages.length - 1;
             }
-
             if (index >= productImages.length) {
                 index = 0;
             }
@@ -300,7 +294,6 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
         if (nextBtn) {
             nextBtn.addEventListener('click', () => changeImage(currentIndex + 1));
         }
-
         thumbs.forEach(thumb => {
             thumb.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'));
