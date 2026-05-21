@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: admin_verify.php");
             exit();
         } else {
-            $_SESSION['flash_msg'] = 'Thông tin xác minh sai!';
+            $_SESSION['noti_message'] = 'Thông tin xác minh sai!';
+            $_SESSION['noti_type'] = 'error';
         }
     }
     if (isset($_POST['verify_step_2'])) {
@@ -34,7 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: ../admin/admin_dashboard.php");
             exit();
         } else {
-            $_SESSION['flash_msg'] = 'Mã PIN không đúng!';
+            $_SESSION['noti_message'] = 'Mã PIN không đúng!';
+            $_SESSION['noti_type'] = 'error';
         }
     }
 }
@@ -42,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <?php
 $page_title = 'Xác minh Admin - FD Tech';
-$is_admin = true; // Bật cờ này lên để file auth_header.php đổi chữ thành ADMIN
+$is_admin = true;
 include '../includes/auth_header.php';
 ?>
 
@@ -71,7 +73,7 @@ include '../includes/auth_header.php';
     <form action="" method="POST">
         <input type="hidden" name="verify_step_2" value="1">
         <div class="input-group">
-            <input type="text" name="code" placeholder="Nhập mã PIN" maxlength="6" required>
+            <input type="password" name="code" placeholder="Nhập mã PIN" maxlength="6" required>
         </div>
         <button type="submit" class="btn-login" style="background-color: #1a9bb8;">Vào trang quản trị</button>
     </form>
@@ -83,15 +85,11 @@ include '../includes/auth_header.php';
 
 </div>
 </div>
-</div> <?php include '../includes/footer.php'; ?>
+</div> 
 
-<?php if (isset($_SESSION['flash_msg'])): ?>
-    <script>
-        alert('<?php echo $_SESSION['flash_msg']; ?>');
-    </script>
-    <?php unset($_SESSION['flash_msg']); ?>
-<?php endif; ?>
+<?php include '../includes/footer.php'; ?>
+
+<?php include '../includes/notification.php'; ?>
 
 </body>
-
 </html>

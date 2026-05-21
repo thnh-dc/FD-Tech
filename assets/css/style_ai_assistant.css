@@ -1,41 +1,49 @@
-.ai-floating-btn {
+.ai-widget-wrapper {
     position: fixed;
     right: 24px;
     bottom: 24px;
+    z-index: 9999;
+}
+.ai-floating-btn {
     width: 100px;
     height: 100px;
     border: none;
     background: transparent;
     cursor: pointer;
-    z-index: 9999;
     padding: 0;
-    background: transparent;
 }
-
 .ai-floating-btn img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     display: block;
+    border-radius: 50%;
     transition: transform 0.3s ease;
 }
-
 .ai-floating-btn:hover img {
     transform: scale(1.08);
 }
-
+/* POPUP CHÀO MỪNG */
 .ai-welcome-popup {
-    position: fixed;
-    right: 100px;
-    bottom: 95px;
+    position: absolute;
+    right: 95px;
+    bottom: 70px;
     width: 320px;
     background: #fff;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-hover);
-    z-index: 9998;
     overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
 }
-
+/* Chỉ hiện popup khi rê chuột vào vùng icon */
+.ai-widget-wrapper:hover .ai-welcome-popup {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
 .ai-welcome-header {
     background: var(--primary);
     color: #fff;
@@ -44,35 +52,26 @@
     justify-content: space-between;
     align-items: center;
 }
-
-.ai-welcome-header button,
-.ai-chat-header button {
-    border: none;
-    background: transparent;
-    color: #fff;
-    font-size: 22px;
-    cursor: pointer;
+.ai-welcome-header strong {
+    font-size: 15px;
 }
-
 .ai-welcome-body {
     padding: 15px;
     color: var(--text-dark);
     font-size: var(--text-sm);
     line-height: 1.5;
 }
-
 .ai-auth-links {
     display: flex;
     gap: 10px;
     margin-top: 12px;
 }
-
 .ai-auth-links a {
     color: var(--secondary);
     text-decoration: none;
     font-weight: 700;
 }
-
+/* CHAT BOX */
 .ai-chat-box {
     position: fixed;
     right: 100px;
@@ -87,11 +86,9 @@
     flex-direction: column;
     overflow: hidden;
 }
-
 .ai-chat-box.active {
     display: flex;
 }
-
 .ai-chat-header {
     background: var(--primary);
     color: #fff;
@@ -100,20 +97,49 @@
     justify-content: space-between;
     align-items: center;
 }
-
+.ai-chat-header button {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+}
 .ai-chat-header p {
     margin: 4px 0 0;
     font-size: var(--text-xs);
     opacity: 0.8;
 }
-
+/* TAB */
+.ai-chat-tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+.ai-tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #fff;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.ai-tab-btn.active {
+    color: var(--secondary);
+    border-bottom: 2px solid var(--secondary);
+}
+.ai-tab-btn:hover {
+    color: var(--secondary);
+}
+/* MESSAGE AREA */
 .ai-chat-messages {
     flex: 1;
     padding: 15px;
     overflow-y: auto;
     background: #f8fafc;
 }
-
 .ai-message {
     max-width: 85%;
     padding: 10px 12px;
@@ -122,24 +148,23 @@
     font-size: var(--text-sm);
     line-height: 1.5;
 }
-
 .ai-bot {
-    background: #fff;
+    align-self: flex-start;
+    background: #f1f5f9;
     color: var(--text-dark);
     border: 1px solid #eee;
 }
-
 .ai-user {
+    align-self: flex-end;
     background: var(--secondary);
     color: #fff;
     margin-left: auto;
 }
-
+/* FORM */
 .ai-chat-form {
     display: flex;
     border-top: 1px solid #eee;
 }
-
 .ai-chat-form input {
     flex: 1;
     border: none;
@@ -147,7 +172,6 @@
     outline: none;
     font-size: var(--text-sm);
 }
-
 .ai-chat-form button {
     width: 52px;
     border: none;
@@ -155,11 +179,12 @@
     color: #fff;
     cursor: pointer;
 }
-
-.ai-product-result {
-    display: block;
+/* LINK SẢN PHẨM */
+.ai-product-result,
+.ai-detail-link {
+    display: inline-block;
     color: var(--secondary);
-    text-decoration: none;
+    text-decoration: underline;
     font-weight: 600;
     margin-top: 6px;
 }

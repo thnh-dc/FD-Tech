@@ -6,15 +6,6 @@ include '../config/database.php';
 define('ADMIN_USER', 'admin');
 define('ADMIN_PASS', 'admin123');
 
-// Biến lưu thông báo
-$alert_msg = '';
-
-// Dọn dẹp session thông báo
-if (isset($_SESSION['flash_msg'])) {
-    $alert_msg = $_SESSION['flash_msg'];
-    unset($_SESSION['flash_msg'], $_SESSION['flash_type']);
-}
-
 // --- XỬ LÝ ĐĂNG NHẬP ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $login_input = trim($_POST['username']);
@@ -35,18 +26,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role'] = $user['role'];
-                $_SESSION['avatar'] = $user['avatar'];
+                
+                if (isset($user['status']) && $user['status'] === 'blocked') {
+                    $_SESSION['noti_message'] = 'Tài khoản bạn bị khoá vui lòng dùng tài khoản khác!';
+                    $_SESSION['noti_type'] = 'error';
+                } else {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['role'] = $user['role'];
+                    $_SESSION['avatar'] = $user['avatar'];
 
-                header("Location: ../user/index.php");
-                exit();
+                    header("Location: ../user/index.php");
+                    exit();
+                }
+
             } else {
-                $alert_msg = 'Sai tên đăng nhập hoặc mật khẩu!';
+                $_SESSION['noti_message'] = 'Sai tên đăng nhập hoặc mật khẩu!';
+                $_SESSION['noti_type'] = 'error';
             }
         } catch (PDOException $e) {
-            $alert_msg = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
+            $_SESSION['noti_message'] = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
+            $_SESSION['noti_type'] = 'error';
         }
     }
 }
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <?php
 $page_title = 'Đăng nhập - FD Tech';
-include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đây
+include '../includes/auth_header.php'; 
 ?>
 
 <div class="form-header">
@@ -82,12 +82,9 @@ include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đâ
 
 </div>
 </div>
-</div> <?php include '../includes/footer.php'; ?>
-
-<?php if (!empty($alert_msg)): ?>
-    <script>alert('<?php echo $alert_msg; ?>');</script>
-<?php endif; ?>
+</div> 
+<?php include '../includes/footer.php'; ?>
+<?php include '../includes/notification.php'; ?>
 
 </body>
-
 </html>

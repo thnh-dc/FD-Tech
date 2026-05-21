@@ -10,23 +10,23 @@ try {
 
 // Hàm dịch trạng thái thành 1 câu duy nhất
 function getNotificationText($order) {
-    $order_id = str_pad($order['id'], 6, '0', STR_PAD_LEFT);
+    $order_id = str_pad($order['id'], '0', STR_PAD_LEFT);
     $time = date('H:i - d/m/Y', strtotime($order['updated_at'])); 
     
     switch ($order['status']) {
         case 'pending':
-            return "Đơn hàng <strong>#{$order_id}</strong> đã được ghi nhận và đang chờ xác nhận. <em>($time)</em>";
+            return "Đơn hàng <strong>#FD{$order_id}</strong> đã được ghi nhận và đang chờ xác nhận. <em>($time)</em>";
         case 'processing':
-            return "Đơn hàng <strong>#{$order_id}</strong> đang được đóng gói chuẩn bị giao cho shipper. <em>($time)</em>";
+            return "Đơn hàng <strong>#FD{$order_id}</strong> đang được đóng gói chuẩn bị giao cho shipper. <em>($time)</em>";
         case 'shipped':
         case 'shipping':
-            return "Đơn hàng <strong>#{$order_id}</strong> đang trên đường giao đến bạn. Chú ý điện thoại nhé! <em>($time)</em>";
+            return "Đơn hàng <strong>#FD{$order_id}</strong> đang trên đường giao đến bạn. Chú ý điện thoại nhé! <em>($time)</em>";
         case 'completed':
-            return "Đơn hàng <strong>#{$order_id}</strong> đã giao thành công. Cảm ơn bạn! <em>($time)</em>";
+            return "Đơn hàng <strong>#FD{$order_id}</strong> đã giao thành công. Cảm ơn bạn! <em>($time)</em>";
         case 'cancelled':
-            return "Đơn hàng <strong>#{$order_id}</strong> đã bị hủy. <em>($time)</em>";
+            return "Đơn hàng <strong>#FD{$order_id}</strong> đã bị hủy. <em>($time)</em>";
         default:
-            return "Đơn hàng <strong>#{$order_id}</strong> vừa được cập nhật trạng thái. <em>($time)</em>";
+            return "Đơn hàng <strong>#FD{$order_id}</strong> vừa được cập nhật trạng thái. <em>($time)</em>";
     }
 }
 ?>

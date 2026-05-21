@@ -1,5 +1,4 @@
 <?php
-// --- XỬ LÝ LƯU DỮ LIỆU HỒ SƠ ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action']) && $_POST['form_action'] == 'update_profile') {
     $full_name = trim($_POST['fullname']);
     $email = trim($_POST['email']);
@@ -37,14 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action']) && $_PO
     }
 
     if ($upload_error) {
-        $_SESSION['flash_msg'] = $upload_error;
+        $_SESSION['noti_message'] = $upload_error;
+        $_SESSION['noti_type'] = 'error';
     } else {
         try {
             $stmt = $pdo->prepare("UPDATE users SET full_name = ?, email = ?, phone = ?, gender = ?, date_of_birth = ?, address = ?, avatar = ? WHERE id = ?");
             $stmt->execute([$full_name, $email, $phone, $gender, $dob, $address, $avatar_name, $user_id]);
-            $_SESSION['flash_msg'] = 'Cập nhật hồ sơ thành công!';
+            $_SESSION['noti_message'] = 'Cập nhật hồ sơ thành công!';
+            $_SESSION['noti_type'] = 'success';
         } catch (PDOException $e) {
-            $_SESSION['flash_msg'] = 'Lỗi cập nhật Database!';
+            $_SESSION['noti_message'] = 'Lỗi cập nhật Database!';
+            $_SESSION['noti_type'] = 'error';
         }
     }
     header("Location: profile.php?action=account");
@@ -83,3 +85,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['form_action']) && $_PO
         <button type="button" class="btn-upload" onclick="document.getElementById('file-upload').click()">Chọn Ảnh</button>
     </div>
 </form>
+
+<?php include '../includes/notification.php'; ?>
