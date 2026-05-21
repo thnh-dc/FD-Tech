@@ -124,3 +124,4 @@
 </div>
 <?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>
+// Đây là trang chủ của người dùng đã đăng nhập, hiển thị các sản phẩm nổi bật, flash sale và sản phẩm đang bán.
