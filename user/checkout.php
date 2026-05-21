@@ -46,34 +46,27 @@
             <p class="success-message">
                 Đơn hàng của bạn đã được ghi nhận.
             </p>
-
             <button onclick="window.location.href='index.php'" 
                     class="btn btn-primary">
                 Tiếp tục mua sắm
             </button>
         </div>
     </div>
-
 <?php elseif(count($cartItems) > 0): ?>
-
     <!-- checkout -->
     <div class="checkout-layout">
-
     <form action="../user/action_checkout/process_checkout.php" method="POST">
         <input type="hidden" name="selected_items" value="<?= htmlspecialchars($selectedItems) ?>">
         <!-- THÔNG TIN -->
         <div class="checkout-section">
             <h3>📍 Thông tin nhận hàng</h3>
-
             <input type="text" name="fullname" value="<?= $user['full_name'] ?? '' ?>" required>
             <input type="text" name="phone" value="<?= $user['phone'] ?? '' ?>" required>
             <textarea name="address" required><?= $user['address'] ?? '' ?></textarea>
         </div>
-
         <!-- sản phẩm -->
         <div class="checkout-section">
             <h3>📦 Sản phẩm</h3>
-
             <?php foreach($cartItems as $item): ?>
                 <div class="checkout-item">
                     
@@ -88,27 +81,24 @@
 
                 </div>
             <?php endforeach; ?>
-
         </div>
         <!-- thanh toán -->
         <div class="checkout-section">
             <h3>💳 Thanh toán</h3>
-
             <label>
                 <input type="radio" name="payment_method" value="cod" checked>
-                Thanh toán khi nhận hàng </label>
+                Thanh toán khi nhận hàng
+            </label>
             <label>
-                <input type="radio" name="payment_method" value="cod">
+                <input type="radio" name="payment_method" value="bank">
                 Chuyển khoản qua ngân hàng
             </label>
         </div>
         <!-- tổng -->
         <div class="checkout-section">
-
             <p>Tổng tiền: 
                 <b><?= number_format($total) ?>₫</b>
             </p>
-
             <button type="submit" class="btn btn-primary">
                 Xác nhận đặt hàng
             </button>

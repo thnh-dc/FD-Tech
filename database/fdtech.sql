@@ -98,17 +98,3 @@ CREATE TABLE cart_items (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
-
-
-CREATE TABLE payments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
-    amount DECIMAL(10,2),
-    payment_method ENUM('cod', 'bank_transfer', 'momo', 'vnpay') NOT NULL,
-    payment_status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
-    transaction_code VARCHAR(100),
-    paid_at TIMESTAMP NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
-);

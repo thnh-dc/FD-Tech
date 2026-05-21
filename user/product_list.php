@@ -107,5 +107,5 @@ include '../includes/header.php';
         <?php endif; ?>
     </div>
 </main>
-
+<?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>

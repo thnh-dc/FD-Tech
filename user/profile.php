@@ -107,5 +107,5 @@ if (file_exists($file_path)) {
         if (event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
     }
 </script>
-
+<?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>
