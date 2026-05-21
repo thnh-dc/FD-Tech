@@ -38,3 +38,7 @@ CREATE TABLE product_reviews (
 );
 
 DROP TABLE payments;
+-- 1. Sửa định dạng tổng tiền
+ALTER TABLE `orders` MODIFY `total_amount` BIGINT;
+ALTER TABLE `products` MODIFY `price` BIGINT;
+ALTER TABLE `order_items` MODIFY `price` BIGINT;
