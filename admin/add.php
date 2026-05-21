@@ -31,14 +31,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // --- XỬ LÝ GIÁ FLASH SALE ---
+    $tags = $_POST['tags'] ?? [];
+    $discount_price = (in_array('2', $tags) && !empty($_POST['discount_price'])) ? $_POST['discount_price'] : null;
+
     $stmt = $pdo->prepare("
-        INSERT INTO products(name, price, stock_quantity, category_id, description, image_url)
-        VALUES(?,?,?,?,?,?)
+        INSERT INTO products(name, price, discount_price, stock_quantity, category_id, description, image_url)
+        VALUES(?,?,?,?,?,?,?)
     ");
 
     $stmt->execute([
         $_POST['name'],
         $_POST['price'],
+        $discount_price,
         $_POST['stock'],
         $_POST['category_id'],
         $_POST['description'],
@@ -94,13 +99,18 @@ include 'includes/header.php';
                             </label>
 
                             <label class="tag-option">
-                                <input type="checkbox" name="tags[]" value="2">
+                                <input type="checkbox" name="tags[]" value="2" id="flash-sale-checkbox">
                                 <span class="tag-badge tag-sale">
                                     <i class="fa-solid fa-bolt"></i>
                                     Flash sale
                                 </span>
                             </label>
                         </div>
+                    </div>
+
+                    <div class="form-group" id="flash-sale-price-group" style="display: none; background: #fff5f5; padding: 12px; border-radius: 6px; border: 1px solid #fee2e2;">
+                        <label class="form-label" style="color: #dc2626; font-weight: bold;">Giá Flash Sale (₫)</label>
+                        <input name="discount_price" type="number" step="any" min="0" class="form-control" placeholder="Nhập giá bán riêng cho Flash Sale...">
                     </div>
 
                     <div class="form-group">
@@ -161,5 +171,22 @@ include 'includes/header.php';
 
 </div>
 <script src="../assets/js/script_dashboard.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const flashSaleCheckbox = document.getElementById('flash-sale-checkbox');
+    const flashSalePriceGroup = document.getElementById('flash-sale-price-group');
+    
+    if (flashSaleCheckbox && flashSalePriceGroup) {
+        flashSaleCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                flashSalePriceGroup.style.display = 'block';
+            } else {
+                flashSalePriceGroup.style.display = 'none';
+                flashSalePriceGroup.querySelector('input').value = '';
+            }
+        });
+    }
+});
+</script>
 </body>
 </html>
