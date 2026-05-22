@@ -82,7 +82,7 @@ include 'includes/header.php';
                                                  $badge_class = 'badge-info';
                                                     $status_vi = $status;
 
-                                                    if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ xác nhận'; }
+                                                    if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ thanh toán'; }
                                                     elseif ($status == 'processing') { $badge_class = 'badge-warning'; $status_vi = 'Đang xử lí'; }
                                                     elseif ($status == 'shipped') { $badge_class = 'badge-depending'; $status_vi = 'Đang vận chuyển'; }
                                                     elseif ($status == 'completed') { $badge_class = 'badge-success'; $status_vi = 'Hoàn thành'; }
@@ -101,7 +101,6 @@ include 'includes/header.php';
                                                     </button>
 
                                                     <div class="action-menu">
-                                                        <button data-status="pending">Chờ xác nhận</button>
                                                         <button data-status="processing">Đang xử lý</button>
                                                         <button data-status="shipped">Đang giao</button>
                                                         <button data-status="completed">Hoàn thành</button>
