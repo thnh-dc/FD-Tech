@@ -303,4 +303,5 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
     });
 </script>
 <script src="../assets/js/product_detail.js?v=<?= time() ?>"></script>
+<?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>
