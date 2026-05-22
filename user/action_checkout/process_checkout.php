@@ -35,7 +35,8 @@ if ($action === 'confirm_bank_payment') {
             'address' => $address,
             'payment_content' => $payment_content
         ];
-        header("Location:bank_payment.php");
+
+        header("Location: bank_payment.php");
         exit();
     }
     $payment_note = 'Thanh toán khi nhận hàng';
@@ -55,12 +56,9 @@ $placeholders = implode(',', array_fill(0, count($selectedArray), '?'));
 
 $stmt = $pdo->prepare("
     SELECT 
-        c.product_id,
-        c.quantity,
-        p.price,
-        c.id,
-        p.name AS product_name,
-        p.image_url AS product_image
+        c.product_id, c.quantity, c.id, p.price, p.discount_price,
+        COALESCE(NULLIF(p.discount_price, 0), p.price) AS display_price,
+        p.name AS product_name, p.image_url AS product_image
     FROM cart_items c
     JOIN products p ON c.product_id = p.id
     WHERE c.user_id = ?
@@ -75,7 +73,7 @@ if (empty($cartItems)) {
 }
 $total = 0;
 foreach ($cartItems as $item) {
-    $total += $item['price'] * $item['quantity'];
+    $total += $item['display_price'] * $item['quantity'];
 }
 $pdo->beginTransaction();
 try {
@@ -113,7 +111,7 @@ try {
             $order_id,
             $item['product_id'],
             $item['quantity'],
-            $item['price'],
+            $item['display_price'],
             $item['product_name'],
             $item['product_image']
         ]);

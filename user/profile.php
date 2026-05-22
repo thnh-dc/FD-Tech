@@ -1,18 +1,15 @@
 <?php
-// 1. KHỞI TẠO SESSION & DATABASE TRƯỚC TIÊN
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once '../config/database.php';
 
-// Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
 }
 $user_id = $_SESSION['user_id'];
 
-// 2. LẤY THÔNG TIN USER TỪ DATABASE
 try {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
@@ -21,7 +18,6 @@ try {
     die("Lỗi truy xuất dữ liệu người dùng!");
 }
 
-// 3. XÁC ĐỊNH AVATAR
 $has_custom_avatar = !empty($user['avatar']) && file_exists("../upload/avatar_user/" . $user['avatar']);
 if ($has_custom_avatar) {
     $avatar_url = "../upload/avatar_user/" . $user['avatar'];
@@ -30,11 +26,9 @@ if ($has_custom_avatar) {
     $avatar_url = "https://ui-avatars.com/api/?name=" . urlencode($initials) . "&background=random&color=fff&size=128";
 }
 
-// 4. ĐỊNH TUYẾN (ROUTING) - Xác định hành động người dùng muốn thực hiện
 $allowed_actions = ['account', 'password', 'orders', 'notifications'];
 $action = isset($_GET['action']) && in_array($_GET['action'], $allowed_actions) ? $_GET['action'] : 'account';
 
-// 5. XỬ LÝ LOGIC CỦA TỪNG TRANG (NẾU CÓ SUBMIT FORM)
 $file_path = "action_profile/profile_{$action}.php";
 $action_content = "";
 

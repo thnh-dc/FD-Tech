@@ -101,7 +101,7 @@
 }
 
 .price { 
-    color: #ee4d2d; 
+    color:var(--danger); 
     font-weight: bold; 
     font-size: 1.1em; 
     margin: 0;
