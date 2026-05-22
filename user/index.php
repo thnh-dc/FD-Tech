@@ -124,4 +124,3 @@
 </div>
 <?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>
-1
