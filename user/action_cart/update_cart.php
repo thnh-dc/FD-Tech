@@ -39,14 +39,18 @@ try {
         ]);
         exit;
     }
-    $newQty = $item['quantity'] + $change;
+    $stock = (int)$item['stock_quantity'];
+    $currentQty = (int)$item['quantity'];
+    $newQty = $currentQty + $change;
     if ($newQty < 1) {
         $newQty = 1;
     }
-    if ($newQty > $item['stock_quantity']) {
+    if ($newQty > $stock) {
         echo json_encode([
             'success' => false,
-            'message' => 'Số lượng vượt quá tồn kho hiện có.'
+            'message' => 'Số lượng tối đa chỉ còn ' . $stock . ' sản phẩm trong kho.',
+            'quantity' => $currentQty,
+            'stock_quantity' => $stock
         ]);
         exit;
     }
@@ -61,13 +65,14 @@ try {
         'success' => true,
         'message' => 'Cập nhật số lượng thành công.',
         'quantity' => $newQty,
-        'price' => $item['display_price'],
-        'subtotal' => $newQty * $item['display_price']
-    ]);
+        'stock_quantity' => $stock,
+        'price' => (float)$item['display_price'],
+        'subtotal' => $newQty * (float)$item['display_price']
+    ]);exit;
 } catch (PDOException $e) {
     echo json_encode([
         'success' => false,
         'message' => 'Lỗi hệ thống, không thể cập nhật số lượng.'
-    ]);
+    ]);exit;
 }
 ?>
