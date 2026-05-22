@@ -26,10 +26,11 @@ if ($has_custom_avatar) {
     $avatar_url = "https://ui-avatars.com/api/?name=" . urlencode($initials) . "&background=random&color=fff&size=128";
 }
 
-$allowed_actions = ['account', 'password', 'orders', 'notifications'];
+$allowed_actions = ['account', 'password', 'orders', 'notifications', 'history_bought'];
 $action = isset($_GET['action']) && in_array($_GET['action'], $allowed_actions) ? $_GET['action'] : 'account';
 
 $file_path = "action_profile/profile_{$action}.php";
+
 $action_content = "";
 
 if (file_exists($file_path)) {
@@ -64,6 +65,9 @@ if (file_exists($file_path)) {
                 <li><a href="?action=notifications"
                         class="menu-link <?php echo $action == 'notifications' ? 'active' : ''; ?>"><i
                             class="fas fa-bell"></i> Thông báo</a></li>
+                <li><a href="?action=history_bought" class="menu-link <?php echo $action == 'history_bought' ? 'active' : ''; ?>"><i
+                            class="fas fa-chart-bar"></i> Thống kê</a></li>
+
                 <li style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
                     <a href="../auth/logout.php" style="color: #DB4437;"><i class="fas fa-sign-out-alt"></i> Đăng
                         xuất</a>
