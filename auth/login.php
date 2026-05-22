@@ -1,40 +1,33 @@
 <?php
 session_start();
-include '../config/database.php';
+require_once '../config/database.php';
 
-// --- THÔNG TIN ADMIN CỨNG ---
-define('ADMIN_USER', 'admin');
-define('ADMIN_PASS', 'admin123');
-
-// Biến lưu thông báo
-$alert_msg = '';
-
-// Dọn dẹp session thông báo
-if (isset($_SESSION['flash_msg'])) {
-    $alert_msg = $_SESSION['flash_msg'];
-    unset($_SESSION['flash_msg'], $_SESSION['flash_type']);
-}
-
-// --- XỬ LÝ ĐĂNG NHẬP ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $login_input = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // 1. KIỂM TRA ADMIN CỨNG
-    if ($login_input === ADMIN_USER && $password === ADMIN_PASS) {
-        $_SESSION['pending_admin_login'] = true;
-        $_SESSION['admin_step'] = 1;
-        header("Location: admin_verify.php");
-        exit();
-    }
-    // 2. KIỂM TRA USER
-    else {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
-            $stmt->execute([$login_input, $login_input]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1");
+        $stmt->execute([$login_input, $login_input]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user && password_verify($password, $user['password'])) {
+        if ($user && password_verify($password, $user['password'])) {
+            
+            if (isset($user['status']) && $user['status'] === 'blocked') {
+                $_SESSION['noti_message'] = 'Tài khoản bạn bị khoá vui lòng dùng tài khoản khác!';
+                $_SESSION['noti_type'] = 'error';
+            } 
+            elseif (isset($user['role']) && $user['role'] === 'admin') {
+                $_SESSION['pending_admin_login'] = true;
+                $_SESSION['admin_step'] = 1;
+
+                $_SESSION['auth_admin_id'] = $user['id']; 
+                
+                header("Location: admin_verify.php");
+                exit();
+            } 
+
+            else {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
@@ -42,19 +35,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 header("Location: ../user/index.php");
                 exit();
-            } else {
-                $alert_msg = 'Sai tên đăng nhập hoặc mật khẩu!';
             }
-        } catch (PDOException $e) {
-            $alert_msg = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
+
+        } else {
+            $_SESSION['noti_message'] = 'Sai tên đăng nhập hoặc mật khẩu!';
+            $_SESSION['noti_type'] = 'error';
         }
+    } catch (PDOException $e) {
+        $_SESSION['noti_message'] = 'Lỗi hệ thống: Không thể đăng nhập lúc này.';
+        $_SESSION['noti_type'] = 'error';
     }
 }
 ?>
 
 <?php
 $page_title = 'Đăng nhập - FD Tech';
-include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đây
+include '../includes/auth_header.php'; 
 ?>
 
 <div class="form-header">
@@ -82,16 +78,9 @@ include '../includes/auth_header.php'; // Gọi Header và Cột trái vào đâ
 
 </div>
 </div>
-</div> <?php include '../includes/footer.php'; ?>
-
-<?php if (!empty($alert_msg)): ?>
-    <script>
-        setTimeout(function() {
-            alert('<?php echo $alert_msg; ?>');
-        }, 20);
-    </script>
-<?php endif; ?>
+</div> 
+<?php include '../includes/footer.php'; ?>
+<?php include '../includes/notification.php'; ?>
 
 </body>
-
 </html>

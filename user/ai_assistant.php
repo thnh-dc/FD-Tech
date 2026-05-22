@@ -1,30 +1,20 @@
 <?php
 session_start();
-
 require_once '../config/database.php';
 require_once '../config/groq_config.php';
-
 header('Content-Type: application/json; charset=utf-8');
-
 $message = trim($_POST['message'] ?? '');
-
 if ($message === '') {
     echo json_encode([
         'reply' => 'Bạn hãy nhập nội dung cần hỗ trợ nhé.'
     ]);
     exit;
 }
-
 $lower_message = mb_strtolower($message, 'UTF-8');
 $is_logged_in = isset($_SESSION['user_id']);
-
 $context = "";
 $intent = "general";
-
-/* =========================
-   1. PHÂN LOẠI Ý ĐỊNH
-========================= */
-
+/* phân loại ý định*/
 if (
     str_contains($lower_message, 'đơn hàng') ||
     str_contains($lower_message, 'don hang') ||
@@ -58,26 +48,18 @@ if (
 ) {
     $intent = "policy";
 }
-
-/* =========================
-   2. XỬ LÝ SẢN PHẨM
-========================= */
-
+/*xử lí ý định-sản phẩm */
 if ($intent === "product") {
     $max_price = null;
     $min_price = null;
-
     if (preg_match('/(?:dưới|duoi|nhỏ hơn|nho hon)\s*([0-9\.]+)/u', $lower_message, $matches)) {
         $max_price = (int) str_replace('.', '', $matches[1]);
     }
-
     if (preg_match('/(?:trên|tren|lớn hơn|lon hon)\s*([0-9\.]+)/u', $lower_message, $matches)) {
         $min_price = (int) str_replace('.', '', $matches[1]);
     }
-
     $keyword = $message;
         $is_cheap_search = false;
-
         if (
             str_contains($lower_message, 'giá rẻ') ||
             str_contains($lower_message, 'gia re') ||
@@ -86,7 +68,6 @@ if ($intent === "product") {
         ) {
             $is_cheap_search = true;
         }
-
         $remove_words = [
             'tìm', 'tim',
             'sản phẩm', 'san pham',
@@ -99,11 +80,9 @@ if ($intent === "product") {
             'rẻ', 're',
             'khoảng', 'khoang'
         ];
-
         $keyword = str_ireplace($remove_words, '', $keyword);
         $keyword = preg_replace('/[0-9\.]+/', '', $keyword);
         $keyword = trim($keyword);
-
     $sql = "
         SELECT 
             p.id,
@@ -117,42 +96,32 @@ if ($intent === "product") {
         LEFT JOIN categories c ON p.category_id = c.id
         WHERE 1 = 1
     ";
-
     $params = [];
-
     if ($keyword !== '') {
             $words = preg_split('/\s+/', $keyword);
-
             foreach ($words as $word) {
                 $word = trim($word);
-
                 if ($word === '') {
                     continue;
                 }
-
                 $sql .= " AND (p.name LIKE ? OR p.description LIKE ? OR c.name LIKE ?)";
                 $params[] = "%$word%";
                 $params[] = "%$word%";
                 $params[] = "%$word%";
             }
         }
-
     if ($max_price !== null) {
         $sql .= " AND p.price <= ?";
         $params[] = $max_price;
     }
-
     if ($min_price !== null) {
         $sql .= " AND p.price >= ?";
         $params[] = $min_price;
     }
-
     $sql .= " ORDER BY p.price ASC LIMIT 8";
-
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     if (empty($products)) {
         $context = "Không tìm thấy sản phẩm phù hợp trong database.";
     } else {
@@ -164,11 +133,7 @@ if ($intent === "product") {
         }
     }
 }
-
-/* =========================
-   3. XỬ LÝ ĐƠN HÀNG
-========================= */
-
+/* nếu ý định là đơn hàng */
 if ($intent === "order") {
     if (!$is_logged_in) {
         $context = "Người dùng chưa đăng nhập. Không thể tra cứu đơn hàng. Hãy nhắc người dùng đăng nhập hoặc đăng ký.";
@@ -185,28 +150,20 @@ if ($intent === "order") {
             ORDER BY created_at DESC
             LIMIT 5
         ");
-
         $stmt->execute([$_SESSION['user_id']]);
         $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         if (empty($orders)) {
             $context = "Người dùng chưa có đơn hàng nào.";
         } else {
             $context = "Danh sách đơn hàng gần đây của người dùng:\n";
-
             foreach ($orders as $o) {
                 $order_code = str_pad($o['id'], 6, '0', STR_PAD_LEFT);
-
                 $context .= "- Mã đơn: #{$order_code} | Tổng tiền: {$o['total_amount']} | Trạng thái: {$o['status']} | Ngày đặt: {$o['created_at']} | Địa chỉ giao: {$o['shipping_address']}\n";
             }
         }
     }
 }
-
-/* =========================
-   4. XỬ LÝ CHÍNH SÁCH
-========================= */
-
+/* nếu ý định liên quan chính sách */
 if ($intent === "policy") {
     $context = "
 Thông tin hỗ trợ của FD Tech:
@@ -217,11 +174,7 @@ Thông tin hỗ trợ của FD Tech:
 - Địa chỉ: Trường Đại học Quy Nhơn.
 ";
 }
-
-/* =========================
-   5. TRƯỜNG HỢP CHUNG
-========================= */
-
+/* request chung */
 if ($intent === "general") {
     $context = "
 Người dùng đang hỏi câu hỏi chung.
@@ -234,13 +187,10 @@ Bot chỉ nên hỗ trợ các nội dung:
 - Chính sách thanh toán, bảo hành, đổi trả, liên hệ
 ";
 }
-
 $login_status = $is_logged_in ? 'Đã đăng nhập' : 'Chưa đăng nhập';
-
 $system_prompt = "
 Bạn là Trợ lí AI của website FD Tech, tên là FD Bot. Nguyễn Thành Được là người phát triển nên bạn.
 FD Tech là phần mềm ứng dụng web quản lí bán hàng thiết bị, phụ kiện công nghệ.
-
 Vai trò:
 - Hỗ trợ khách hàng tìm sản phẩm công nghệ.
 - Tư vấn mua hàng.
@@ -267,11 +217,9 @@ Một số nội dung đáng chú ý:
 
 Trạng thái người dùng: {$login_status}
 Ý định đã phân loại: {$intent}
-
 NGỮ CẢNH:
 {$context}
 ";
-
 $data = [
     "model" => GROQ_MODEL,
     "messages" => [
@@ -289,7 +237,6 @@ $data = [
 ];
 
 $ch = curl_init("https://api.groq.com/openai/v1/chat/completions");
-
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
@@ -300,9 +247,7 @@ curl_setopt_array($ch, [
     CURLOPT_POSTFIELDS => json_encode($data),
     CURLOPT_TIMEOUT => 30
 ]);
-
 $response = curl_exec($ch);
-
 if ($response === false) {
     echo json_encode([
         'reply' => 'Lỗi kết nối Groq API: ' . curl_error($ch)
@@ -310,12 +255,9 @@ if ($response === false) {
     curl_close($ch);
     exit;
 }
-
 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
-
 $result = json_decode($response, true);
-
 if ($http_code < 200 || $http_code >= 300) {
     $error_message = $result['error']['message'] ?? 'Không rõ lỗi';
 
@@ -324,13 +266,10 @@ if ($http_code < 200 || $http_code >= 300) {
     ]);
     exit;
 }
-
 $reply = $result['choices'][0]['message']['content'] ?? '';
-
 if ($reply === '') {
     $reply = 'Mình chưa có phản hồi phù hợp. Bạn thử hỏi lại rõ hơn nhé.';
 }
-
 echo json_encode([
     'reply' => nl2br($reply)
 ]);

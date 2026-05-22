@@ -1,40 +1,74 @@
 <?php
 session_start();
+require_once '../config/database.php';
+
 if (!isset($_SESSION['pending_admin_login'])) {
     header("Location: login.php");
     exit();
 }
 
-define('ADMIN_USER', 'admin');
-define('ADMIN_PASS', 'admin123');
-define('ADMIN_EMAIL', 'admin@gmail.com');
-define('ADMIN_PHONE', '19001000');
-define('ADMIN_CODE', '888888');
-
 $step = $_SESSION['admin_step'] ?? 1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
     if (isset($_POST['verify_step_1'])) {
-        if (
-            $_POST['username'] === ADMIN_USER && $_POST['password'] === ADMIN_PASS &&
-            $_POST['email'] === ADMIN_EMAIL && $_POST['phone'] === ADMIN_PHONE
-        ) {
-            $_SESSION['admin_step'] = 2;
-            header("Location: admin_verify.php");
-            exit();
-        } else {
-            $_SESSION['flash_msg'] = 'Thông tin xác minh sai!';
+        $username = trim($_POST['username']);
+        $password = $_POST['password'];
+        $email = trim($_POST['email']);
+        $phone = trim($_POST['phone']);
+
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND role = 'admin' AND status = 'active' LIMIT 1");
+            $stmt->execute([$username]);
+            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (
+                $admin &&
+                password_verify($password, $admin['password']) &&
+                $admin['email'] === $email &&
+                $admin['phone'] === $phone
+            ) {
+                $_SESSION['admin_step'] = 2;
+                $_SESSION['auth_admin_id'] = $admin['id'];
+                header("Location: admin_verify.php");
+                exit();
+            } else {
+                $_SESSION['noti_message'] = 'Thông tin xác minh sai!';
+                $_SESSION['noti_type'] = 'error';
+            }
+        } catch (PDOException $e) {
+            $_SESSION['noti_message'] = 'Lỗi kết nối cơ sở dữ liệu!';
+            $_SESSION['noti_type'] = 'error';
         }
     }
+
     if (isset($_POST['verify_step_2'])) {
-        if ($_POST['code'] === ADMIN_CODE) {
-            $_SESSION['user_id'] = 1;
-            $_SESSION['role'] = 'admin';
-            unset($_SESSION['pending_admin_login'], $_SESSION['admin_step']);
-            header("Location: ../admin/admin_dashboard.php");
-            exit();
-        } else {
-            $_SESSION['flash_msg'] = 'Mã PIN không đúng!';
+        $code = $_POST['code'];
+        $admin_id = $_SESSION['auth_admin_id'] ?? 0;
+
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ? AND role = 'admin' LIMIT 1");
+            $stmt->execute([$admin_id]);
+            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($admin && !empty($admin['admin_pin']) && password_verify($code, $admin['admin_pin'])) {
+                $_SESSION['user_id'] = $admin['id'];
+                $_SESSION['role'] = 'admin';
+                $_SESSION['username'] = $admin['username'];
+
+                $stmt_update = $pdo->prepare("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?");
+                $stmt_update->execute([$admin['id']]);
+
+                unset($_SESSION['pending_admin_login'], $_SESSION['admin_step'], $_SESSION['auth_admin_id']);
+                header("Location: ../admin/admin_dashboard.php");
+                exit();
+            } else {
+                $_SESSION['noti_message'] = 'Mã PIN bảo mật không chính xác!';
+                $_SESSION['noti_type'] = 'error';
+            }
+        } catch (PDOException $e) {
+            $_SESSION['noti_message'] = 'Lỗi hệ thống khi xác thực mã PIN!';
+            $_SESSION['noti_type'] = 'error';
         }
     }
 }
@@ -42,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <?php
 $page_title = 'Xác minh Admin - FD Tech';
-$is_admin = true; // Bật cờ này lên để file auth_header.php đổi chữ thành ADMIN
+$is_admin = true;
 include '../includes/auth_header.php';
 ?>
 
@@ -83,14 +117,10 @@ include '../includes/auth_header.php';
 
 </div>
 </div>
-</div> <?php include '../includes/footer.php'; ?>
+</div>
 
-<?php if (isset($_SESSION['flash_msg'])): ?>
-    <script>
-        alert('<?php echo $_SESSION['flash_msg']; ?>');
-    </script>
-    <?php unset($_SESSION['flash_msg']); ?>
-<?php endif; ?>
+<?php include '../includes/footer.php'; ?>
+<?php include '../includes/notification.php'; ?>
 
 </body>
 
