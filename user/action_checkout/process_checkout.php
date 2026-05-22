@@ -56,9 +56,15 @@ $placeholders = implode(',', array_fill(0, count($selectedArray), '?'));
 
 $stmt = $pdo->prepare("
     SELECT 
-        c.product_id, c.quantity, c.id, p.price, p.discount_price,
+        c.product_id,
+        c.quantity,
+        c.id,
+        p.price,
+        p.discount_price,
+        p.stock_quantity,
         COALESCE(NULLIF(p.discount_price, 0), p.price) AS display_price,
-        p.name AS product_name, p.image_url AS product_image
+        p.name AS product_name,
+        p.image_url AS product_image
     FROM cart_items c
     JOIN products p ON c.product_id = p.id
     WHERE c.user_id = ?
@@ -73,11 +79,15 @@ if (empty($cartItems)) {
 }
 $total = 0;
 foreach ($cartItems as $item) {
+    if ((int)$item['quantity'] > (int)$item['stock_quantity']) {
+        header("Location: ../cart.php?error=not_enough_stock");
+        exit();
+    }
     $total += $item['display_price'] * $item['quantity'];
 }
 $pdo->beginTransaction();
 try {
-    $stmt = $pdo->prepare("
+    $stmtOrder = $pdo->prepare("
         INSERT INTO orders(
             user_id,
             total_amount,
@@ -87,7 +97,7 @@ try {
         )
         VALUES (?, ?, ?, ?, ?)
     ");
-    $stmt->execute([
+    $stmtOrder->execute([
         $user_id,
         $total,
         $order_status,
@@ -106,11 +116,27 @@ try {
         )
         VALUES (?, ?, ?, ?, ?, ?)
     ");
+    $stmtUpdateStock = $pdo->prepare("
+        UPDATE products
+        SET stock_quantity = stock_quantity - ?
+        WHERE id = ?
+        AND stock_quantity >= ?
+    ");
     foreach ($cartItems as $item) {
+        $product_id = (int)$item['product_id'];
+        $quantity = (int)$item['quantity'];
+        $stmtUpdateStock->execute([
+            $quantity,
+            $product_id,
+            $quantity
+        ]);
+        if ($stmtUpdateStock->rowCount() <= 0) {
+            throw new Exception("Sản phẩm " . $item['product_name'] . " không đủ tồn kho.");
+        }
         $stmtItem->execute([
             $order_id,
-            $item['product_id'],
-            $item['quantity'],
+            $product_id,
+            $quantity,
             $item['display_price'],
             $item['product_name'],
             $item['product_image']
@@ -132,6 +158,9 @@ try {
     exit();
 } catch (Exception $e) {
     $pdo->rollBack();
-    echo "Lỗi: " . $e->getMessage();
+    $_SESSION['noti_message'] = $e->getMessage();
+    $_SESSION['noti_type'] = 'error';
+    header("Location: ../cart.php");
+    exit();
 }
 ?>

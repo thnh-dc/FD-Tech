@@ -12,7 +12,7 @@
     $user_id = $_SESSION['user_id'] ?? 0;
     $stmt = $pdo->prepare("
         SELECT 
-            c.id, c.quantity, p.name, p.price, p.discount_price,
+            c.id, c.quantity, p.name, p.price, p.discount_price, p.stock_quantity,
             COALESCE(NULLIF(p.discount_price, 0), p.price) AS display_price, p.image_url
         FROM cart_items c
         INNER JOIN products p ON c.product_id = p.id
@@ -118,8 +118,10 @@
                                             readonly 
                                             class="qty-input" 
                                             id="qty-<?= $item['id'] ?>"
-                                        >
-                                        <button class="btn-plus" data-id="<?= $item['id'] ?>">+</button>
+                                            data-stock="<?= $item['stock_quantity'] ?>">
+                                        <button class="btn-plus" data-id="<?= $item['id'] ?>" <?= $item['quantity'] >= $item['stock_quantity'] ? 'disabled' : '' ?>>
+                                            +
+                                        </button>
                                     </div>
                                 </td>
                                 <td class="item-subtotal">
