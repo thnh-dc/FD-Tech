@@ -157,7 +157,7 @@
 }
 
 .price {
-    color: var(--danger);
+    color: #dc3545;
     font-weight: 700;
     font-size: 1.1rem;
     margin-top: auto;
@@ -170,31 +170,4 @@
     background: #f9f9f9;
     border-radius: 8px;
     color: #777;
-}
-.old-price {
-    display: block;
-    color: #999;
-    text-decoration: line-through;
-    font-size: 13px;
-    margin-bottom: 4px;
-}
-.discount-price {
-    display: block;
-    color: var(--danger,);
-    font-weight: 700;
-}
-.discount-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #dc2626;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    z-index: 2;
-}
-.img-wrapper {
-    position: relative;
 }

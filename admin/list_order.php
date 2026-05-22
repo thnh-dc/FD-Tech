@@ -34,10 +34,7 @@ try {
 <?php
 $page_title = 'Quản lí đơn hàng';
 $page_icon = 'fa-solid fa-cart-shopping';
-$custom_css = '
-    <link rel="stylesheet" href="/FD-Tech/assets/css/style_list_oder.css">
-    <link rel="stylesheet" href="/FD-Tech/assets/css/style_notification.css">
-';
+$custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_list_oder.css">';
 
 include 'includes/header.php';
 ?>
@@ -99,7 +96,7 @@ include 'includes/header.php';
                                                     </button>
 
                                                     <div class="action-menu">
-                                                        <button data-status="pending">Chờ xác nhận</button>
+                                                        <button data-status="pending">Chờ xử lý</button>
                                                         <button data-status="processing">Đang xử lý</button>
                                                         <button data-status="shipped">Đang giao</button>
                                                         <button data-status="completed">Hoàn thành</button>
