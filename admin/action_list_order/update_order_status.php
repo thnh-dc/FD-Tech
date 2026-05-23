@@ -11,8 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ]);
     exit;
 }
-$id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-$status = $_POST['status'] ?? '';
+$order_id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+$new_status = $_POST['status'] ?? '';
+
 $allowed = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
 $statusText = [
     'pending' => 'Chờ xác nhận',
@@ -21,7 +22,7 @@ $statusText = [
     'completed' => 'Hoàn thành',
     'cancelled' => 'Đã hủy'
 ];
-if ($id <= 0 || !in_array($status, $allowed)) {
+if ($order_id <= 0 || !in_array($new_status, $allowed)) {
     echo json_encode([
         'success' => false,
         'message' => 'Dữ liệu cập nhật không hợp lệ.'
@@ -29,30 +30,74 @@ if ($id <= 0 || !in_array($status, $allowed)) {
     exit;
 }
 try {
-    $stmt = $pdo->prepare("
-        UPDATE orders 
+    $pdo->beginTransaction();
+    $stmtOrder = $pdo->prepare("
+        SELECT id, status
+        FROM orders
+        WHERE id = ?
+        LIMIT 1
+    ");
+    $stmtOrder->execute([$order_id]);
+    $order = $stmtOrder->fetch(PDO::FETCH_ASSOC);
+    if (!$order) {
+        throw new Exception('Không tìm thấy đơn hàng.');
+    }
+    $old_status = $order['status'];
+    if ($old_status === $new_status) {
+        throw new Exception('Trạng thái đơn hàng không thay đổi.');
+    }
+
+    if ($old_status === 'cancelled' && $new_status !== 'cancelled') {
+        throw new Exception('Đơn hàng đã hủy không thể chuyển sang trạng thái khác.');
+    }
+    if ($old_status === 'completed' && $new_status === 'cancelled') {
+        throw new Exception('Đơn hàng đã hoàn thành không thể hủy.');
+    }
+    if ($new_status === 'cancelled' && $old_status !== 'cancelled') {
+        $stmtItems = $pdo->prepare("
+            SELECT product_id, quantity
+            FROM order_items
+            WHERE order_id = ?
+        ");
+        $stmtItems->execute([$order_id]);
+        $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($items)) {
+            throw new Exception('Không tìm thấy chi tiết sản phẩm của đơn hàng.');
+        }
+        $stmtReturnStock = $pdo->prepare("
+            UPDATE products
+            SET stock_quantity = stock_quantity + ?
+            WHERE id = ?
+        ");
+        foreach ($items as $item) {
+            $stmtReturnStock->execute([
+                (int) $item['quantity'],
+                (int) $item['product_id']
+            ]);
+        }
+    }
+    // Cập nhật trạng thái đơn hàng
+    $stmtUpdate = $pdo->prepare("
+        UPDATE orders
         SET status = ?, updated_at = NOW()
         WHERE id = ?
     ");
-    $stmt->execute([$status, $id]);
-    if ($stmt->rowCount() > 0) {
-        echo json_encode([
-            'success' => true,
-            'message' => 'Đã cập nhật đơn hàng sang trạng thái: ' . $statusText[$status],
-            'status' => $status,
-            'status_text' => $statusText[$status]
-        ]);
-        exit;
+    $stmtUpdate->execute([$new_status, $order_id]);
+    $pdo->commit();
+    echo json_encode([
+        'success' => true,
+        'message' => 'Đã cập nhật đơn hàng sang trạng thái: ' . $statusText[$new_status],
+        'status' => $new_status,
+        'status_text' => $statusText[$new_status]
+    ]);
+    exit;
+} catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
     }
     echo json_encode([
         'success' => false,
-        'message' => 'Trạng thái đơn hàng không thay đổi hoặc không tìm thấy đơn hàng.'
+        'message' => $e->getMessage()
     ]);
     exit;
-} catch (PDOException $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Lỗi hệ thống, không thể cập nhật trạng thái đơn hàng.'
-    ]);
-    exit;
-}
+}?>
