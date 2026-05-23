@@ -15,13 +15,15 @@ if ($checkSuppliers == 0) {
 }
 
 $suppliers = $pdo->query("SELECT * FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
-$products = $pdo->query("SELECT id, name, price FROM products ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+// Lấy thêm thuộc tính stock_quantity để hiển thị số lượng trong kho hiện tại
+$products = $pdo->query("SELECT id, name, price, stock_quantity FROM products ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $supplier_id = $_POST['supplier_id'] ?? '';
     $note = trim($_POST['note'] ?? '');
-    $admin_id = $_SESSION['user_id']; 
+    $admin_id = $_SESSION['user_id'] ?? 1; 
 
     $product_ids = $_POST['product_ids'] ?? [];
     $quantities = $_POST['quantities'] ?? [];
@@ -71,91 +73,200 @@ $page_title = 'Tạo phiếu nhập kho';
 include 'includes/header.php';
 ?>
 
-<div class="admin-container" style="display: flex; min-height: 100vh; background: #f8fafc;">
-    
-    <main class="admin-main" style="flex: 1; padding: 30px;">
-        <div class="header-page" style="margin-bottom: 25px;">
-            <h2 style="color: #1e293b; font-size: 1.6rem; font-weight: 700; margin: 0;">📦 Tạo phiếu nhập kho hàng lẻ</h2>
-            <p style="color: #64748b; margin: 5px 0 0 0;">Quản lý bổ sung nguồn hàng cung ứng vật lý cho hệ thống FD Tech</p>
+<style>
+/* Nhúng font chữ cao cấp */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+.premium-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, #0f172a 30%, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+
+.title-underline {
+    height: 4px;
+    width: 60px;
+    background: #2563eb;
+    border-radius: 2px;
+    margin-top: 8px;
+}
+
+.form-card {
+    background: white; 
+    padding: 28px; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04); 
+    border: 1px solid #e2e8f0;
+    margin-bottom: 25px;
+}
+
+.form-label-custom {
+    display: block; 
+    font-weight: 600; 
+    margin-bottom: 8px; 
+    color: #334155;
+    font-size: 0.9rem;
+}
+
+.input-custom {
+    width: 100%; 
+    padding: 11px 14px; 
+    border: 1px solid #cbd5e1; 
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    background-color: #fff;
+    transition: all 0.2s;
+}
+
+.input-custom:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    outline: none;
+}
+
+.import-item-row {
+    background: #f8fafc;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+@keyframes pulse-warning {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+    animation: pulse-warning 2s infinite;
+}
+</style>
+
+<?php
+// Logic quét tự động linh kiện sắp hết hàng
+$low_stock_products = $pdo->query("SELECT name, stock_quantity FROM products WHERE stock_quantity <= 5 ORDER BY stock_quantity ASC LIMIT 4")->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<div class="header-page" style="margin-bottom: 35px; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+            <div style="background: #eff6ff; color: #2563eb; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: inset 0 0 0 1px rgba(37,99,235,0.1);">
+                <i class="fa-solid fa-file-import"></i>
+            </div>
+            <h2 class="premium-title">Tạo phiếu nhập kho hàng lẻ</h2>
         </div>
+        <div class="title-underline"></div>
+        <p style="color: #64748b; margin: 12px 0 0 0; font-size: 0.95rem; font-weight: 500;">Hệ thống cung ứng vật lý & Quản trị dòng vốn <span style="color: #2563eb; font-weight: 700;">FD TECH</span></p>
+    </div>
 
-        <?php if (!empty($msg)): ?>
-            <div style="background: #fee2e2; border-left: 4px solid #ef4444; color: #b91c1c; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
-                <?= htmlspecialchars($msg) ?>
+    <?php if (!empty($low_stock_products)): ?>
+        <div style="background: #ffffff; border: 1px solid #fed7aa; border-left: 4px solid #f97316; padding: 12px 18px; border-radius: 10px; max-width: 420px; flex: 1; box-shadow: 0 4px 12px rgba(249,115,22,0.08);">
+            <div style="display: flex; align-items: center; gap: 8px; color: #ea580c; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                <i class="fa-solid fa-circle-exclamation animate-pulse"></i> Radar báo động tồn kho
             </div>
-        <?php endif; ?>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 5px;">
+                <?php foreach ($low_stock_products as $p_low): ?>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #475569;">
+                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;">• <?= htmlspecialchars($p_low['name']) ?></span>
+                        <span style="font-weight: 700; color: #dc2626;">Còn <?= $p_low['stock_quantity'] ?> cái</span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
 
-        <form method="POST" id="importForm">
-            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 25px;">
-                <h3 style="font-size: 1.1rem; color: #334155; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Thông tin nhà cung ứng</h3>
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-                    <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569;">Chọn nhà cung cấp <span style="color:red;">*</span></label>
-                        <select name="supplier_id" class="form-control" style="width:100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" required>
-                            <option value="">-- Chọn đối tác cấp hàng --</option>
-                            <?php foreach ($suppliers as $sup): ?>
-                                <option value="<?= $sup['id'] ?>"><?= htmlspecialchars($sup['name']) ?> (SĐT: <?= htmlspecialchars($sup['phone']) ?>)</option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569;">Ghi chú nội dung đợt nhập hàng</label>
-                        <input type="text" name="note" class="form-control" placeholder="Ví dụ: Nhập linh kiện laptop đợt cuối tháng..." style="width:100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    </div>
-                </div>
+<?php if (!empty($msg)): ?>
+    <div style="background: #fee2e2; border-left: 4px solid #ef4444; color: #b91c1c; padding: 14px; margin-bottom: 25px; border-radius: 8px; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-triangle-exclamation"></i> <?= htmlspecialchars($msg) ?>
+    </div>
+<?php endif; ?>
+
+<form method="POST" id="importForm">
+    <div class="form-card">
+        <h3 style="font-size: 1.1rem; color: #0f172a; font-weight: 700; margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-building-user" style="color: #2563eb; background: #eff6ff; width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;"></i> Thông tin nguồn cấp hàng
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div>
+                <label class="form-label-custom">Nhà cung cấp đối tác <span style="color:#ef4444;">*</span></label>
+                <select name="supplier_id" class="input-custom" required>
+                    <option value="">-- Chọn đối tác cấp hàng --</option>
+                    <?php foreach ($suppliers as $sup): ?>
+                        <option value="<?= $sup['id'] ?>"><?= htmlspecialchars($sup['name']) ?> (SĐT: <?= htmlspecialchars($sup['phone']) ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label class="form-label-custom">Nội dung ghi chú đợt nhập</label>
+                <input type="text" name="note" class="input-custom" placeholder="Ví dụ: Nhập linh kiện laptop đợt cuối tháng...">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <h3 style="font-size: 1.1rem; color: #0f172a; font-weight: 700; margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-boxes-stacked" style="color: #2563eb; background: #eff6ff; width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;"></i> Danh mục hàng hóa tiếp nhận
+        </h3>
+        
+        <div id="import-items-wrapper">
+            <div style="display: grid; grid-template-columns: 3.5fr 1fr 1.5fr 1.5fr 40px; gap: 15px; margin-bottom: 12px; font-weight: 700; color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 14px;">
+                <div>Sản phẩm / Linh kiện</div>
+                <div style="text-align: center;">Số lượng</div>
+                <div>Giá vốn (₫)</div>
+                <div style="text-align: right; padding-right: 14px;">Thành tiền</div>
+                <div></div>
             </div>
 
-            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 25px;">
-                <h3 style="font-size: 1.1rem; color: #334155; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Chi tiết danh sách hàng hóa</h3>
-                <div id="import-items-wrapper">
-                    <div style="display: grid; grid-template-columns: 3fr 1fr 1.5fr 1.5fr 40px; gap: 15px; margin-bottom: 10px; font-weight: bold; color: #64748b; font-size: 0.9rem;">
-                        <div>Sản phẩm / Linh kiện cần nhập <span style="color:red;">*</span></div>
-                        <div>Số lượng</div>
-                        <div>Giá vốn nhập (₫)</div>
-                        <div style="text-align: right; padding-right: 10px;">Thành tiền dự kiến</div>
-                        <div></div>
-                    </div>
-
-                    <div class="import-item-row" style="display: grid; grid-template-columns: 3fr 1fr 1.5fr 1.5fr 40px; gap: 15px; margin-bottom: 12px; align-items: center;">
-                        <div>
-                            <select name="product_ids[]" class="form-control product-select" style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;" required>
-                                <option value="">-- Chọn mặt hàng từ kho --</option>
-                                <?php foreach ($products as $p): ?>
-                                    <option value="<?= $p['id'] ?>" data-price="<?= $p['price'] ?>"><?= htmlspecialchars($p['name']) ?> (Gốc: <?= number_format($p['price'], 0, ',', '.') ?>₫)</option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div>
-                            <input type="number" name="quantities[]" class="form-control qty-input" min="1" value="1" style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;" required>
-                        </div>
-                        <div>
-                            <input type="number" name="import_prices[]" class="form-control price-input" min="0" placeholder="Nhập giá vốn" style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;" required>
-                        </div>
-                        <div class="row-subtotal" style="font-weight: 600; color: #334155; text-align: right; padding-right: 10px;">0₫</div>
-                        <div>
-                            <button type="button" class="btn-remove-row" style="background: none; border: none; color: #ef4444; font-size: 1.2rem; cursor: pointer;">✕</button>
-                        </div>
-                    </div>
-                </div>
-                <button type="button" id="btn-add-product" style="background: #f1f5f9; color: #475569; border: 1px dashed #cbd5e1; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px;">
-                    ➕ Thêm sản phẩm khác vào phiếu nhập kho
-                </button>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 20px; border-radius: 8px; color: white;">
+            <div class="import-item-row" style="display: grid; grid-template-columns: 3.5fr 1fr 1.5fr 1.5fr 40px; gap: 15px; margin-bottom: 12px; align-items: center;">
                 <div>
-                    <span style="color: #94a3b8; font-size: 0.95rem;">TỔNG TIỀN HÓA ĐƠN CẦN THANH TOÁN:</span>
-                    <h2 id="total-import-price" style="margin: 5px 0 0 0; color: #38bdf8; font-size: 1.8rem; font-weight: 700;">0₫</h2>
+                    <select name="product_ids[]" class="input-custom product-select" required>
+                        <option value="">-- Chọn mặt hàng từ kho --</option>
+                        <?php foreach ($products as $p): ?>
+                            <option value="<?= $p['id'] ?>" data-price="<?= $p['price'] ?>">
+                                <?= htmlspecialchars($p['name']) ?> &nbsp;---&nbsp; [Kho: <?= $p['stock_quantity'] ?>]
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div>
-                    <button type="submit" style="background: #10b981; color: white; border: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">
-                        📥 Xác nhận hoàn thành & Cộng dồn kho vật lý
+                    <input type="number" name="quantities[]" class="input-custom qty-input" min="1" value="1" style="text-align: center;" required>
+                </div>
+                <div>
+                    <input type="number" name="import_prices[]" class="input-custom price-input" min="0" placeholder="Giá vốn" required>
+                </div>
+                <div class="row-subtotal" style="font-weight: 700; color: #0f172a; text-align: right; padding-right: 14px; font-size: 1rem;">0₫</div>
+                <div style="text-align: center;">
+                    <button type="button" class="btn-remove-row" style="background: #fee2e2; border: none; color: #ef4444; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#fee2e2'">
+                        <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
             </div>
-        </form>
-    </main>
-</div>
+        </div>
+
+        <button type="button" id="btn-add-product" style="background: #f8fafc; color: #2563eb; border: 1px dashed #cbd5e1; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; width: 100%; margin-top: 15px; font-size: 0.95rem; transition: all 0.2s;" onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#2563eb'" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'">
+            <i class="fa-solid fa-plus-circle"></i> Thêm sản phẩm khác vào phiếu nhập kho
+        </button>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 25px 30px; border-radius: 15px; color: white; box-shadow: 0 10px 30px -10px rgba(15,23,42,0.5);">
+        <div>
+            <span style="color: #94a3b8; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">TỔNG GIÁ TRỊ NHẬP KHO:</span>
+            <h2 id="total-import-price" style="margin: 5px 0 0 0; color: #38bdf8; font-size: 2.2rem; font-weight: 800; letter-spacing: -1px;">0₫</h2>
+        </div>
+        <div>
+            <button type="submit" style="background: #2563eb; color: white; border: none; padding: 16px 35px; border-radius: 10px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 14px rgba(37,99,235,0.4); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.background='#1d4ed8'" onmouseout="this.style.transform='translateY(0)'; this.style.background='#2563eb'">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Xác nhận nhập kho & Hoàn tất
+            </button>
+        </div>
+    </div>
+</form>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -200,13 +311,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     wrapper.addEventListener('click', function(e) {
-        if (e.target.classList.contains('btn-remove-row')) {
+        if (e.target.closest('.btn-remove-row')) {
             const rows = wrapper.querySelectorAll('.import-item-row');
             if (rows.length > 1) {
                 e.target.closest('.import-item-row').remove();
                 calculateTotal();
             } else {
-                alert('Một hóa đơn nhập kho bắt buộc phải có ít nhất 1 sản phẩm!');
+                alert('Mỗi chứng từ nhập kho phải chứa ít nhất 1 sản phẩm hàng hóa!');
             }
         }
     });
@@ -223,3 +334,6 @@ document.addEventListener('DOMContentLoaded', function() {
     calculateTotal(); 
 });
 </script>
+
+</body>
+</html>
