@@ -14,6 +14,19 @@ try {
     $revenueRow = $stmtRevenue->fetch(PDO::FETCH_ASSOC);
     $totalRevenue = $revenueRow['total_revenue'] ?? 0;
 
+    // [MỚI THÊM] 1B. Tính tổng chi phí nhập từ các hóa đơn nhập kho thành công
+    $stmtImports = $pdo->prepare("
+        SELECT SUM(total_amount) AS total_import_cost 
+        FROM import_orders 
+        WHERE status = 'completed'
+    ");
+    $stmtImports->execute();
+    $importRow = $stmtImports->fetch(PDO::FETCH_ASSOC);
+    $totalImportCost = $importRow['total_import_cost'] ?? 0;
+
+    // [MỚI THÊM] 1C. Tính Lợi nhuận thuần thực tế
+    $netProfit = $totalRevenue - $totalImportCost;
+
     // 2. Đếm số lượng đơn hàng mới đang chờ xác nhận
     $stmtOrders = $pdo->prepare("
         SELECT COUNT(id) AS new_orders 
@@ -69,7 +82,6 @@ foreach ($chartData as $row) {
     <title>Admin Dashboard - FD Tech</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <link rel="stylesheet" href="../assets/css/style_chung.css">
     <link rel="stylesheet" href="../assets/css/style_dashboard.css">
 </head>
@@ -93,38 +105,55 @@ foreach ($chartData as $row) {
 
         <div class="container dashboard-container">
 
-            <div class="stats-grid">
+            <div class="stats-grid" style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 25px; justify-content: space-between;">
 
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon-revenue">
+                <div class="stat-card" style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 15px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="stat-icon stat-icon-revenue" style="flex-shrink: 0;">
                         <i class="fa-solid fa-sack-dollar"></i>
                     </div>
-
                     <div class="stat-info">
-                        <span class="text-muted">Tổng doanh thu</span>
-                        <h3><?= number_format($totalRevenue, 0, ',', '.') ?>₫</h3>
+                        <span class="text-muted" style="display: block; font-size: 0.9rem; color: #64748b;">Tổng doanh thu</span>
+                        <h3 style="margin: 5px 0 0 0; font-size: 1.3rem; font-weight: 700; color: #1e293b;"><?= number_format($totalRevenue, 0, ',', '.') ?>₫</h3>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon-orders">
+                <div class="stat-card" style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 15px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="stat-icon" style="flex-shrink: 0; background: #fef3c7; color: #d97706; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="text-muted" style="display: block; font-size: 0.9rem; color: #64748b;">Chi phí vốn nhập</span>
+                        <h3 style="margin: 5px 0 0 0; font-size: 1.3rem; font-weight: 700; color: #1e293b;"><?= number_format($totalImportCost, 0, ',', '.') ?>₫</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 15px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="stat-icon" style="flex-shrink: 0; background: <?= $netProfit >= 0 ? '#dcfce7' : '#fee2e2' ?>; color: <?= $netProfit >= 0 ? '#16a34a' : '#dc2626' ?>; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="fa-solid <?= $netProfit >= 0 ? 'fa-chart-line' : 'fa-chart-line-down' ?>"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="text-muted" style="display: block; font-size: 0.9rem; color: #64748b;">Lợi nhuận thuần</span>
+                        <h3 style="margin: 5px 0 0 0; font-size: 1.3rem; font-weight: 700; color: <?= $netProfit >= 0 ? '#16a34a' : '#dc2626' ?>;"><?= number_format($netProfit, 0, ',', '.') ?>₫</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 15px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="stat-icon stat-icon-orders" style="flex-shrink: 0;">
                         <i class="fa-solid fa-file-invoice"></i>
                     </div>
-
                     <div class="stat-info">
-                        <span class="text-muted">Đơn hàng mới</span>
-                        <h3><?= $newOrdersCount ?> đơn hàng</h3>
+                        <span class="text-muted" style="display: block; font-size: 0.9rem; color: #64748b;">Đơn hàng mới</span>
+                        <h3 style="margin: 5px 0 0 0; font-size: 1.3rem; font-weight: 700; color: #1e293b;"><?= $newOrdersCount ?> đơn</h3>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon-products">
+                <div class="stat-card" style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 15px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="stat-icon stat-icon-products" style="flex-shrink: 0;">
                         <i class="fa-solid fa-cubes"></i>
                     </div>
-
                     <div class="stat-info">
-                        <span class="text-muted">Sản phẩm đang bán</span>
-                        <h3><?= $totalProductsCount ?> sản phẩm</h3>
+                        <span class="text-muted" style="display: block; font-size: 0.9rem; color: #64748b;">Sản phẩm đang bán</span>
+                        <h3 style="margin: 5px 0 0 0; font-size: 1.3rem; font-weight: 700; color: #1e293b;"><?= $totalProductsCount ?> món</h3>
                     </div>
                 </div>
 
