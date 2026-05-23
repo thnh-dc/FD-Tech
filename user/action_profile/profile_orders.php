@@ -229,7 +229,7 @@ if (!function_exists('translateOrderStatus')) {
                                 </form>
                                 
                                 <?php if ($order['status'] == 'pending' && ($order['payment_method'] ?? '') === 'bank'): ?>
-                                    <a href="/FD-Tech/user/action_checkout/bank_payment.php?order_id=<?= $order['id'] ?>" class="btn-pay-now">Thanh toán ngay</a>
+                                    <a href="/FD-Tech/user/action_checkout/bank_payment.php?order_id=<?= $order['id'] ?>" class="btn btn-primary">Thanh toán ngay</a>
                                 <?php endif; ?>
 
                             <?php elseif ($order['status'] == 'shipped' || $order['status'] == 'shipping'): ?>
