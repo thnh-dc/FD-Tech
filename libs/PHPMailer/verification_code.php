@@ -23,14 +23,14 @@ function send_system_email($to_email, $otp_code, $action) {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'tinhnguyenbook@gmail.com'; 
-        $mail->Password   = 'bocz nffa ydsd ritk'; 
+        $mail->Username   = 'fdtechshop@gmail.com'; 
+        $mail->Password   = 'nbji avpn bnef drwd'; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
         // --- 2. CẤU HÌNH THÔNG TIN GỬI ---
-        $mail->setFrom('tinhnguyenbook@gmail.com', 'FD-Tech Shop');
+        $mail->setFrom('fdtechshop@gmail.com', 'FD-Tech Shop');
         $mail->addAddress($to_email); 
         $mail->isHTML(true);
 
