@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../../config/database.php';
-
 function autoCancelUnpaidBankOrders($pdo, $expireMinutes = 15)
 {
     try {
