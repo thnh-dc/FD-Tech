@@ -1,19 +1,25 @@
 .order-filter-tabs {
     display: flex;
+    align-items: center;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 6px;
     margin-bottom: 20px;
+    width: 100%; 
 }
 
 .order-filter-tabs a {
-    flex: 1;
+    flex: 1; 
     text-align: center;
-    padding: 12px;
+    padding: 14px 5px; 
     color: #555;
     font-size: 14px;
     border-right: 1px solid #eee;
     text-decoration: none;
+
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    display: block; 
 }
 
 .order-filter-tabs a:last-child {
@@ -59,9 +65,15 @@
     align-items: center;
 }
 
-.order-summary-left,
-.order-item-info {
+.order-summary {
+    gap: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.order-summary-left {
     flex: 1;
+    min-width: 180px;
 }
 
 .order-summary-title {
@@ -72,11 +84,22 @@
     margin-bottom: 4px;
 }
 
-.order-summary-status,
+.order-summary-status {
+    font-size: 13px;
+    color: #666;
+}
+
+.status-badge-text {
+    color: #26aa99; 
+    font-weight: 500;
+    display: inline-block !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+}
+
 .order-info-row,
 .order-address-row,
-.order-item-meta,
-.btn-cancel-order {
+.order-item-meta {
     font-size: 13px;
     color: #666;
 }
@@ -105,18 +128,14 @@
     margin-bottom: 5px;
 }
 
-.order-summary,
-.order-detail-box {
-    padding: 15px;
-}
-
-.order-summary {
-    border-bottom: 1px solid #f5f5f5;
+.order-item-info {
+    flex: 1;
 }
 
 .order-detail-box {
     display: none;
     background: #fafafa;
+    padding: 15px;
 }
 
 .order-info-row,
@@ -126,14 +145,6 @@
     border-bottom: 1px dashed #ccc;
 }
 
-.order-footer {
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
-    justify-content: flex-end;
-    gap: 15px;
-}
-
 .order-item {
     justify-content: flex-start;
     gap: 15px;
@@ -141,6 +152,7 @@
     padding: 12px;
     border: 1px solid #eee;
     border-radius: 6px;
+    background: #fff;
 }
 
 .order-item-img {
@@ -157,6 +169,73 @@
     object-fit: cover;
 }
 
+.order-customer-info {
+    background-color: #f9f9f9;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    margin-left: -15px; 
+    margin-right: -15px;  
+    text-align: left;
+    font-size: 14px;      
+    color: #444;
+    line-height: 1.6;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.order-customer-info div {
+    margin-bottom: 6px;
+}
+
+.order-customer-info div:last-child {
+    margin-bottom: 0;
+}
+
+.order-customer-info strong {
+    color: #222;
+    font-weight: 500;
+}
+
+.order-payment-method-box {
+    text-align: left;
+    font-size: 14px; 
+    color: #444;
+    padding: 12px 0;
+    margin-top: 15px;
+    border-top: 1px dashed #eee; 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;            
+}
+
+.order-payment-method-box strong {
+    color: #222;
+    font-weight: 500;
+}
+
+.order-payment-method-box span {
+    color: #666;
+    line-height: 1.5;
+    background: #f5f5f5;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: block;
+}
+
+.order-footer {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.order-actions-group {
+    display: flex; 
+    align-items: center;
+    gap: 10px;
+}
+
 .btn-toggle-detail {
     background: none;
     border: none;
@@ -165,16 +244,54 @@
     text-decoration: underline;
     font-size: 14px;
     margin: 0 15px;
+    white-space: nowrap;
 }
 
 .btn-cancel-order {
     background: #fff;
     border: 1px solid #ccc;
-    padding: 6px 15px;
+    padding: 8px 15px;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
 }
 
 .btn-cancel-order:hover {
     background: #f8f9fa;
+}
+
+.btn-pay-now {
+    background-color: #ee4d2d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.btn-pay-now:hover {
+    background-color: #d73211;
+}
+
+.btn-confirm-received {
+    background-color: #26aa99; 
+    color: #fff; 
+    border: none; 
+    padding: 8px 15px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.btn-confirm-received:hover {
+    opacity: 0.9;
 }
