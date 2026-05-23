@@ -60,9 +60,11 @@ include 'includes/header.php';
                     <?php else: ?>
                         <?php foreach ($imports as $item): ?>
                             <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 15px 20px; font-weight: bold; color: #2563eb;">
-                                    #NK-<?= str_pad($item['id'], 5, '0', STR_PAD_LEFT) ?>
-                                </td>
+                                <td style="padding: 15px 20px; font-weight: bold;">
+    <a href="view_import.php?id=<?= $item['id'] ?>" style="color: #2563eb; text-decoration: none; hover: underline;">
+        #NK-<?= str_pad($item['id'], 5, '0', STR_PAD_LEFT) ?>
+    </a>
+</td>
                                 <td style="padding: 15px 20px; font-weight: 500; color: #334155;">
                                     <?= htmlspecialchars($item['supplier_name']) ?>
                                 </td>
