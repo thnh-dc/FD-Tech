@@ -53,7 +53,7 @@
         // Hiển thị tồn kho ra trang index
         echo '<div class="stock-container">';
         if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
-            echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Tồn kho: '.$row['stock_quantity'].')</span>';
+            echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
         } else {
             echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
         }
@@ -97,10 +97,10 @@
                 echo '</div>';
             }
             
-                        // Hiển thị tồn kho ra trang index
+                // Hiển thị tồn kho ra trang index
                 echo '<div class="stock-container">';
                 if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
-                    echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Tồn kho: '.$row['stock_quantity'].')</span>';
+                    echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
                 } else {
                     echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
                 }
@@ -140,7 +140,7 @@
                     // Hiển thị tồn kho ra trang index
                     echo '<div class="stock-container">';
                     if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
-                        echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Tồn kho: '.$row['stock_quantity'].')</span>';
+                        echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
                     } else {
                         echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
                     }

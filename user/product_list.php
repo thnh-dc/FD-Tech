@@ -174,22 +174,19 @@ include '../includes/header.php';
                         </div>
                         <div class="card-body">
                             <h3><?= htmlspecialchars($row['name']) ?></h3>
-                            
-                            <p class="stock-info" style="color: #555;">
-                                Trạng thái: 
-                                <?php if ($stock_qty > 0): ?>
-                                    <span class="in-stock">Còn hàng (<?= $stock_qty ?>)</span>
-                                <?php else: ?>
-                                    <span class="out-of-stock">Hết hàng</span>
-                                <?php endif; ?>
-                            </p>
-                            
                             <p class="price">
                                 <?php if ($has_discount): ?>
                                     <span class="old-price"><?= number_format($row['price'], 0, ',', '.') ?> VNĐ</span>
                                     <span class="discount-price"><?= number_format($row['discount_price'], 0, ',', '.') ?> VNĐ</span>
                                 <?php else: ?>
                                     <?= number_format($row['price'], 0, ',', '.') ?> VNĐ
+                                <?php endif; ?>
+                            </p>
+                            <p class="stock-info" style="color: #555;">
+                                <?php if ($stock_qty > 0): ?>
+                                    <span class="in-stock"><b>✔ Còn hàng</b></span> <span>(Số lượng: <?= $stock_qty ?>)</span>
+                                <?php else: ?>
+                                    <span class="out-of-stock">❌ Hết hàng</span>
                                 <?php endif; ?>
                             </p>
                         </div>
