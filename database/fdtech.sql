@@ -98,3 +98,9 @@ CREATE TABLE cart_items (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
+
+ALTER TABLE orders 
+ADD COLUMN payment_code VARCHAR(100) DEFAULT NULL AFTER status,
+ADD COLUMN payment_method VARCHAR(50) DEFAULT 'cod' AFTER payment_code,
+ADD COLUMN payment_status VARCHAR(50) DEFAULT 'unpaid' AFTER payment_method,
+ADD COLUMN paid_at DATETIME DEFAULT NULL AFTER created_at;

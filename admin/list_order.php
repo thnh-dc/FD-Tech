@@ -2,7 +2,9 @@
 session_start();
 require_once '../config/database.php';
 require_once __DIR__ . '/check_admin.php';
+require_once '../user/action_checkout/auto_cancel_unpaid_orders.php';
 
+autoCancelUnpaidBankOrders($pdo, 15);
 try {
     $user_filter = $_GET['user_id'] ?? '';
 
@@ -34,7 +36,10 @@ try {
 <?php
 $page_title = 'Quản lí đơn hàng';
 $page_icon = 'fa-solid fa-cart-shopping';
-$custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_list_oder.css">';
+$custom_css = '
+    <link rel="stylesheet" href="/FD-Tech/assets/css/style_list_oder.css">
+    <link rel="stylesheet" href="/FD-Tech/assets/css/style_notification.css">
+';
 
 include 'includes/header.php';
 ?>
@@ -77,7 +82,7 @@ include 'includes/header.php';
                                                  $badge_class = 'badge-info';
                                                     $status_vi = $status;
 
-                                                    if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ xác nhận'; }
+                                                    if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ thanh toán'; }
                                                     elseif ($status == 'processing') { $badge_class = 'badge-warning'; $status_vi = 'Đang xử lí'; }
                                                     elseif ($status == 'shipped') { $badge_class = 'badge-depending'; $status_vi = 'Đang vận chuyển'; }
                                                     elseif ($status == 'completed') { $badge_class = 'badge-success'; $status_vi = 'Hoàn thành'; }
@@ -96,7 +101,6 @@ include 'includes/header.php';
                                                     </button>
 
                                                     <div class="action-menu">
-                                                        <button data-status="pending">Chờ xử lý</button>
                                                         <button data-status="processing">Đang xử lý</button>
                                                         <button data-status="shipped">Đang giao</button>
                                                         <button data-status="completed">Hoàn thành</button>

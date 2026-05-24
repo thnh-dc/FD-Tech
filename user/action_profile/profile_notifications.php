@@ -15,7 +15,7 @@ function getNotificationText($order) {
         case 'pending':
             return "Đơn hàng <strong>#FD{$order_id}</strong> đã được ghi nhận và đang chờ xác nhận. <em>($time)</em>";
         case 'processing':
-            return "Đơn hàng <strong>#FD{$order_id}</strong> đang được đóng gói chuẩn bị giao cho shipper. <em>($time)</em>";
+            return "Đơn hàng <strong>#FD{$order_id}</strong> đang được được xử lý. <em>($time)</em>";
         case 'shipped':
         case 'shipping':
             return "Đơn hàng <strong>#FD{$order_id}</strong> đang trên đường giao đến bạn. Chú ý điện thoại nhé! <em>($time)</em>";
