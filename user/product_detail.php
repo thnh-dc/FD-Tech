@@ -49,8 +49,7 @@ try {
         $reviews = $stmtReviews->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e2) {
         $stmtReviews = $pdo->prepare("
-            SELECT * 
-            FROM product_reviews 
+            SELECT * FROM product_reviews 
             WHERE product_id = :id 
             AND status = 'show' 
             ORDER BY id DESC
@@ -96,6 +95,10 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
     <div class="product-layout">
         <div class="product-gallery">
             <div class="main-image-container" style="position: relative;">
+                <?php if ($has_discount): ?>
+                    <span class="discount-badge-detail">HOT</span>
+                <?php endif; ?>
+                
                 <button type="button" id="prev-img-btn" class="nav-arrow left-arrow">
                     <i class="fas fa-chevron-left"></i>
                 </button>
@@ -126,24 +129,31 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
             <h1 class="product-title">
                 <?= htmlspecialchars($sp['name'] ?? 'Đang cập nhật'); ?>
             </h1>
+            
             <div class="product-price">
                 <?php if ($has_discount): ?>
                     <span class="old-price-detail">
-                        <?= number_format($sp['price'], 0, ',', '.'); ?> VNĐ
+                        <?= number_format($sp['price'], 0, ',', '.'); ?> ₫
                     </span>
                     <span class="discount-price-detail">
-                        <?= number_format($sp['discount_price'], 0, ',', '.'); ?> VNĐ
+                        <?= number_format($sp['discount_price'], 0, ',', '.'); ?> ₫
                     </span>
                 <?php else: ?>
-                    <?= number_format($sp['price'] ?? 0, 0, ',', '.'); ?> VNĐ
+                    <?= number_format($sp['price'] ?? 0, 0, ',', '.'); ?> ₫
                 <?php endif; ?>
             </div>
+            
             <div class="product-status">
                 Trạng thái: 
                 <span class="<?= $sp['stock_quantity'] > 0 ? 'text-success' : 'text-danger' ?>">
-                    <?= $sp['stock_quantity'] > 0 ? 'Còn hàng (' . $sp['stock_quantity'] . ')' : 'Hết hàng' ?>
+                    <?php if ($sp['stock_quantity'] > 0): ?>
+                        &#10003; Còn hàng <span style="color: #999; font-weight: normal;">(Tồn kho: <?= $sp['stock_quantity'] ?>)</span>
+                    <?php else: ?>
+                        Hết hàng
+                    <?php endif; ?>
                 </span>
             </div>
+            
             <form action="../user/action_product_detail/action_product.php" method="POST" class="product-form" id="addToCartForm">
                 <input type="hidden" name="product_id" value="<?= $id; ?>">
                 <div class="quantity-group">
