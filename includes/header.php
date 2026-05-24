@@ -141,7 +141,35 @@
                 </form>
 
                 <div class="header-icons">
-                    <a href="/FD-Tech/user/profile.php?action=notifications"><i class="far fa-bell"></i></a>
+                    <?php
+                    $unread_count = 0;
+                    
+                    // Tự động kết nối database nếu trang hiện tại chưa gọi biến $pdo
+                    if (!isset($pdo)) {
+                        @include __DIR__ . '/../config/database.php';
+                    }
+
+                    // Chỉ đếm số lượng khi người dùng đã đăng nhập
+                    if (isset($_SESSION['user_id']) && isset($pdo)) {
+                        try {
+                            // Đếm các đơn hàng của user đang ở trạng thái xử lý (pending, processing, shipped, shipping)
+                            // Trừ các đơn đã hoàn thành (completed) hoặc đã hủy (cancelled)
+                            $stmt_count = $pdo->prepare("SELECT COUNT(*) FROM orders WHERE user_id = ? AND status NOT IN ('completed', 'cancelled')");
+                            $stmt_count->execute([$_SESSION['user_id']]);
+                            $unread_count = $stmt_count->fetchColumn();
+                        } catch (Exception $e) {
+                            $unread_count = 0;
+                        }
+                    }
+                    ?>
+
+                    <a href="/FD-Tech/user/profile.php?action=notifications" class="notification-wrapper">
+                        <i class="far fa-bell"></i>
+                        <?php if ($unread_count > 0): ?>
+                            <span class="notification-badge"><?php echo $unread_count; ?></span>
+                        <?php endif; ?>
+                    </a>
+                    
                     <a href="/FD-Tech/user/cart.php" class="cart-icon">
                         <i class="fas fa-shopping-bag"></i>
                         <span class="cart-text">Giỏ hàng</span>
