@@ -294,3 +294,27 @@
     object-fit: cover;
     border: 1px solid #ddd;
 }
+/* Khung định vị xung quanh icon chuông */
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+}
+
+/* Định dạng chấm tròn số lượng màu đỏ */
+.notification-wrapper .notification-badge {
+    position: absolute;
+    top: -6px;          /* Đẩy lên góc trên cái chuông */
+    right: -6px;        /* Đẩy sang góc phải cái chuông */
+    background-color: #ff3b30; /* Màu đỏ rực rỡ */
+    color: #ffffff;    /* Màu chữ trắng */
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 50%; /* Bo tròn xoe */
+    padding: 2px 5px;
+    min-width: 14px;
+    text-align: center;
+    line-height: 1;
+    border: 1.5px solid #ffffff; /* Viền trắng bao quanh tạo điểm nhấn tách nền */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
