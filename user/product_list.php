@@ -68,7 +68,6 @@ try {
         $params['cat'] = $cat;
     }
 
-    // ĐÃ SỬA THÀNH CỘT stock_quantity
     if ($stock_filter === 'instock') {
         $where_conditions[] = "stock_quantity > 0";
     } elseif ($stock_filter === 'outstock') {
@@ -77,7 +76,6 @@ try {
 
     $where_sql = count($where_conditions) > 0 ? "WHERE " . implode(" AND ", $where_conditions) : "";
 
-    // ĐÃ SỬA THÀNH CỘT stock_quantity TRONG LỆNH SELECT
     $stmt = $pdo->prepare("
         SELECT 
             id,
@@ -109,6 +107,7 @@ include '../includes/header.php';
             <?= $category_name !== '' ? htmlspecialchars(mb_strtoupper($category_name, 'UTF-8')) : 'TẤT CẢ SẢN PHẨM' ?>
         </h2>
     </div>
+    
     <div class="sort-bar">
         <span class="sort-label">Sắp xếp theo:</span>
         <a href="?cat=<?= $cat ?>&sort=featured&stock=<?= $stock_filter ?>" class="sort-item <?= $sort == 'featured' ? 'active' : '' ?>">Nổi bật</a>
@@ -161,35 +160,33 @@ include '../includes/header.php';
                     }
                     $has_discount = !empty($row['discount_price']) && $row['discount_price'] > 0;
                     
-                    // LẤY DỮ LIỆU TỪ stock_quantity
                     $stock_qty = isset($row['stock_quantity']) ? (int)$row['stock_quantity'] : 0;
                 ?>
                 <div class="product-card">
                     <a href="product_detail.php?id=<?= $row['id'] ?>" class="card-link">
                         <div class="img-wrapper">
                             <?php if ($has_discount): ?>
-                                <span class="discount-badge">SALE</span>
+                                <span class="discount-badge">HOT</span>
                             <?php endif; ?>
                             <img src="<?= htmlspecialchars($src) ?>" alt="<?= htmlspecialchars($row['name']) ?>" onerror="this.src='../assets/images/logo-fd.jpg'">
                         </div>
                         <div class="card-body">
                             <h3><?= htmlspecialchars($row['name']) ?></h3>
                             
-                            <p class="stock-info" style="color: #555;">
-                                Trạng thái: 
-                                <?php if ($stock_qty > 0): ?>
-                                    <span class="in-stock">Còn hàng (<?= $stock_qty ?>)</span>
-                                <?php else: ?>
-                                    <span class="out-of-stock">Hết hàng</span>
-                                <?php endif; ?>
-                            </p>
-                            
                             <p class="price">
                                 <?php if ($has_discount): ?>
-                                    <span class="old-price"><?= number_format($row['price'], 0, ',', '.') ?> VNĐ</span>
-                                    <span class="discount-price"><?= number_format($row['discount_price'], 0, ',', '.') ?> VNĐ</span>
+                                    <span class="old-price"><?= number_format($row['price'], 0, ',', '.') ?> ₫</span>
+                                    <span class="discount-price"><?= number_format($row['discount_price'], 0, ',', '.') ?> ₫</span>
                                 <?php else: ?>
-                                    <?= number_format($row['price'], 0, ',', '.') ?> VNĐ
+                                    <?= number_format($row['price'], 0, ',', '.') ?> ₫
+                                <?php endif; ?>
+                            </p>
+
+                            <p class="stock-info">
+                                <?php if ($stock_qty > 0): ?>
+                                    <span class="in-stock">&#10003; Còn hàng <span style="color: #999; font-weight: normal;">(Tồn kho: <?= $stock_qty ?>)</span></span>
+                                <?php else: ?>
+                                    <span class="out-of-stock">Hết hàng</span>
                                 <?php endif; ?>
                             </p>
                         </div>
