@@ -5,6 +5,7 @@ require_once '../config/database.php';
 
 $cat = isset($_GET['cat']) ? (int)$_GET['cat'] : 0;
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'featured';
+$stock_filter = isset($_GET['stock']) ? $_GET['stock'] : 'all'; 
 
 $products = [];
 $category_name = '';
@@ -26,23 +27,18 @@ switch ($sort) {
     case 'price_asc':
         $orderBy = "display_price ASC";
         break;
-
     case 'price_desc':
         $orderBy = "display_price DESC";
         break;
-
     case 'newest':
         $orderBy = "id DESC";
         break;
-
     case 'bestseller':
         $orderBy = "id ASC";
         break;
-
     case 'discount':
         $orderBy = "discount_price DESC";
         break;
-
     case 'featured':
     default:
         $orderBy = "id DESC";
@@ -62,33 +58,44 @@ try {
                 $category_name = $cat_data['name'];
             }
         }
-
-        $stmt = $pdo->prepare("
-            SELECT 
-                id,
-                name,
-                price,
-                discount_price,
-                COALESCE(NULLIF(discount_price, 0), price) AS display_price,
-                image_url,
-                description
-            FROM products
-            WHERE category_id = :cat
-            ORDER BY $orderBy
-        ");
-
-        $stmt->execute(['cat' => $cat]);
-    } else {
-        $stmt = $pdo->prepare("
-            SELECT 
-                id, name, price, discount_price, COALESCE(NULLIF(discount_price, 0), price) AS display_price, image_url, description
-            FROM products
-            ORDER BY $orderBy
-        ");
-
-        $stmt->execute();
     }
+
+    $where_conditions = [];
+    $params = [];
+
+    if ($cat > 0) {
+        $where_conditions[] = "category_id = :cat";
+        $params['cat'] = $cat;
+    }
+
+    // ĐÃ SỬA THÀNH CỘT stock_quantity
+    if ($stock_filter === 'instock') {
+        $where_conditions[] = "stock_quantity > 0";
+    } elseif ($stock_filter === 'outstock') {
+        $where_conditions[] = "stock_quantity <= 0";
+    }
+
+    $where_sql = count($where_conditions) > 0 ? "WHERE " . implode(" AND ", $where_conditions) : "";
+
+    // ĐÃ SỬA THÀNH CỘT stock_quantity TRONG LỆNH SELECT
+    $stmt = $pdo->prepare("
+        SELECT 
+            id,
+            name,
+            price,
+            discount_price,
+            COALESCE(NULLIF(discount_price, 0), price) AS display_price,
+            image_url,
+            description,
+            stock_quantity 
+        FROM products
+        $where_sql
+        ORDER BY $orderBy
+    ");
+
+    $stmt->execute($params);
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
     die("<h3 style='color:red; text-align:center;'>Lỗi truy vấn SQL: " . $e->getMessage() . "</h3>");
 }
@@ -104,21 +111,13 @@ include '../includes/header.php';
     </div>
     <div class="sort-bar">
         <span class="sort-label">Sắp xếp theo:</span>
-        <a href="?cat=<?= $cat ?>&sort=featured" class="sort-item <?= $sort == 'featured' ? 'active' : '' ?>">
-            Nổi bật
-        </a>
+        <a href="?cat=<?= $cat ?>&sort=featured&stock=<?= $stock_filter ?>" class="sort-item <?= $sort == 'featured' ? 'active' : '' ?>">Nổi bật</a>
         <span class="separator">•</span>
-        <a href="?cat=<?= $cat ?>&sort=bestseller" class="sort-item <?= $sort == 'bestseller' ? 'active' : '' ?>">
-            Bán chạy
-        </a>
+        <a href="?cat=<?= $cat ?>&sort=bestseller&stock=<?= $stock_filter ?>" class="sort-item <?= $sort == 'bestseller' ? 'active' : '' ?>">Bán chạy</a>
         <span class="separator">•</span>
-        <a href="?cat=<?= $cat ?>&sort=discount" class="sort-item <?= $sort == 'discount' ? 'active' : '' ?>">
-            Giảm giá
-        </a>
+        <a href="?cat=<?= $cat ?>&sort=discount&stock=<?= $stock_filter ?>" class="sort-item <?= $sort == 'discount' ? 'active' : '' ?>">Giảm giá</a>
         <span class="separator">•</span>
-        <a href="?cat=<?= $cat ?>&sort=newest" class="sort-item <?= $sort == 'newest' ? 'active' : '' ?>">
-            Mới
-        </a>
+        <a href="?cat=<?= $cat ?>&sort=newest&stock=<?= $stock_filter ?>" class="sort-item <?= $sort == 'newest' ? 'active' : '' ?>">Mới</a>
         <span class="separator">•</span>
         <div class="sort-dropdown">
             <span class="sort-item <?= strpos($sort, 'price') !== false ? 'active' : '' ?>" style="cursor: pointer;">
@@ -126,15 +125,26 @@ include '../includes/header.php';
                 <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 3px;"></i>
             </span>
             <div class="dropdown-content">
-                <a href="?cat=<?= $cat ?>&sort=price_asc" class="<?= $sort == 'price_asc' ? 'active' : '' ?>">
-                    Giá: Thấp đến Cao
-                </a>
-                <a href="?cat=<?= $cat ?>&sort=price_desc" class="<?= $sort == 'price_desc' ? 'active' : '' ?>">
-                    Giá: Cao đến Thấp
-                </a>
+                <a href="?cat=<?= $cat ?>&sort=price_asc&stock=<?= $stock_filter ?>" class="<?= $sort == 'price_asc' ? 'active' : '' ?>">Giá: Thấp đến Cao</a>
+                <a href="?cat=<?= $cat ?>&sort=price_desc&stock=<?= $stock_filter ?>" class="<?= $sort == 'price_desc' ? 'active' : '' ?>">Giá: Cao đến Thấp</a>
+            </div>
+        </div>
+
+        <span class="separator">|</span>
+        <span class="sort-label">Lọc:</span>
+        <div class="sort-dropdown">
+            <span class="sort-item <?= $stock_filter !== 'all' ? 'active' : '' ?>" style="cursor: pointer;">
+                Tình trạng <?= $stock_filter == 'instock' ? '(Còn hàng)' : ($stock_filter == 'outstock' ? '(Hết hàng)' : '') ?>
+                <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 3px;"></i>
+            </span>
+            <div class="dropdown-content">
+                <a href="?cat=<?= $cat ?>&sort=<?= $sort ?>&stock=all" class="<?= $stock_filter == 'all' ? 'active' : '' ?>">Tất cả</a>
+                <a href="?cat=<?= $cat ?>&sort=<?= $sort ?>&stock=instock" class="<?= $stock_filter == 'instock' ? 'active' : '' ?>">Còn hàng</a>
+                <a href="?cat=<?= $cat ?>&sort=<?= $sort ?>&stock=outstock" class="<?= $stock_filter == 'outstock' ? 'active' : '' ?>">Hết hàng</a>
             </div>
         </div>
     </div>
+    
     <div class="product-grid">
         <?php if (!empty($products)): ?>
             <?php foreach ($products as $row): ?>
@@ -150,6 +160,9 @@ include '../includes/header.php';
                         $src = "../upload/product_image/" . $img;
                     }
                     $has_discount = !empty($row['discount_price']) && $row['discount_price'] > 0;
+                    
+                    // LẤY DỮ LIỆU TỪ stock_quantity
+                    $stock_qty = isset($row['stock_quantity']) ? (int)$row['stock_quantity'] : 0;
                 ?>
                 <div class="product-card">
                     <a href="product_detail.php?id=<?= $row['id'] ?>" class="card-link">
@@ -157,22 +170,24 @@ include '../includes/header.php';
                             <?php if ($has_discount): ?>
                                 <span class="discount-badge">SALE</span>
                             <?php endif; ?>
-                            <img 
-                                src="<?= htmlspecialchars($src) ?>" 
-                                alt="<?= htmlspecialchars($row['name']) ?>" 
-                                onerror="this.src='../assets/images/logo-fd.jpg'"
-                            >
+                            <img src="<?= htmlspecialchars($src) ?>" alt="<?= htmlspecialchars($row['name']) ?>" onerror="this.src='../assets/images/logo-fd.jpg'">
                         </div>
                         <div class="card-body">
                             <h3><?= htmlspecialchars($row['name']) ?></h3>
+                            
+                            <p class="stock-info" style="color: #555;">
+                                Trạng thái: 
+                                <?php if ($stock_qty > 0): ?>
+                                    <span class="in-stock">Còn hàng (<?= $stock_qty ?>)</span>
+                                <?php else: ?>
+                                    <span class="out-of-stock">Hết hàng</span>
+                                <?php endif; ?>
+                            </p>
+                            
                             <p class="price">
                                 <?php if ($has_discount): ?>
-                                    <span class="old-price">
-                                        <?= number_format($row['price'], 0, ',', '.') ?> VNĐ
-                                    </span>
-                                    <span class="discount-price">
-                                        <?= number_format($row['discount_price'], 0, ',', '.') ?> VNĐ
-                                    </span>
+                                    <span class="old-price"><?= number_format($row['price'], 0, ',', '.') ?> VNĐ</span>
+                                    <span class="discount-price"><?= number_format($row['discount_price'], 0, ',', '.') ?> VNĐ</span>
                                 <?php else: ?>
                                     <?= number_format($row['price'], 0, ',', '.') ?> VNĐ
                                 <?php endif; ?>
@@ -183,7 +198,7 @@ include '../includes/header.php';
             <?php endforeach; ?>
         <?php else: ?>
             <div class="product-empty">
-                <p>Hiện tại chưa có sản phẩm nào trong danh mục này.</p>
+                <p>Hiện tại chưa có sản phẩm nào phù hợp với tiêu chí của bạn.</p>
             </div>
         <?php endif; ?>
     </div>
