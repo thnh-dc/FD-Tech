@@ -162,7 +162,7 @@
 
                     if (!function_exists('getHeaderNotificationText')) {
                         function getHeaderNotificationText($noti_order) {
-                            $noti_order_id = str_pad($noti_order['id'], 3, '0', STR_PAD_LEFT);
+                            $noti_order_id = str_pad($noti_order['id'], 0, '0', STR_PAD_LEFT);
                             $noti_time = date('H:i - d/m/Y', strtotime($noti_order['updated_at']));
 
                             switch ($noti_order['status']) {
