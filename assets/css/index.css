@@ -122,3 +122,29 @@
     font-size: 20px; 
     color: #222; 
 } 
+/* Căn giữa toàn bộ khối chứa thông tin tồn kho */
+.stock-container {
+    font-size: 13px;
+    margin-top: 8px;
+    margin-bottom: 5px;
+    text-align: center; /* Lệnh quyết định để căn text ra chính giữa card */
+    width: 100%;
+    display: block;
+}
+
+/* Định dạng chữ "Còn hàng" màu xanh lá tươi hơn */
+.status-in-stock {
+    color: #2eb85c; 
+    font-weight: bold;
+}
+
+/* Định dạng số lượng tồn kho màu xám nhẹ cho tinh tế */
+.stock-count {
+    color: #768192;
+}
+
+/* Định dạng chữ "Hết hàng" màu đỏ nổi bật */
+.status-out-of-stock {
+    color: #e55353;
+    font-weight: bold;
+}

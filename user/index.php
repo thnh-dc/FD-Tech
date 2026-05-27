@@ -46,11 +46,20 @@
                 echo '<p class="old-price">'.number_format($row['price']).' ₫</p>';
                 echo '</div>';
             } else {
-                echo '<div class="price-container">';
-                echo '<p class="price">'.number_format($row['price']).' ₫</p>';
-                echo '</div>';
+        echo '<div class="price-container">';
+        echo '<p class="price">'.number_format($row['price']).' ₫</p>';
+        echo '</div>';
     }
-    echo '</a></div>';
+        // Hiển thị tồn kho ra trang index
+        echo '<div class="stock-container">';
+        if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
+            echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
+        } else {
+            echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
+        }
+        echo '</div>';
+
+        echo '</a></div>';
             }
             ?>
         </div>  
@@ -82,12 +91,22 @@
                         echo '<p class="price">'.number_format($row['discount_price']).' ₫</p>';
                         echo '<p class="old-price">'.number_format($row['price']).' ₫</p>';
                         echo '</div>';
-                    } else {
-                        echo '<div class="price-container">';
-                        echo '<p class="price">'.number_format($row['price']).' ₫</p>';
-                        echo '</div>';
+                   } else {
+                echo '<div class="price-container">';
+                echo '<p class="price">'.number_format($row['price']).' ₫</p>';
+                echo '</div>';
             }
-    echo '</a></div>';
+            
+                // Hiển thị tồn kho ra trang index
+                echo '<div class="stock-container">';
+                if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
+                    echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
+                } else {
+                    echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
+                }
+                echo '</div>';
+
+            echo '</a></div>';
             }
             ?>
             </div>
@@ -117,6 +136,16 @@
                         echo '<p class="price">'.number_format($row['price']).' ₫</p>';
                         echo '</div>';
                     }
+                    
+                    // Hiển thị tồn kho ra trang index
+                    echo '<div class="stock-container">';
+                    if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
+                        echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
+                    } else {
+                        echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
+                    }
+                    echo '</div>';
+
                     echo '</a></div>';
             }
             ?>

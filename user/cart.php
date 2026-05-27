@@ -22,9 +22,6 @@
     $stmt->execute([$user_id]);
     $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total = 0;
-    foreach ($cartItems as $item) {
-        $total += $item['display_price'] * $item['quantity'];
-    }
 ?>
 <style>
     .data-table {
