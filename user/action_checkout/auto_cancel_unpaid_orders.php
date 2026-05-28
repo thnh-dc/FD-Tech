@@ -5,7 +5,10 @@ function autoCancelUnpaidBankOrders($pdo, $expireMinutes = 15)
 {
     try {
         $stmtOrders = $pdo->prepare("
-            SELECT id
+            SELECT 
+                id,
+                user_id,
+                used_points
             FROM orders
             WHERE payment_method = 'bank'
             AND payment_status = 'unpaid'
@@ -29,10 +32,16 @@ function autoCancelUnpaidBankOrders($pdo, $expireMinutes = 15)
 
             try {
                 $stmtCheck = $pdo->prepare("
-                    SELECT id, status, payment_status
+                    SELECT 
+                        id,
+                        user_id,
+                        status,
+                        payment_status,
+                        used_points
                     FROM orders
                     WHERE id = ?
                     LIMIT 1
+                    FOR UPDATE
                 ");
                 $stmtCheck->execute([$order_id]);
                 $currentOrder = $stmtCheck->fetch(PDO::FETCH_ASSOC);
@@ -72,18 +81,41 @@ function autoCancelUnpaidBankOrders($pdo, $expireMinutes = 15)
                     ]);
                 }
 
+                $used_points = (int)($currentOrder['used_points'] ?? 0);
+                $order_user_id = (int)$currentOrder['user_id'];
+                $refund_note = '';
+
+                if ($used_points > 0) {
+                    $stmtRefundPoint = $pdo->prepare("
+                        UPDATE users
+                        SET point = COALESCE(point, 0) + ?
+                        WHERE id = ?
+                    ");
+                    $stmtRefundPoint->execute([$used_points, $order_user_id]);
+
+                    $refund_note = ', đã hoàn lại ' . $used_points . ' FDp';
+                }
+
                 $stmtCancel = $pdo->prepare("
                     UPDATE orders
                     SET 
                         status = 'cancelled',
-                        note = CONCAT(IFNULL(note, ''), ' | Tự động hủy do quá thời gian thanh toán'),
+                        note = CONCAT(IFNULL(note, ''), ?),
                         updated_at = NOW()
                     WHERE id = ?
                     AND status = 'pending'
                     AND payment_status = 'unpaid'
                 ");
 
-                $stmtCancel->execute([$order_id]);
+                $stmtCancel->execute([
+                    ' | Tự động hủy do quá thời gian thanh toán' . $refund_note,
+                    $order_id
+                ]);
+
+                if ($stmtCancel->rowCount() <= 0) {
+                    $pdo->rollBack();
+                    continue;
+                }
 
                 $pdo->commit();
                 $cancelledCount++;
@@ -94,6 +126,7 @@ function autoCancelUnpaidBankOrders($pdo, $expireMinutes = 15)
                 }
             }
         }
+
         return $cancelledCount;
 
     } catch (PDOException $e) {
