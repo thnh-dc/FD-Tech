@@ -226,3 +226,21 @@
     margin-bottom: 15px;
     color: #ddd;
 }
+.member-rank-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #1a9bb8;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.member-rank-link:hover {
+    color: #147a91;
+}
+
+.member-rank-link i {
+    color: #f59e0b;
+}
