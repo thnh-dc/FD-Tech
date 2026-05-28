@@ -96,14 +96,14 @@
                                 <td class="item-price" data-price="<?= $item['display_price'] ?>">
                                     <?php if (!empty($item['discount_price']) && $item['discount_price'] > 0): ?>
                                         <span class="old-price">
-                                            <?= number_format($item['price'], 0, ',', '.') ?> vn₫
+                                            <?= number_format($item['price'], 0, ',', '.') ?> ₫
                                         </span>
                                         <br>
                                         <span>
-                                            <?= number_format($item['discount_price'], 0, ',', '.') ?> vn₫
+                                            <?= number_format($item['discount_price'], 0, ',', '.') ?> ₫
                                         </span>
                                     <?php else: ?>
-                                        <?= number_format($item['price'], 0, ',', '.') ?> vn₫
+                                        <?= number_format($item['price'], 0, ',', '.') ?> ₫
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -122,7 +122,7 @@
                                     </div>
                                 </td>
                                 <td class="item-subtotal">
-                                    <?= number_format($item['display_price'] * $item['quantity'], 0, ',', '.') ?> vn₫
+                                    <?= number_format($item['display_price'] * $item['quantity'], 0, ',', '.') ?> ₫
                                 </td>
                                 <td>
                                     <button class="btn btn-danger btn-delete" data-id="<?= $item['id'] ?>">
@@ -138,7 +138,7 @@
                         <br>
                         <b>Tổng thanh toán: </b>
                         <span class="price-highlight">
-                            <?= number_format($total, 0, ',', '.') ?> vn₫
+                            <?= number_format($total, 0, ',', '.') ?> ₫
                         </span>
                     </p>
                     <br>
