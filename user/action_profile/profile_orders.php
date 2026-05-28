@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 $user_id = $user_id ?? ($_SESSION['user_id'] ?? 0);
 
@@ -9,96 +7,113 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 
     if ($_POST['action'] == 'cancel_order') {
         $order_id = (int)$_POST['order_id'];
+
         try {
-            // Kích hoạt Transaction để đảm bảo tính toàn vẹn của dữ liệu kho hàng và điểm tiêu dùng
             $pdo->beginTransaction();
 
-            // 1. Lấy thông tin đơn hàng để kiểm tra trạng thái và lấy số điểm đã dùng
             $stmt_order = $pdo->prepare("SELECT id, status, used_points FROM orders WHERE id = ? AND user_id = ? LIMIT 1 FOR UPDATE");
             $stmt_order->execute([$order_id, $user_id]);
             $order_cancel = $stmt_order->fetch(PDO::FETCH_ASSOC);
 
-            if (!$order_cancel) {
-                throw new Exception('Không tìm thấy đơn hàng!');
-            }
-
-            if (!in_array($order_cancel['status'], ['pending', 'processing'])) {
-                throw new Exception('Không thể hủy đơn hàng này hoặc trạng thái đơn đã thay đổi!');
-            }
+            if (!$order_cancel) throw new Exception('Không tìm thấy đơn hàng!');
+            if (!in_array($order_cancel['status'], ['pending', 'processing'])) throw new Exception('Không thể hủy đơn hàng này hoặc trạng thái đơn đã thay đổi!');
 
             $used_points = (int)($order_cancel['used_points'] ?? 0);
-
-            // 2. Cập nhật trạng thái đơn hàng thành đã hủy
-            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled', note = CONCAT(IFNULL(note, ''), ?), updated_at = NOW() WHERE id = ? AND user_id = ? AND status IN ('pending', 'processing')");
-            
             $cancel_note = ' | Người dùng hủy đơn';
-            if ($used_points > 0) {
-                $cancel_note .= ', đã hoàn lại ' . $used_points . ' FDp';
-            }
+
+            if ($used_points > 0) $cancel_note .= ', đã hoàn lại ' . $used_points . ' FDp';
+
+            $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled', note = CONCAT(IFNULL(note, ''), ?), updated_at = NOW() WHERE id = ? AND user_id = ? AND status IN ('pending', 'processing')");
 
             if ($stmt->execute([$cancel_note, $order_id, $user_id]) && $stmt->rowCount() > 0) {
-                
-                // 3. Lấy danh sách sản phẩm và số lượng tương ứng từ đơn hàng bị hủy
+
                 $st_get_items = $pdo->prepare("SELECT product_id, quantity FROM order_items WHERE order_id = ?");
                 $st_get_items->execute([$order_id]);
                 $cancelled_items = $st_get_items->fetchAll(PDO::FETCH_ASSOC);
 
-                if (empty($cancelled_items)) {
-                    throw new Exception('Không tìm thấy chi tiết sản phẩm của đơn hàng.');
-                }
+                if (empty($cancelled_items)) throw new Exception('Không tìm thấy chi tiết sản phẩm của đơn hàng.');
 
-                // 4. Chạy vòng lặp cộng trả lại số lượng vào kho hàng
                 $st_update_stock = $pdo->prepare("UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?");
+
                 foreach ($cancelled_items as $item) {
                     $st_update_stock->execute([$item['quantity'], $item['product_id']]);
                 }
 
-                // 5. Hoàn lại điểm tiêu dùng nếu đơn hàng có sử dụng điểm
                 if ($used_points > 0) {
                     $st_refund_point = $pdo->prepare("UPDATE users SET point = COALESCE(point, 0) + ? WHERE id = ?");
                     $st_refund_point->execute([$used_points, $user_id]);
-                }
-                
-                // Xác nhận lưu mọi thay đổi vào Database thành công
-                $pdo->commit(); 
 
-                if ($used_points > 0) {
-                    $_SESSION['noti_message'] = 'Đã hủy đơn hàng, hoàn trả số lượng vào kho và hoàn lại ' . $used_points . ' FDp!';
-                } else {
-                    $_SESSION['noti_message'] = 'Đã hủy đơn hàng và hoàn trả số lượng vào kho thành công!';
+                    $st_refund_history = $pdo->prepare("INSERT INTO fd_point_transactions(user_id, order_id, type, points, description) VALUES (?, ?, 'refund', ?, ?)");
+                    $st_refund_history->execute([$user_id, $order_id, $used_points, 'Hoàn lại ' . $used_points . ' FDp do người dùng hủy đơn hàng #FD-' . $order_id]);
                 }
+
+                $pdo->commit();
+
+                $_SESSION['noti_message'] = $used_points > 0 
+                    ? 'Đã hủy đơn hàng, hoàn trả số lượng vào kho và hoàn lại ' . $used_points . ' FDp!' 
+                    : 'Đã hủy đơn hàng và hoàn trả số lượng vào kho thành công!';
 
                 $_SESSION['noti_type'] = 'success';
             } else {
-                // Nếu đơn hàng đã bị đổi trạng thái trước đó bởi Admin hoặc không hợp lệ
                 $pdo->rollBack();
                 $_SESSION['noti_message'] = 'Không thể hủy đơn hàng này hoặc trạng thái đơn đã thay đổi!';
                 $_SESSION['noti_type'] = 'error';
             }
+
         } catch (Exception $e) {
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
-            }
+            if ($pdo->inTransaction()) $pdo->rollBack();
+
             $_SESSION['noti_message'] = $e->getMessage();
             $_SESSION['noti_type'] = 'error';
         }
+
         header("Location: profile.php?action=orders");
         exit();
     } 
     
     elseif ($_POST['action'] == 'confirm_received') {
         $order_id = (int)$_POST['order_id'];
+
         try {
-            // Khách hàng bấm xác nhận khi đã nhận hàng
-            $stmt = $pdo->prepare("UPDATE orders SET status = 'completed' WHERE id = ? AND user_id = ? AND status IN ('shipped', 'shipping')");
-            if ($stmt->execute([$order_id, $user_id])) {
-                $_SESSION['noti_message'] = 'Xác nhận đã nhận hàng thành công. Cảm ơn bạn đã mua sắm!';
-                $_SESSION['noti_type'] = 'success';
+            $pdo->beginTransaction();
+
+            $stmt_order = $pdo->prepare("SELECT id, total_amount, status FROM orders WHERE id = ? AND user_id = ? LIMIT 1 FOR UPDATE");
+            $stmt_order->execute([$order_id, $user_id]);
+            $order_done = $stmt_order->fetch(PDO::FETCH_ASSOC);
+
+            if (!$order_done) throw new Exception('Không tìm thấy đơn hàng!');
+            if (!in_array($order_done['status'], ['shipped', 'shipping'])) throw new Exception('Không thể xác nhận đơn hàng này.');
+
+            $stmt = $pdo->prepare("UPDATE orders SET status = 'completed', updated_at = NOW() WHERE id = ? AND user_id = ? AND status IN ('shipped', 'shipping')");
+            $stmt->execute([$order_id, $user_id]);
+
+            if ($stmt->rowCount() <= 0) throw new Exception('Không thể xác nhận đơn hàng này.');
+
+            $earned_point = (int)floor(((float)$order_done['total_amount']) / 10000);
+
+            if ($earned_point > 0) {
+                $st_add_point = $pdo->prepare("UPDATE users SET point = COALESCE(point, 0) + ? WHERE id = ?");
+                $st_add_point->execute([$earned_point, $user_id]);
+
+                $st_earn_history = $pdo->prepare("INSERT INTO fd_point_transactions(user_id, order_id, type, points, description) VALUES (?, ?, 'earn', ?, ?)");
+                $st_earn_history->execute([$user_id, $order_id, $earned_point, 'Tích ' . $earned_point . ' FDp từ đơn hàng hoàn thành #FD-' . $order_id]);
             }
-        } catch (PDOException $e) {
-            $_SESSION['noti_message'] = 'Lỗi khi xác nhận đơn hàng!';
+
+            $pdo->commit();
+
+            $_SESSION['noti_message'] = $earned_point > 0 
+                ? 'Xác nhận đã nhận hàng thành công. Bạn được cộng ' . $earned_point . ' FDp!' 
+                : 'Xác nhận đã nhận hàng thành công. Cảm ơn bạn đã mua sắm!';
+
+            $_SESSION['noti_type'] = 'success';
+
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+
+            $_SESSION['noti_message'] = $e->getMessage();
             $_SESSION['noti_type'] = 'error';
         }
+
         header("Location: profile.php?action=orders");
         exit();
     }
@@ -108,30 +123,18 @@ $current_status = $_GET['status'] ?? 'all';
 
 try {
     if ($current_status == 'all') {
-        $stmt = $pdo->prepare("
-            SELECT o.*, u.phone AS user_phone 
-            FROM orders o 
-            LEFT JOIN users u ON o.user_id = u.id 
-            WHERE o.user_id = ? 
-            ORDER BY o.created_at DESC
-        ");
+        $stmt = $pdo->prepare("SELECT o.*, u.phone AS user_phone FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.user_id = ? ORDER BY o.created_at DESC");
         $stmt->execute([$user_id]);
     } else {
-        $stmt = $pdo->prepare("
-            SELECT o.*, u.phone AS user_phone 
-            FROM orders o 
-            LEFT JOIN users u ON o.user_id = u.id 
-            WHERE o.user_id = ? AND o.status = ? 
-            ORDER BY o.created_at DESC
-        ");
+        $stmt = $pdo->prepare("SELECT o.*, u.phone AS user_phone FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.user_id = ? AND o.status = ? ORDER BY o.created_at DESC");
         $stmt->execute([$user_id, $current_status]);
     }
+
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $orders = [];
 }
 
-// Hàm hỗ trợ dịch trạng thái đơn hàng sang tiếng Việt hiển thị trực quan
 if (!function_exists('translateOrderStatus')) {
     function translateOrderStatus($status)
     {
@@ -143,7 +146,9 @@ if (!function_exists('translateOrderStatus')) {
             'completed' => 'Đã giao',
             'cancelled' => 'Đã hủy'
         ];
+
         $text = $labels[$status] ?? $status;
+
         return '<span class="status-badge-text">' . htmlspecialchars($text) . '</span>';
     }
 }
@@ -172,16 +177,13 @@ if (!function_exists('translateOrderStatus')) {
 <?php else: ?>
     <div>
         <?php foreach ($orders as $order):
-            // Lấy toàn bộ danh sách sản phẩm thuộc đơn hàng hiện tại
             $st_items = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
             $st_items->execute([$order['id']]);
             $items = $st_items->fetchAll(PDO::FETCH_ASSOC);
-
-            // Đặt tên tiêu đề đại diện hiển thị ngoài Card là tên sản phẩm đầu tiên
             $first_name = !empty($items) ? $items[0]['product_name'] : 'Đơn hàng #' . $order['id'];
             ?>
+
             <div class="order-card">
-                
                 <div class="order-summary">
                     <div class="order-summary-left">
                         <span class="order-summary-title"><?= htmlspecialchars($first_name) ?></span>
@@ -199,18 +201,14 @@ if (!function_exists('translateOrderStatus')) {
                 </div>
 
                 <div id="detail-<?= $order['id'] ?>" class="order-detail-box">
-                    
                     <div class="order-info-row">
                         <span>Mã đơn: <strong>#<?= $order['id'] ?></strong></span>
                         <span>Ngày đặt: <strong><?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></strong></span>
                     </div>
 
                     <?php 
-                        // Cấu hình hiển thị thông tin khách hàng nhận
                         $display_phone = !empty($order['user_phone']) ? $order['user_phone'] : 'Chưa cập nhật SĐT'; 
                         $display_address = !empty($order['shipping_address']) ? $order['shipping_address'] : 'Chưa cập nhật địa chỉ';
-                        
-                        // Định dạng hiển thị chuỗi phương thức thanh toán dựa theo cột payment_method
                         $payment_method = $order['payment_method'] ?? 'cod';
                         $display_payment = ($payment_method === 'bank') ? 'Chuyển khoản ngân hàng (Qua cổng mã QR)' : 'Thanh toán khi nhận hàng (COD)';
                     ?>
@@ -228,11 +226,11 @@ if (!function_exists('translateOrderStatus')) {
                         $img_link = !empty($it['product_image']) ? $it['product_image'] : '';
                         $p_name = !empty($it['product_name']) ? $it['product_name'] : 'Sản phẩm không xác định';
                         
-                        // Định vị chuẩn đường dẫn thư mục lưu ảnh upload trên Localhost XAMPP
                         if (!empty($img_link) && !filter_var($img_link, FILTER_VALIDATE_URL) && strpos($img_link, 'upload/') !== 0) {
                             $img_link = "../upload/product_image/" . $img_link;
                         }
                         ?>
+
                         <div class="order-item">
                             <div class="order-item-img">
                                 <img src="<?= htmlspecialchars($img_link) ?>" alt="Product" onerror="this.src='../assets/images/logo-fd.jpg'">
@@ -252,7 +250,7 @@ if (!function_exists('translateOrderStatus')) {
 
                     <?php if (!empty($order['used_points']) && (int)$order['used_points'] > 0): ?>
                         <div class="order-payment-method-box">
-                            <strong>FD point đã sử dụng:</strong> <span><?= number_format((int)$order['used_points'], 0, ',', '.') ?> FDp</span>
+                            <strong>FD Point đã sử dụng:</strong> <span><?= number_format((int)$order['used_points'], 0, ',', '.') ?> FDp</span>
                         </div>
                     <?php endif; ?>
 
@@ -264,7 +262,7 @@ if (!function_exists('translateOrderStatus')) {
 
                         <div class="order-actions-group">
                             <?php if ($order['status'] == 'pending' || $order['status'] == 'processing'): ?>
-                                <form action="" method="POST" style="margin: 0;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #<?= $order['id'] ?> này không? Thao tác này sẽ tự động hoàn lại sản phẩm vào kho hàng và hoàn lại điểm đã dùng nếu có.');">
+                                <form action="" method="POST" style="margin: 0;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #<?= $order['id'] ?> này không? Thao tác này sẽ tự động hoàn lại sản phẩm vào kho hàng và hoàn lại FDp đã dùng nếu có.');">
                                     <input type="hidden" name="action" value="cancel_order">
                                     <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                                     <button type="submit" class="btn-cancel-order">Hủy đơn hàng</button>
@@ -290,16 +288,16 @@ if (!function_exists('translateOrderStatus')) {
 <?php endif; ?>
 
 <script>
-    function toggleOrder(id, btn) {
-        var box = document.getElementById('detail-' + id);
-        if (box.style.display === "none" || box.style.display === "") {
-            box.style.display = "block";
-            btn.innerText = "Đóng";
-        } else {
-            box.style.display = "none";
-            btn.innerText = "Xem chi tiết";
-        }
+function toggleOrder(id, btn) {
+    var box = document.getElementById('detail-' + id);
+    if (box.style.display === "none" || box.style.display === "") {
+        box.style.display = "block";
+        btn.innerText = "Đóng";
+    } else {
+        box.style.display = "none";
+        btn.innerText = "Xem chi tiết";
     }
+}
 </script>
 
 <?php include '../includes/notification.php'; ?>
