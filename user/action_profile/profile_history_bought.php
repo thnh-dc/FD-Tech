@@ -7,14 +7,31 @@ if (!isset($user_id)) {
     $user_id = $_SESSION['user_id'] ?? 0;
 }
 
-// 1. TRUY VẤN DỮ LIỆU THỐNG KÊ & LỊCH SỬ (CHỈ LẤY ĐƠN HÀNG THÀNH CÔNG)
+// 1. TRUY VẤN DỮ LIỆU THỐNG KÊ & LỊCH SỬ MUA HÀNG
 try {
+    // Lấy điểm tiêu dùng của người dùng
+    $stmt_point = $pdo->prepare("
+        SELECT point
+        FROM users
+        WHERE id = ?
+        LIMIT 1
+    ");
+    $stmt_point->execute([$user_id]);
+    $user_point_data = $stmt_point->fetch(PDO::FETCH_ASSOC);
+    $user_point = (int)($user_point_data['point'] ?? 0);
+
     // Chỉ lấy đơn hàng thành công
-    $stmt_orders = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? AND status = 'completed' ORDER BY created_at DESC");
+    $stmt_orders = $pdo->prepare("
+        SELECT *
+        FROM orders
+        WHERE user_id = ?
+        AND status = 'completed'
+        ORDER BY created_at DESC
+    ");
     $stmt_orders->execute([$user_id]);
     $orders = $stmt_orders->fetchAll(PDO::FETCH_ASSOC);
 
-    // Tính toán số liệu tổng quan để hiển thị
+    // Tính toán số liệu tổng quan
     $total_orders = count($orders);
     $total_spent = 0;
 
@@ -22,12 +39,11 @@ try {
         $total_spent += $order['total_amount'] ?? 0;
     }
 
-    // LOGIC TÍNH TOÁN DOANH THU 6 THÁNG GẦN NHẤT
+    // Tính chi tiêu 6 tháng gần nhất
     $months_data = [];
 
     for ($i = 5; $i >= 0; $i--) {
         $month_target = date('Y-m', strtotime("-$i months"));
-        $month_label = "Thương mại " . date('m/y', strtotime("-$i months"));
         $month_label = "Tháng " . date('m/Y', strtotime("-$i months"));
 
         $months_data[$month_target] = [
@@ -36,9 +52,9 @@ try {
         ];
     }
 
-    // Duyệt qua các đơn hàng để gom tiền vào từng tháng tương ứng
     foreach ($orders as $order) {
         $order_month = date('Y-m', strtotime($order['created_at']));
+
         if (isset($months_data[$order_month])) {
             $months_data[$order_month]['amount'] += $order['total_amount'];
         }
@@ -49,12 +65,13 @@ try {
     $total_orders = 0;
     $total_spent = 0;
     $months_data = [];
+    $user_point = 0;
 }
 ?>
 
 <div class="profile-header">
     <h2>Thống kê & Lịch sử mua hàng</h2>
-    <p>Xem lại các sản phẩm bạn đã sở hữu và biểu đồ chi tiêu</p>
+    <p>Xem lại các sản phẩm bạn đã sở hữu, điểm tiêu dùng và biểu đồ chi tiêu</p>
 </div>
 
 <div class="profile-body-split">
@@ -82,18 +99,22 @@ try {
                                 <th style="padding: 12px 8px; color: #555; text-align: center;">Trạng thái</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <?php foreach ($orders as $order): ?>
                                 <tr style="border-bottom: 1px solid #eee; transition: background 0.2s;">
                                     <td style="padding: 12px 8px; font-weight: bold; color: #1a9bb8;">
-                                        #<?php echo $order['order_code'] ?? $order['id']; ?>
+                                        #<?php echo htmlspecialchars($order['order_code'] ?? $order['id']); ?>
                                     </td>
+
                                     <td style="padding: 12px 8px; color: #666;">
                                         <?php echo date('d/m/Y H:i', strtotime($order['created_at'])); ?>
                                     </td>
+
                                     <td style="padding: 12px 8px; font-weight: bold; color: #db4437;">
                                         <?php echo number_format($order['total_amount'], 0, ',', '.'); ?>đ
                                     </td>
+
                                     <td style="padding: 12px 8px; text-align: center;">
                                         <span
                                             style="display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; background-color: #d4edda; color: #155724;">
@@ -121,7 +142,8 @@ try {
             <div style="text-align: center; width: 100%;">
                 <p style="font-size: 12px; color: #777; margin: 0 0 5px 0;">Tổng tích lũy mua sắm</p>
                 <p style="font-size: 22px; font-weight: bold; color: #db4437; margin: 0;">
-                    <?php echo number_format($total_spent, 0, ',', '.'); ?> <span style="font-size: 14px;">đ</span>
+                    <?php echo number_format($total_spent, 0, ',', '.'); ?>
+                    <span style="font-size: 14px;">đ</span>
                 </p>
             </div>
 
@@ -131,6 +153,22 @@ try {
                 style="display: flex; justify-content: space-between; width: 100%; font-size: 13px; color: #555; padding: 0 5px;">
                 <span>Tổng đơn hàng đã mua:</span>
                 <strong><?php echo $total_orders; ?> đơn</strong>
+            </div>
+
+            <div
+                style="display: flex; justify-content: space-between; width: 100%; font-size: 13px; color: #555; padding: 0 5px;">
+                <span>FD point hiện có:</span>
+                <strong style="color: #1a9bb8;">
+                    <?php echo number_format($user_point, 0, ',', '.'); ?> FDp
+                </strong>
+            </div>
+
+            <div
+                style="background: #f0f8ff; border-radius: 8px; padding: 12px; width: 100%; text-align: center; border: 1px solid #d7eef5;">
+                <p style="font-size: 12px; color: #666; margin: 0 0 5px 0;">
+                    FD point sẽ được tích lũy khi đơn hàng hoàn thành
+                </p>
+                <p><b>10.000đ = 1FDp</b></p>
             </div>
 
             <?php if (!empty($orders)): ?>
@@ -160,7 +198,6 @@ try {
             onclick="window.location.href='../user/index.php'">
             <i class="fas fa-shopping-cart" style="margin-right: 5px;"></i> Tiếp tục mua sắm
         </button>
-
     </div>
 
 </div>
