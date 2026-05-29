@@ -31,6 +31,11 @@ document.addEventListener('DOMContentLoaded', function () {
         pointDiscountText.textContent = '-' + formatMoney(pointDiscount);
         if (memberDiscountText) memberDiscountText.textContent = '-' + formatMoney(memberDiscount);
         finalTotalText.textContent = formatMoney(finalTotal);
+        const earnedPointsText = document.getElementById('earnedPointsText');
+        if (earnedPointsText) {
+            const earnedPoints = Math.floor(finalTotal / 10000);
+            earnedPointsText.textContent = earnedPoints.toLocaleString('vi-VN') + ' FDp';
+        }
     }
 
     usePointsInput.addEventListener('input', updateCheckoutTotal);

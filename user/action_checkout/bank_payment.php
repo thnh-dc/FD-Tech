@@ -181,7 +181,8 @@ include '../../includes/notification.php';
 
                         <p>
                             <b>Số tiền:</b> 
-                            <?= number_format($order['total_amount'], 0, ',', '.') ?>₫
+                            <?= number_format($order['total_amount'], 0, ',', '.') ?>₫ 
+                            <i>(đã bao gồm giảm giá)</i>
                         </p>
                         <p>
                             <b>Nội dung chuyển khoản:</b> 
@@ -241,17 +242,11 @@ include '../../includes/notification.php';
 
             <div class="checkout-section">
                 <p>
-                    <i class="fa-solid fa-money-check-dollar"></i>
-                    Tổng tiền:
-                    <b><?= number_format($order['total_amount'], 0, ',', '.') ?>₫</b>
-                </p>
-
-                <p>
                     <i class="fa-solid fa-hourglass-half"></i>
                     Trạng thái thanh toán:
                     <b>Chưa thanh toán</b>
                 </p>
-
+                </br>
                 <button 
                     type="button" 
                     onclick="window.location.href='bank_payment.php?order_id=<?= $order['id'] ?>&check_payment=1'" 
