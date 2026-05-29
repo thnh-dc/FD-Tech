@@ -13,7 +13,6 @@ try {
                 p.id,
                 p.name,
                 p.price,
-                p.stock_quantity,
                 p.image_url,
                 p.description,
                 c.name AS cat_name
@@ -48,19 +47,6 @@ function getProductImage($image_url)
     }
 
     return "../upload/product_image/" . $image_url;
-}
-
-function getStockClass($stock)
-{
-    if ($stock <= 0) {
-        return "out-stock";
-    }
-
-    if ($stock < 10) {
-        return "low-stock";
-    }
-
-    return "in-stock";
 }
 ?>
 
@@ -119,7 +105,6 @@ include 'includes/header.php';
                             <th>Tên sản phẩm</th>
                             <th>Danh mục</th>
                             <th>Giá</th>
-                            <th>Tồn kho</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
@@ -131,8 +116,6 @@ include 'includes/header.php';
                         <?php foreach ($products as $p): ?>
 
                             <?php
-                                $stock = (int)$p['stock_quantity'];
-                                $stock_class = getStockClass($stock);
                                 $image_src = getProductImage($p['image_url']);
                             ?>
 
@@ -157,12 +140,6 @@ include 'includes/header.php';
 
                                 <td class="product-price">
                                     <?= number_format($p['price'], 0, ',', '.') ?>₫
-                                </td>
-
-                                <td>
-                                    <span class="stock-badge <?= $stock_class ?>">
-                                        <?= $stock ?> sản phẩm
-                                    </span>
                                 </td>
 
                                 <td>
@@ -193,7 +170,7 @@ include 'includes/header.php';
                     <?php else: ?>
 
                         <tr>
-                            <td colspan="6">
+                            <td colspan="5">
                                 <div class="empty-box">
                                     <i class="fa-solid fa-box-open"></i>
                                     <h3>Không có sản phẩm</h3>
