@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/database.php';
+require_once '../../includes/fd_member_helper.php';
 
 $user_id = $_SESSION['user_id'] ?? 0;
 if ($user_id <= 0) { header("Location: ../../auth/login.php"); exit(); }
@@ -56,6 +57,11 @@ try {
     $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
     if (!$user) throw new Exception('Không tìm thấy thông tin người dùng.');
 
+    $period_points = getUserPeriodFDp($pdo, $user_id);
+    $current_tier = getFDMemberTierByPoint($pdo, $period_points);
+    $member_tier_name = $current_tier['tier_name'] ?? 'Đồng';
+    $member_discount_percent = (float)($current_tier['discount_percent'] ?? 0);
+
     $current_point = (int)($user['point'] ?? 0);
     $max_points_by_total = (int)floor($total / $point_value);
     $max_usable_points = min($current_point, $max_points_by_total);
@@ -63,7 +69,9 @@ try {
     if ($use_points > $max_usable_points) throw new Exception('Số FDp sử dụng không hợp lệ hoặc vượt quá số FDp hiện có.');
 
     $point_discount = $use_points * $point_value;
-    $final_total = max($total - $point_discount, 0);
+    $after_point_total = max($total - $point_discount, 0);
+    $member_discount = (int)floor($after_point_total * $member_discount_percent / 100);
+    $final_total = max($after_point_total - $member_discount, 0);
 
     if ($use_points > 0) {
         $payment_note .= ' | Đã dùng ' . $use_points . ' FDp, giảm ' . number_format($point_discount, 0, ',', '.') . 'đ';
@@ -71,6 +79,8 @@ try {
         $stmtMinusPoint->execute([$use_points, $user_id, $use_points]);
         if ($stmtMinusPoint->rowCount() <= 0) throw new Exception('Không thể trừ FDp. Vui lòng kiểm tra lại FDp hiện có.');
     }
+
+    if ($member_discount > 0) $payment_note .= ' | Ưu đãi FD Member hạng ' . $member_tier_name . ' giảm ' . number_format($member_discount, 0, ',', '.') . 'đ';
 
     $stmtOrder = $pdo->prepare("INSERT INTO orders(user_id, total_amount, status, shipping_address, note, payment_method, payment_status, used_points) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmtOrder->execute([$user_id, $final_total, $order_status, $address, $payment_note, $payment_method, $payment_status, $use_points]);
@@ -85,6 +95,8 @@ try {
         $payment_code = 'FDTECH' . $order_id;
         $bank_note = 'Chuyển khoản ngân hàng - Nội dung: ' . $payment_code;
         if ($use_points > 0) $bank_note .= ' | Đã dùng ' . $use_points . ' FDp, giảm ' . number_format($point_discount, 0, ',', '.') . 'đ';
+        if ($member_discount > 0) $bank_note .= ' | Ưu đãi FD Member hạng ' . $member_tier_name . ' giảm ' . number_format($member_discount, 0, ',', '.') . 'đ';
+
         $stmtPaymentCode = $pdo->prepare("UPDATE orders SET payment_code = ?, note = ? WHERE id = ?");
         $stmtPaymentCode->execute([$payment_code, $bank_note, $order_id]);
     }
@@ -110,13 +122,16 @@ try {
     $pdo->commit();
 
     if ($payment_method === 'bank') { header("Location: bank_payment.php?order_id=" . $order_id); exit(); }
+
     header("Location: ../checkout.php?status=success&order_id=" . $order_id);
     exit();
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
+
     $_SESSION['noti_message'] = $e->getMessage();
     $_SESSION['noti_type'] = 'error';
+
     header("Location: ../cart.php");
     exit();
 }
