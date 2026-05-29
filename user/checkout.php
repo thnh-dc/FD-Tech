@@ -146,7 +146,7 @@ $member_discount_percent = (float)($current_tier['discount_percent'] ?? 0);
 
             <div class="checkout-right">
                 <div class="checkout-section checkout-summary-section">
-                    <h3><i class="fa-solid fa-file-invoice-dollar"></i> Thông tin đơn hàng</h3>
+                    <h3><i class="fa-solid fa-file-invoice-dollar"></i> Thông tin thanh toán</h3>
 
                     <div class="summary-row">
                         <span>Tổng tiền tạm tính</span>
@@ -163,7 +163,7 @@ $member_discount_percent = (float)($current_tier['discount_percent'] ?? 0);
                         <div class="summary-member">
                             <strong id="memberDiscountText" class="summary-discount">-0₫</strong>
                             <small id="memberDiscountLabel">
-                                Hạng <?= htmlspecialchars($member_tier_name) ?><?= $member_discount_percent > 0 ? ' - giảm ' . number_format($member_discount_percent, 0, ',', '.') . '%' : '' ?>
+                                Thành viên <?= htmlspecialchars($member_tier_name) ?><?= $member_discount_percent > 0 ? ', chúc mừng bạn được giảm ' . number_format($member_discount_percent, 0, ',', '.') . '%' : '' ?>
                             </small>
                         </div>
                     </div>
@@ -185,7 +185,7 @@ $member_discount_percent = (float)($current_tier['discount_percent'] ?? 0);
                     </button>
 
                     <p class="checkout-policy">
-                        Bằng việc đặt hàng, bạn đồng ý với điều khoản mua hàng của FD Tech.
+                        Bằng việc xác nhận đặt hàng, bạn đồng ý với điều khoản mua hàng của FD Tech.
                     </p>
                     
                     
