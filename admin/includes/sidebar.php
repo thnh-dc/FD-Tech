@@ -18,7 +18,8 @@
         </li>
         
         <?php 
-            $product_pages = ['add.php', 'edit.php', 'list_products.php'];
+            // Đã thêm 'manage_warehouse.php' vào đây để menu Danh mục sản phẩm không bị tự động đóng lại khi xem kho
+            $product_pages = ['add.php', 'edit.php', 'list_products.php', 'manage_warehouse.php'];
             $is_product_active = in_array(basename($_SERVER['PHP_SELF']), $product_pages);
         ?>
         <li class="menu-item has-submenu">
@@ -27,13 +28,26 @@
                 <i class="fa-solid fa-chevron-down arrow-icon"></i>
             </a>
             <ul class="submenu <?= $is_product_active ? 'show' : '' ?>">
-                <li><a href="add.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-plus"></i> Thêm sản phẩm</a></li>
-                <li><a href="list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_products.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-trash"></i> Quản lí sản phẩm</a></li>
+                <li>
+                    <a href="add.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active-sub' : '' ?>">
+                        <i class="fa-solid fa-plus"></i> Thêm sản phẩm
+                    </a>
+                </li>
+                <li>
+                    <a href="list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_products.php') ? 'active-sub' : '' ?>">
+                        <i class="fa-solid fa-list"></i> Quản lí sản phẩm
+                    </a>
+                </li>
+                <li>
+                    <a href="manage_warehouse.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'manage_warehouse.php') ? 'active-sub' : '' ?>">
+                        <i class="fa-solid fa-warehouse"></i> Quản lý kho hàng
+                    </a>
+                </li>
             </ul>
         </li>
 
         <?php 
-            $import_pages = ['add_import.php', 'list_imports.php'];
+            $import_pages = ['add_import.php', 'list_imports.php', 'view_import.php'];
             $is_import_active = in_array(basename($_SERVER['PHP_SELF']), $import_pages);
         ?>
         <li class="menu-item has-submenu">

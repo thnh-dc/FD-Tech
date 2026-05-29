@@ -6,6 +6,7 @@ include '../config/database.php';
 require_once __DIR__ . '/check_admin.php';
 
 try {
+    // Truy vấn danh sách lịch sử phiếu nhập kèm tên nhà cung cấp
     $query = "SELECT io.*, s.name AS supplier_name 
               FROM import_orders io
               JOIN suppliers s ON io.supplier_id = s.id
@@ -16,71 +17,80 @@ try {
 }
 
 $page_title = 'Lịch sử nhập kho';
+$page_icon = 'fa-solid fa-clock-rotate-left';
+// Nhúng file CSS tách biệt cho toàn bộ hệ thống hóa đơn nhập
+$custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/list_imports.css">';
+
 include 'includes/header.php';
 ?>
 
-<div class="admin-container" style="display: flex; min-height: 100vh; background: #f8fafc;">
-    
-    <main class="admin-main" style="flex: 1; padding: 30px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <div>
-                <h2 style="color: #1e293b; font-size: 1.6rem; font-weight: 700; margin: 0;">📜 Lịch sử nhập kho hàng</h2>
-                <p style="color: #64748b; margin: 5px 0 0 0;">Danh sách toàn bộ các hóa đơn nhập hàng hóa của FD Tech</p>
+<div class="imports-container">
+    <div class="imports-card">
+        
+        <div class="imports-header-flex">
+            <div class="imports-title">
+                <h2><i class="fa-solid fa-file-invoice-dollar"></i> Lịch sử nhập kho hàng</h2>
+                <p>Danh sách toàn bộ các chứng từ kiểm kê và nhập linh kiện PC / Laptop vật lý vào xưởng.</p>
             </div>
-            <a href="add_import.php" style="background: #2563eb; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 8px;">
-                ➕ Nhập lô hàng mới
+            <a href="add_import.php" class="btn-imports-action btn-imports-primary">
+                <i class="fa-solid fa-plus"></i> Lập phiếu nhập kho mới
             </a>
         </div>
 
         <?php if (isset($_GET['msg'])): ?>
-            <div style="background: #dcfce7; border-left: 4px solid #10b981; color: #15803d; padding: 12px; margin-bottom: 20px; border-radius: 4px; font-weight: 500;">
-                ✓ <?= htmlspecialchars($_GET['msg']) ?>
+            <div style="background: #dcfce7; color: #15803d; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; font-size: 0.9rem;">
+                <i class="fa-solid fa-circle-check"></i> <?= htmlspecialchars($_GET['msg']) ?>
             </div>
         <?php endif; ?>
 
-        <div style="background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+        <div class="imports-table-wrapper">
+            <table class="imports-table">
                 <thead>
-                    <tr style="background: #f1f5f9; color: #475569; border-bottom: 2px solid #e2e8f0;">
-                        <th style="padding: 15px 20px; font-weight: 600;">Mã đơn</th>
-                        <th style="padding: 15px 20px; font-weight: 600;">Nhà cung cấp</th>
-                        <th style="padding: 15px 20px; font-weight: 600; text-align: right;">Tổng chi phí vốn</th>
-                        <th style="padding: 15px 20px; font-weight: 600; text-align: center;">Trạng thái</th>
-                        <th style="padding: 15px 20px; font-weight: 600;">Ghi chú đợt nhập</th>
-                        <th style="padding: 15px 20px; font-weight: 600;">Ngày giờ</th>
+                    <tr>
+                        <th style="width: 100px; text-align: center;">Mã chứng từ</th>
+                        <th>Nhà cung cấp đối tác</th>
+                        <th style="text-align: right; width: 180px;">Tổng tiền thanh toán</th>
+                        <th style="text-align: center; width: 140px;">Trạng thái kho</th>
+                        <th>Ghi chú phiếu</th>
+                        <th style="width: 160px;">Thời gian lập</th>
+                        <th style="width: 100px; text-align: center;">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($imports)): ?>
                         <tr>
-                            <td colspan="6" style="padding: 30px; text-align: center; color: #94a3b8; font-style: italic;">
-                                Chưa có chứng từ nhập kho nào.
+                            <td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">
+                                <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; margin-bottom: 10px; display: block;"></i>
+                                Chưa có bất kỳ chứng từ nhập kho nào được tạo trên hệ thống!
                             </td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($imports as $item): ?>
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 15px 20px; font-weight: bold;">
-    <a href="view_import.php?id=<?= $item['id'] ?>" style="color: #2563eb; text-decoration: none; hover: underline;">
-        #NK-<?= str_pad($item['id'], 5, '0', STR_PAD_LEFT) ?>
-    </a>
-</td>
-                                <td style="padding: 15px 20px; font-weight: 500; color: #334155;">
+                            <tr>
+                                <td style="text-align: center; font-weight: bold; color: #64748b;">
+                                    #<?= $item['id'] ?>
+                                </td>
+                                <td style="font-weight: 600; color: #334155;">
                                     <?= htmlspecialchars($item['supplier_name']) ?>
                                 </td>
-                                <td style="padding: 15px 20px; text-align: right; font-weight: bold; color: #0f172a;">
+                                <td style="text-align: right; font-weight: bold; color: #0f172a; font-variant-numeric: tabular-nums;">
                                     <?= number_format($item['total_amount'], 0, ',', '.') ?>₫
                                 </td>
-                                <td style="padding: 15px 20px; text-align: center;">
-                                    <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">
-                                        Đã nhập kho
+                                <td style="text-align: center;">
+                                    <span class="badge-import-status">
+                                        <i class="fa-solid fa-circle-check"></i> Đã hoàn tất
                                     </span>
                                 </td>
-                                <td style="padding: 15px 20px; color: #64748b;">
-                                    <?= !empty($item['note']) ? htmlspecialchars($item['note']) : '<span style="color:#cbd5e1;">Không có ghi chú</span>' ?>
+                                <td style="color: #64748b;">
+                                    <?= !empty($item['note']) ? htmlspecialchars($item['note']) : '<span style="color:#cbd5e1; font-style: italic;">Không có ghi chú</span>' ?>
                                 </td>
-                                <td style="padding: 15px 20px; color: #64748b; font-size: 0.9rem;">
-                                    <?= date('d/m/Y H:i', strtotime($item['created_at'])) ?>
+                                <td style="color: #64748b; font-size: 0.85rem;">
+                                    <i class="fa-regular fa-clock"></i> <?= date('d/m/Y H:i', strtotime($item['created_at'])) ?>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a href="view_import.php?id=<?= $item['id'] ?>" class="btn-imports-action btn-imports-secondary" style="padding: 6px 12px; font-size: 0.8rem;" title="Xem chi tiết hóa đơn">
+                                        <i class="fa-solid fa-eye"></i> Xem chi tiết
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -88,5 +98,12 @@ include 'includes/header.php';
                 </tbody>
             </table>
         </div>
-    </main>
+        
+    </div>
 </div>
+
+</main>
+</div>
+<script src="../assets/js/script_dashboard.js"></script>
+</body>
+</html>
