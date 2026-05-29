@@ -7,6 +7,11 @@ $cat = isset($_GET['cat']) ? (int)$_GET['cat'] : 0;
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'featured';
 $stock_filter = isset($_GET['stock']) ? $_GET['stock'] : 'all'; 
 
+// --- Cấu hình phân trang ---
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$limit = 12; // Số sản phẩm trên mỗi trang
+$offset = ($page - 1) * $limit;
+
 $products = [];
 $category_name = '';
 
@@ -76,6 +81,13 @@ try {
 
     $where_sql = count($where_conditions) > 0 ? "WHERE " . implode(" AND ", $where_conditions) : "";
 
+    // Lấy tổng số sản phẩm để tính số trang
+    $stmt_count = $pdo->prepare("SELECT COUNT(*) FROM products $where_sql");
+    $stmt_count->execute($params);
+    $total_products = $stmt_count->fetchColumn();
+    $total_pages = ceil($total_products / $limit);
+
+    // Truy vấn sản phẩm có giới hạn Limit & Offset
     $stmt = $pdo->prepare("
         SELECT 
             id,
@@ -89,6 +101,7 @@ try {
         FROM products
         $where_sql
         ORDER BY $orderBy
+        LIMIT $limit OFFSET $offset
     ");
 
     $stmt->execute($params);
@@ -199,6 +212,22 @@ include '../includes/header.php';
             </div>
         <?php endif; ?>
     </div>
+
+    <?php if ($total_pages > 1): ?>
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a href="?cat=<?= $cat ?>&sort=<?= $sort ?>&stock=<?= $stock_filter ?>&page=<?= $page - 1 ?>">&laquo;</a>
+            <?php endif; ?>
+            
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="?cat=<?= $cat ?>&sort=<?= $sort ?>&stock=<?= $stock_filter ?>&page=<?= $i ?>" class="<?= $i == $page ? 'active' : '' ?>"><?= $i ?></a>
+            <?php endfor; ?>
+            
+            <?php if ($page < $total_pages): ?>
+                <a href="?cat=<?= $cat ?>&sort=<?= $sort ?>&stock=<?= $stock_filter ?>&page=<?= $page + 1 ?>">&raquo;</a>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
 </main>
 <?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>

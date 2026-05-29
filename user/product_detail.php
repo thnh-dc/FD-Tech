@@ -18,12 +18,15 @@ $sp = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$sp) {
     die("<h2 class='text-center'>Sản phẩm không tồn tại!</h2>");
 }
+
 $stmtImages = $pdo->prepare("SELECT image_url FROM product_images WHERE product_id = :id");
 $stmtImages->execute(['id' => $id]);
 $extraImages = $stmtImages->fetchAll(PDO::FETCH_COLUMN);
+
 $stmtSpecs = $pdo->prepare("SELECT spec_name, spec_value FROM product_specs WHERE product_id = :id");
 $stmtSpecs->execute(['id' => $id]);
 $specs = $stmtSpecs->fetchAll(PDO::FETCH_ASSOC);
+
 try {
     $stmtReviews = $pdo->prepare("
         SELECT r.*, u.username AS user_name 
@@ -58,11 +61,35 @@ try {
         $reviews = $stmtReviews->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+
+// --- Logic kiểm tra quyền đánh giá (Chỉ người đã mua) ---
+$can_review = false;
+if (isset($_SESSION['user_id'])) {
+    try {
+        $stmtCheck = $pdo->prepare("
+            SELECT COUNT(*) 
+            FROM order_details od 
+            JOIN orders o ON od.order_id = o.id 
+            WHERE o.user_id = :user_id 
+            AND od.product_id = :product_id 
+            AND o.status = 'completed' 
+        ");
+        $stmtCheck->execute(['user_id' => $_SESSION['user_id'], 'product_id' => $id]);
+        if ($stmtCheck->fetchColumn() > 0) {
+            $can_review = true;
+        }
+    } catch (PDOException $e) {
+        // Fallback nếu chưa có bảng orders/order_details
+        $can_review = false;
+    }
+}
+
 $custom_css = 
     '<link rel="stylesheet" href="../assets/css/style_product_detail.css?v=' . time() . '">' . "\n" .
     '<link rel="stylesheet" href="../assets/css/style_notification.css?v=' . time() . '">';
 include '../includes/header.php';
 include '../includes/notification.php';
+
 $img = $sp['image_url'] ?? '';
 if (empty($img)) {
     $img_src = "../assets/images/logo-fd.jpg";
@@ -73,6 +100,7 @@ if (empty($img)) {
 } else {
     $img_src = "../upload/product_image/" . $img;
 }
+
 $image_gallery = [$img_src];
 foreach ($extraImages as $eImg) {
     if (filter_var($eImg, FILTER_VALIDATE_URL)) {
@@ -83,6 +111,7 @@ foreach ($extraImages as $eImg) {
         $image_gallery[] = "../upload/product_gallery/" . $eImg;
     }
 }
+
 $has_discount = !empty($sp['discount_price']) && $sp['discount_price'] > 0;
 $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
 ?>
@@ -213,37 +242,48 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
                 </table>
             </div>
             <div class="tab-pane" id="tab-reviews">
-                <div class="review-form-container">
-                    <h3 class="review-form-title">Viết đánh giá của bạn</h3>
-                    <form id="submitReviewForm" class="review-form">
-                        <input type="hidden" name="product_id" value="<?= $id; ?>">
-                        <div class="form-group">
-                            <label for="rating">Mức độ đánh giá:</label>
-                            <select name="rating" id="rating" class="form-control" required>
-                                <option value="5">⭐⭐⭐⭐⭐ (5 Sao - Tuyệt vời)</option>
-                                <option value="4">⭐⭐⭐⭐ (4 Sao - Tốt)</option>
-                                <option value="3">⭐⭐⭐ (3 Sao - Bình thường)</option>
-                                <option value="2">⭐⭐ (2 Sao - Kém)</option>
-                                <option value="1">⭐ (1 Sao - Tệ)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="comment">Nội dung đánh giá:</label>
-                            <textarea 
-                                name="comment" 
-                                id="comment" 
-                                rows="4" 
-                                class="form-control" 
-                                required 
-                                placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."
-                            ></textarea>
-                        </div>
-                        <button type="button" id="btnSubmitReview" class="btn btn-primary btn-submit-review">
-                            Gửi đánh giá
-                        </button>
-                    </form>
-                </div>
+                
+                <?php if ($can_review): ?>
+                    <div class="review-form-container">
+                        <h3 class="review-form-title">Viết đánh giá của bạn</h3>
+                        <form id="submitReviewForm" class="review-form">
+                            <input type="hidden" name="product_id" value="<?= $id; ?>">
+                            <div class="form-group">
+                                <label for="rating">Mức độ đánh giá:</label>
+                                <select name="rating" id="rating" class="form-control" required>
+                                    <option value="5">⭐⭐⭐⭐⭐ (5 Sao - Tuyệt vời)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4 Sao - Tốt)</option>
+                                    <option value="3">⭐⭐⭐ (3 Sao - Bình thường)</option>
+                                    <option value="2">⭐⭐ (2 Sao - Kém)</option>
+                                    <option value="1">⭐ (1 Sao - Tệ)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="comment">Nội dung đánh giá:</label>
+                                <textarea 
+                                    name="comment" 
+                                    id="comment" 
+                                    rows="4" 
+                                    class="form-control" 
+                                    required 
+                                    placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."
+                                ></textarea>
+                            </div>
+                            <button type="button" id="btnSubmitReview" class="btn btn-primary btn-submit-review">
+                                Gửi đánh giá
+                            </button>
+                        </form>
+                    </div>
+                <?php else: ?>
+                    <div class="review-form-container" style="background: #fff3cd; border: 1px solid #ffe69c;">
+                        <p style="color: #664d03; font-weight: 500; text-align: center; margin: 0; padding: 10px 0;">
+                            Chỉ những khách hàng đã mua và hoàn thành thanh toán sản phẩm này mới có quyền để lại đánh giá.
+                        </p>
+                    </div>
+                <?php endif; ?>
+                
                 <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+                
                 <div class="review-list">
                     <?php if (!empty($reviews)): ?>
                         <?php foreach ($reviews as $r): ?>
@@ -271,12 +311,14 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
     const productImages = <?= json_encode($image_gallery); ?>;
     const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
     const loginUrl = '/FD-Tech/auth/login.php';
+    
     document.addEventListener('DOMContentLoaded', function() {
         let currentIndex = 0;
         const mainImg = document.getElementById('main-product-image');
         const prevBtn = document.getElementById('prev-img-btn');
         const nextBtn = document.getElementById('next-img-btn');
         const thumbs = document.querySelectorAll('.thumb-item');
+        
         function changeImage(index) {
             if (index < 0) {
                 index = productImages.length - 1;
@@ -290,6 +332,7 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
                 mainImg.src = productImages[currentIndex];
                 mainImg.style.opacity = '1';
             }, 100);
+            
             thumbs.forEach((t, i) => {
                 if (i === currentIndex) {
                     t.classList.add('active');
@@ -298,12 +341,14 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
                 }
             });
         }
+        
         if (prevBtn) {
             prevBtn.addEventListener('click', () => changeImage(currentIndex - 1));
         }
         if (nextBtn) {
             nextBtn.addEventListener('click', () => changeImage(currentIndex + 1));
         }
+        
         thumbs.forEach(thumb => {
             thumb.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'));

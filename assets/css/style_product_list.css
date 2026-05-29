@@ -239,3 +239,30 @@
     border-radius: 8px;
     color: #777;
 }
+
+/* --- PHẦN CSS PHÂN TRANG (PAGINATION) MỚI --- */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.pagination a {
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #1a365d;
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.pagination a:hover, 
+.pagination a.active {
+    background: #1a365d;
+    color: #ffffff;
+    border-color: #1a365d;
+}
