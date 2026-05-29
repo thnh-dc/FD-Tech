@@ -142,11 +142,26 @@ include '../../includes/notification.php';
 
                 <div class="bank-payment-box">
                     <div class="bank-qr-box">
-                        <img 
-                            src="/FD-Tech/assets/images/qr-payment.jpg" 
-                            alt="QR thanh toán" 
-                            class="bank-qr-img"
-                        >
+                        <?php
+                            $bank_bin = '970418'; // BIDV
+                            $account_no = '96247FD2026'; // sửa lại đúng số tài khoản thật của bạn
+                            $account_name = 'FD TECH';
+                            $amount = (int)$order['total_amount'];
+                            $payment_content = $order['payment_code'];
+
+                            $qr_url = 'https://img.vietqr.io/image/' 
+                                . $bank_bin . '-' 
+                                . $account_no . '-compact2.png?amount=' 
+                                . $amount 
+                                . '&addInfo=' . urlencode($payment_content) 
+                                . '&accountName=' . urlencode($account_name);
+                            ?>
+
+                            <img 
+                                src="<?= htmlspecialchars($qr_url) ?>" 
+                                alt="QR thanh toán" 
+                                class="bank-qr-img"
+                            >
                     </div>
 
                     <div class="bank-info-box">
