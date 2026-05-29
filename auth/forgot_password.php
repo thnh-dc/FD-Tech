@@ -10,7 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once '../config/database.php';
 
 // NẠP FILE HÀM GỬI EMAIL DÙNG CHUNG VỪA TẠO
-require_once '../libs/PHPMailer/verification_code.php';
+require_once '../libs/PHPMailer/send_email.php';
 
 $referer = $_SERVER['HTTP_REFERER'] ?? '';
 

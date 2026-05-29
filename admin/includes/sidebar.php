@@ -16,8 +16,10 @@
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'chat_list.php' || basename($_SERVER['PHP_SELF']) == 'chat_detail.php') ? 'active' : '' ?>">
             <a href="chat_list.php"><i class="fa-solid fa-comments"></i> Tin nhắn khách hàng</a>
         </li>
+        
         <?php 
-            $product_pages = ['add.php', 'edit.php', 'list_products.php'];
+            // Đã thêm 'manage_warehouse.php' vào đây để menu Danh mục sản phẩm không bị tự động đóng lại khi xem kho
+            $product_pages = ['add.php', 'edit.php', 'list_products.php', 'manage_warehouse.php'];
             $is_product_active = in_array(basename($_SERVER['PHP_SELF']), $product_pages);
         ?>
         <li class="menu-item has-submenu">
@@ -26,8 +28,44 @@
                 <i class="fa-solid fa-chevron-down arrow-icon"></i>
             </a>
             <ul class="submenu <?= $is_product_active ? 'show' : '' ?>">
-                <li><a href="add.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-plus"></i> Thêm sản phẩm</a></li>
-                <li><a href="list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_products.php') ? 'active-sub' : '' ?>"><i class="fa-solid fa-trash"></i> Quản lí sản phẩm</a></li>
+                <li>
+                    <a href="add.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active-sub' : '' ?>">
+                        <i class="fa-solid fa-plus"></i> Thêm sản phẩm
+                    </a>
+                </li>
+                <li>
+                    <a href="list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_products.php') ? 'active-sub' : '' ?>">
+                        <i class="fa-solid fa-list"></i> Quản lí sản phẩm
+                    </a>
+                </li>
+                <li>
+                    <a href="manage_warehouse.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'manage_warehouse.php') ? 'active-sub' : '' ?>">
+                        <i class="fa-solid fa-warehouse"></i> Quản lý kho hàng
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <?php 
+            $import_pages = ['add_import.php', 'list_imports.php', 'view_import.php'];
+            $is_import_active = in_array(basename($_SERVER['PHP_SELF']), $import_pages);
+        ?>
+        <li class="menu-item has-submenu">
+            <a href="#" class="submenu-toggle">
+                <i class="fa-solid fa-boxes-packing"></i> Quản lí nhập hàng
+                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+            </a>
+            <ul class="submenu <?= $is_import_active ? 'show' : '' ?>">
+                <li>
+                    <a href="add_import.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add_import.php') ? 'active-sub' : '' ?>">
+                        <i class="fa-solid fa-plus"></i> Tạo phiếu nhập
+                    </a>
+                </li>
+                <li>
+                    <a href="list_imports.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_imports.php') ? 'active-sub' : '' ?>">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhập kho
+                    </a>
+                </li>
             </ul>
         </li>
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'list_users.php' || basename($_SERVER['PHP_SELF']) == 'user_detail.php') ? 'active' : '' ?>">

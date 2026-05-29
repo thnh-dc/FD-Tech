@@ -153,11 +153,28 @@ try {
     ");
     $deleteParams = array_merge([$user_id], $selectedArray);
     $stmtDelete->execute($deleteParams);
+    
     $pdo->commit();
+
+    // =========================================================================
+    // 🔥 TỰ ĐỘNG GỬI EMAIL HÓA ĐƠN PDF CHO KHÁCH CHỌN CHUYỂN KHOẢN (BANK)
+    // =========================================================================
     if ($payment_method === 'bank') {
+        // Lấy chính xác địa chỉ email của user đặt hàng
+        $stmtUser = $pdo->prepare("SELECT email FROM users WHERE id = ?");
+        $stmtUser->execute([$user_id]);
+        $user_data = $stmtUser->fetch(PDO::FETCH_ASSOC);
+        
+        if ($user_data && !empty($user_data['email'])) {
+            // Nhúng file helper nằm trong thư mục xu_ly của bạn (kiểm tra lại cấp đường dẫn nếu cần)
+            require_once 'xu_ly/send_bill_helper.php'; 
+            send_order_bill_email($user_data['email'], $order_id, $pdo);
+        }
+
         header("Location: bank_payment.php?order_id=" . $order_id);
         exit();
     }
+    
     header("Location: ../checkout.php?status=success&order_id=" . $order_id);
     exit();
 } catch (Exception $e) {

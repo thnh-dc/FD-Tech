@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
-require_once '../libs/PHPMailer/verification_code.php';
+require_once '../libs/PHPMailer/send_email.php';
 
 // Xác định bước hiện tại (Mặc định bước 1: Nhập thông tin đăng ký)
 $register_step = $_SESSION['user_register_step'] ?? 1;

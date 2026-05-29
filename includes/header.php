@@ -141,7 +141,94 @@
                 </form>
 
                 <div class="header-icons">
-                    <a href="/FD-Tech/user/profile.php?action=notifications"><i class="far fa-bell"></i></a>
+                    <?php
+                    $header_notifications = [];
+
+                    if (isset($pdo) && isset($_SESSION['user_id'])) {
+                        try {
+                            $stmt_header_noti = $pdo->prepare("
+                                SELECT id, status, updated_at
+                                FROM orders
+                                WHERE user_id = ?
+                                ORDER BY updated_at DESC
+                                LIMIT 5
+                            ");
+                            $stmt_header_noti->execute([$_SESSION['user_id']]);
+                            $header_notifications = $stmt_header_noti->fetchAll(PDO::FETCH_ASSOC);
+                        } catch (PDOException $e) {
+                            $header_notifications = [];
+                        }
+                    }
+
+                    if (!function_exists('getHeaderNotificationText')) {
+                        function getHeaderNotificationText($noti_order) {
+                            $noti_order_id = str_pad($noti_order['id'], 0, '0', STR_PAD_LEFT);
+                            $noti_time = date('H:i - d/m/Y', strtotime($noti_order['updated_at']));
+
+                            switch ($noti_order['status']) {
+                                case 'pending':
+                                    return "Đơn hàng <strong>#FD{$noti_order_id}</strong> chưa được thanh toán, bạn vui lòng thanh toán trong vòng 15 phút nếu không đơn hàng sẽ bị hủy! <em>($noti_time)</em>";
+
+                                case 'processing':
+                                    return "Đơn hàng <strong>#FD{$noti_order_id}</strong> đang được xử lý. <em>($noti_time)</em>";
+
+                                case 'shipped':
+                                case 'shipping':
+                                    return "Đơn hàng <strong>#FD{$noti_order_id}</strong> đang trên đường giao đến bạn. Chú ý điện thoại nhé! <em>($noti_time)</em>";
+
+                                case 'completed':
+                                    return "Đơn hàng <strong>#FD{$noti_order_id}</strong> đã giao thành công. Cảm ơn bạn! <em>($noti_time)</em>";
+
+                                case 'cancelled':
+                                    return "Đơn hàng <strong>#FD{$noti_order_id}</strong> đã bị hủy. <em>($noti_time)</em>";
+
+                                default:
+                                    return "Đơn hàng <strong>#FD{$noti_order_id}</strong> vừa được cập nhật trạng thái. <em>($noti_time)</em>";
+                            }
+                        }
+                    }
+                    ?>
+
+                    <div class="header-noti-wrapper">
+                        <a href="/FD-Tech/user/profile.php?action=notifications" class="header-noti-icon">
+                            <i class="far fa-bell"></i>
+
+                            <?php if (!empty($header_notifications)): ?>
+                                <span class="header-noti-dot"></span>
+                            <?php endif; ?>
+                        </a>
+
+                        <div class="header-noti-popup">
+                            <div class="header-noti-title">
+                                <strong>Thông báo của tôi</strong>
+                                <span>Cập nhật mới nhất</span>
+                            </div>
+
+                            <?php if (!isset($_SESSION['user_id'])): ?>
+                                <div class="header-noti-empty">
+                                    Vui lòng đăng nhập để xem thông báo.
+                                </div>
+                            <?php elseif (empty($header_notifications)): ?>
+                                <div class="header-noti-empty">
+                                    Bạn chưa có thông báo nào.
+                                </div>
+                            <?php else: ?>
+                                <ul class="header-noti-list">
+                                    <?php foreach ($header_notifications as $header_noti_order): ?>
+                                        <li class="header-noti-item">
+                                            <i class="fas fa-angle-right"></i>
+                                            <span><?= getHeaderNotificationText($header_noti_order) ?></span>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+
+                                <a href="/FD-Tech/user/profile.php?action=notifications" class="header-noti-view-all">
+                                    Xem tất cả thông báo
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                     <a href="/FD-Tech/user/cart.php" class="cart-icon">
                         <i class="fas fa-shopping-bag"></i>
                         <span class="cart-text">Giỏ hàng</span>
