@@ -134,10 +134,10 @@ $member_discount_percent = (float)($current_tier['discount_percent'] ?? 0);
 
                 <p>
                     <i class="fa-solid fa-gem"></i>
-                    Ưu đãi FD Member:
+                    FD Member:
                     <b id="memberDiscountText" style="color: var(--success);">-0₫</b>
                     <small id="memberDiscountLabel">
-                        Hạng <?= htmlspecialchars($member_tier_name) ?><?= $member_discount_percent > 0 ? ' - giảm ' . number_format($member_discount_percent, 0, ',', '.') . '%' : '' ?>
+                        Bạn là thành viên <?= htmlspecialchars($member_tier_name) ?><?= $member_discount_percent > 0 ? ' của FD Tech, chúc mừng bạn  được giảm ' . number_format($member_discount_percent, 0, ',', '.') . '%' : '' ?>
                     </small>
                 </p>
 

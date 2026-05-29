@@ -145,8 +145,8 @@
 }
 
 .bank-qr-box {
-    width: 220px;
-    height: 220px;
+    width: 350px;
+    height: 350px;
     border: 1px solid #eee;
     border-radius: 12px;
     padding: 10px;
@@ -250,16 +250,4 @@
 .btn-use-all-points:hover {
     opacity: 0.85;
     transform: translateY(-1px);
-}
-
-@media (max-width: 576px) {
-    .point-current,
-    .point-use-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .btn-use-all-points {
-        width: 100%;
-    }
 }

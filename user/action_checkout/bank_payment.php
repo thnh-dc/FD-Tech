@@ -135,9 +135,7 @@ include '../../includes/notification.php';
                 </h3>
 
                 <p>
-                    Vui lòng chuyển khoản đúng thông tin bên dưới. 
-                    Sau khi hệ thống nhận được giao dịch, đơn hàng sẽ tự động chuyển sang trạng thái 
-                    <b>Đang xử lý</b>.
+                    <i>Đơn hàng sẽ tự động hủy sau 15 phút nếu bạn chưa thanh toán !</i>
                 </p>
 
                 <div class="bank-payment-box">
