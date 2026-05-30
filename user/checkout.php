@@ -108,11 +108,11 @@ $member_discount_percent = (float)($current_tier['discount_percent'] ?? 0);
                 </div>
 
                 <div class="checkout-section point-section">
-                    <h3><i class="fa-solid fa-coins"></i> Sử dụng FD Point</h3>
+                    <h3><i class="fa-solid fa-coins"></i> Sử dụng FD point</h3>
 
                     <div class="point-box">
                         <div class="point-current">
-                            <span><i class="fa-solid fa-wallet"></i> FD Point hiện có</span>
+                            <span><i class="fa-solid fa-wallet"></i> FD point hiện có</span>
                             <strong><?= number_format($user_point, 0, ',', '.') ?> FDp</strong>
                         </div>
 

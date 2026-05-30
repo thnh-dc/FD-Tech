@@ -17,8 +17,8 @@ if ($user_id <= 0) {
 // 🔥 KHỐI XỬ LÝ LƯU DATABASE (Giữ nguyên logic của bạn)
 // =========================================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $order_id = (int)($_POST['order_id'] ?? 0);
-    $product_id = (int)($_POST['product_id'] ?? 0);
+    $order_id = (int) ($_POST['order_id'] ?? 0);
+    $product_id = (int) ($_POST['product_id'] ?? 0);
     $request_type = trim($_POST['request_type'] ?? '');
     $reason = trim($_POST['reason'] ?? '');
     $description = trim($_POST['description'] ?? '');
@@ -73,11 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // =========================================================================
-// 🖥️ KHỐI TRUY VẤN DỮ LIỆU ĐỂ HIỂN THỊ
+// 🖥️ KHỐI TRUY VẤN DỮ LIỆU ĐỂ HIỂN THỊ (ĐÃ CẬP NHẬT TÍNH TỪ UPDATED_AT)
 // =========================================================================
-$order_id = (int)($_GET['order_id'] ?? 0);
+$order_id = (int) ($_GET['order_id'] ?? 0);
 
-$stmtOrder = $pdo->prepare("SELECT *, DATEDIFF(NOW(), created_at) AS days_passed FROM orders WHERE id = ? AND user_id = ?");
+// Thay vì o.created_at, dùng IF(status='completed', updated_at, created_at) để tính số ngày đã qua công bằng cho khách
+$stmtOrder = $pdo->prepare("
+    SELECT *, 
+           DATEDIFF(NOW(), IF(status = 'completed', updated_at, created_at)) AS days_passed 
+    FROM orders 
+    WHERE id = ? AND user_id = ?
+");
 $stmtOrder->execute([$order_id, $user_id]);
 $order = $stmtOrder->fetch(PDO::FETCH_ASSOC);
 
@@ -99,75 +105,199 @@ $can_return = ($order['days_passed'] <= 7);
 
 // =========================================================================
 // Bạn hãy kiểm tra lại đường dẫn chính xác của file header và sidebar nhé!
-require_once '../../includes/header.php'; 
+require_once '../../includes/header.php';
 ?>
 
 <style>
-    .service-request-container { 
-        background: #FFFFFF; 
-        padding: 30px; 
-        border-radius: 8px; 
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    .service-request-container {
+        background: #FFFFFF;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 6px 6px rgba(1, 0, 0, 0.5);
         margin: 10px auto;
         max-width: 100%;
     }
-    .service-request-container h2 { 
-        color: #0B2A4A; 
-        border-bottom: 2px solid #0B2A4A; 
-        padding-bottom: 12px; 
+
+    .service-header-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #0B2A4A;
+        padding-bottom: 12px;
+    }
+
+    .service-request-container h2 {
+        color: #0B2A4A;
+        margin: 0;
         font-size: 22px;
         font-weight: 700;
     }
+
+    .btn-back-link {
+        color: #6C757D;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.2s;
+    }
+
+    .btn-back-link:hover {
+        color: #0B2A4A;
+    }
+
     .service-request-container .order-meta {
         margin-top: 10px;
         font-size: 14px;
         color: #6C757D;
     }
-    .service-request-container .order-meta strong { color: #0B2A4A; }
-    
-    /* Tabs tinh chỉnh hợp với layout nhỏ gọn bên trong Profile */
-    .service-tabs { display: flex; border-bottom: 2px solid #E5E7EB; margin: 20px 0; }
-    .service-tab-btn { 
-        flex: 1; padding: 12px; text-align: center; background: #E5E7EB; border: none; 
-        cursor: pointer; font-size: 15px; font-weight: 600; color: #6C757D; transition: all 0.3s; 
+
+    .service-request-container .order-meta strong {
+        color: #0B2A4A;
     }
-    .service-tab-btn.active { background: #0B2A4A; color: #FFFFFF; }
-    .service-tab-content { display: none; }
-    .service-tab-content.active { display: block; }
+
+    /* Tabs tinh chỉnh hợp với layout nhỏ gọn bên trong Profile */
+    .service-tabs {
+        display: flex;
+        border-bottom: 2px solid #E5E7EB;
+        margin: 20px 0;
+    }
+
+    .service-tab-btn {
+        flex: 1;
+        padding: 12px;
+        text-align: center;
+        background: #E5E7EB;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: #6C757D;
+        transition: all 0.3s;
+    }
+
+    .service-tab-btn.active {
+        background: #0B2A4A;
+        color: #FFFFFF;
+    }
+
+    .service-tab-content {
+        display: none;
+    }
+
+    .service-tab-content.active {
+        display: block;
+    }
 
     /* Form Fields */
-    .service-form-group { margin-bottom: 18px; }
-    .service-form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #333333; }
-    .service-form-control {
-        width: 100%; padding: 10px 14px; border: 1px solid #ccc; border-radius: 4px;
-        box-sizing: border-box; font-size: 14px; color: #333333; background: #FFFFFF;
+    .service-form-group {
+        margin-bottom: 18px;
     }
-    .service-form-control:focus { outline: none; border-color: #23B5D3; }
-    
-    /* Buttons */
-    .service-btn-submit { 
-        background: #0B2A4A; color: #FFFFFF; border: none; padding: 12px; 
-        border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: 0.3s;
-    }
-    .service-btn-submit:hover { opacity: 0.85; }
-    #tab-warranty .service-btn-submit { background: #23B5D3; }
 
-    .service-error-box { 
-        background: #FFF5F5; color: #ff0019; padding: 15px; 
-        border: 1px solid #FED7D7; border-radius: 4px; font-weight: 600; text-align: center; font-size: 14px;
+    .service-form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #333333;
+    }
+
+    .service-form-control {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 14px;
+        color: #333333;
+        background: #FFFFFF;
+        resize: none; /* 🔥 Đã chặn tính năng kéo dãn tự do của khung điền mô tả */
+    }
+
+    .service-form-control:focus {
+        outline: none;
+        border-color: #23B5D3;
+    }
+
+    /* Buttons */
+    .service-action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .service-btn-submit {
+        background: #0B2A4A;
+        color: #FFFFFF;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        flex: 3;
+        transition: 0.3s;
+        text-align: center;
+    }
+
+    .service-btn-submit:hover {
+        opacity: 0.85;
+    }
+
+    #tab-warranty .service-btn-submit {
+        background: #23B5D3;
+    }
+
+    .service-btn-cancel {
+        background: #F8F9FA;
+        color: #495057;
+        border: 1px solid #CED4DA;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        flex: 1;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .service-btn-cancel:hover {
+        background: #E2E6EA;
+        color: #212529;
+    }
+
+    .service-error-box {
+        background: #FFF5F5;
+        color: #ff0019;
+        padding: 15px;
+        border: 1px solid #FED7D7;
+        border-radius: 4px;
+        font-weight: 600;
+        text-align: center;
+        font-size: 14px;
     }
 </style>
 
 <div class="profile-layout-wrapper container">
     <div class="row">
-        <?php if (file_exists('../includes/sidebar.php')) { include '../includes/sidebar.php'; } ?>
+        <?php if (file_exists('../includes/sidebar.php')) {
+            include '../includes/sidebar.php';
+        } ?>
 
         <div class="profile-main-content col-md-9 col-sm-12">
             <div class="service-request-container">
+
+                <div class="service-header-box">
+                    <h2>Trung Tâm Hỗ Trợ Đơn Hàng #<?= $order_id ?></h2>
+                    <a href="../profile.php?action=orders" class="btn-back-link">&#10229; Trở lại</a>
+                </div>
                 
-                <h2>Trung Tâm Hỗ Trợ Đơn Hàng #<?= $order_id ?></h2>
                 <div class="order-meta">
-                    Thời gian đã mua: <strong><?= $order['days_passed'] ?> ngày</strong> (Ngày đặt hóa đơn: <?= date('d/m/Y', strtotime($order['created_at'])) ?>)
+                    (Ngày nhận hàng: <?= date('d/m/Y', strtotime($order['status'] === 'completed' ? $order['updated_at'] : $order['created_at'])) ?>)
                 </div>
 
                 <div class="service-tabs">
@@ -177,7 +307,12 @@ require_once '../../includes/header.php';
 
                 <div id="tab-return" class="service-tab-content active">
                     <?php if (!$can_return): ?>
-                        <div class="service-error-box">Rất tiếc, đơn hàng đã vượt quá giới hạn 7 ngày đổi trả hoàn tiền theo quy định.</div>
+                        <div class="service-error-box" style="margin-bottom: 20px;">
+                            Rất tiếc, đơn hàng đã vượt quá giới hạn 7 ngày đổi trả hoàn tiền tính từ lúc bạn nhận hàng.
+                        </div>
+                        <div style="text-align: center;">
+                            <a href="../profile.php?action=orders" class="service-btn-cancel" style="display: inline-block; width: auto; padding: 10px 30px;">Quay lại danh sách đơn hàng</a>
+                        </div>
                     <?php else: ?>
                         <form action="" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="order_id" value="<?= $order_id ?>">
@@ -186,8 +321,9 @@ require_once '../../includes/header.php';
                             <div class="service-form-group">
                                 <label>Sản phẩm cần hoàn trả:</label>
                                 <select class="service-form-control" name="product_id" required>
-                                    <?php foreach($orderItems as $item): ?>
-                                        <option value="<?= $item['product_id'] ?>"><?= htmlspecialchars($item['product_name']) ?></option>
+                                    <?php foreach ($orderItems as $item): ?>
+                                        <option value="<?= $item['product_id'] ?>">
+                                            <?= htmlspecialchars($item['product_name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -204,7 +340,8 @@ require_once '../../includes/header.php';
 
                             <div class="service-form-group">
                                 <label>Mô tả chi tiết lỗi:</label>
-                                <textarea class="service-form-control" name="description" rows="4" placeholder="Vui lòng mô tả cụ thể trạng thái hư hỏng..." required></textarea>
+                                <textarea class="service-form-control" name="description" rows="5"
+                                    placeholder="Vui lòng mô tả cụ thể trạng thái hư hỏng..." required></textarea>
                             </div>
 
                             <div class="service-form-group">
@@ -217,7 +354,10 @@ require_once '../../includes/header.php';
                                 <input type="file" name="video" accept="video/*">
                             </div>
 
-                            <button type="submit" class="service-btn-submit">Gửi Yêu Cầu Hoàn Hàng</button>
+                            <div class="service-action-buttons">
+                                <a href="../profile.php?action=orders" class="service-btn-cancel">Hủy bỏ</a>
+                                <button type="submit" class="service-btn-submit">Gửi Yêu Cầu Hoàn Hàng</button>
+                            </div>
                         </form>
                     <?php endif; ?>
                 </div>
@@ -229,13 +369,15 @@ require_once '../../includes/header.php';
 
                         <div class="service-form-group">
                             <label>Sản phẩm cần gửi bảo hành:</label>
-                            <select class="service-form-control" name="product_id" id="warranty_product" onchange="checkWarrantyDeadline()" required>
+                            <select class="service-form-control" name="product_id" id="warranty_product"
+                                onchange="checkWarrantyDeadline()" required>
                                 <option value="">-- Chọn sản phẩm cần kiểm định --</option>
-                                <?php foreach($orderItems as $item): 
+                                <?php foreach ($orderItems as $item):
                                     $months = $item['warranty_months'] ?? 12;
                                     $is_expired = ($order['days_passed'] > ($months * 30));
-                                ?>
-                                    <option value="<?= $item['product_id'] ?>" data-expired="<?= $is_expired ? 'true' : 'false' ?>" data-months="<?= $months ?>">
+                                    ?>
+                                    <option value="<?= $item['product_id'] ?>"
+                                        data-expired="<?= $is_expired ? 'true' : 'false' ?>" data-months="<?= $months ?>">
                                         <?= htmlspecialchars($item['product_name']) ?> (Hạn BH: <?= $months ?> Tháng)
                                     </option>
                                 <?php endforeach; ?>
@@ -255,7 +397,8 @@ require_once '../../includes/header.php';
 
                             <div class="service-form-group">
                                 <label>Mô tả chi tiết quá trình phát sinh lỗi:</label>
-                                <textarea class="service-form-control" name="description" rows="4" placeholder="Mô tả quá trình vận hành phát sinh sự cố..." required></textarea>
+                                <textarea class="service-form-control" name="description" rows="5"
+                                    placeholder="Mô tả quá trình vận hành phát sinh sự cố..." required></textarea>
                             </div>
 
                             <div class="service-form-group">
@@ -268,10 +411,16 @@ require_once '../../includes/header.php';
                                 <input type="file" name="video" accept="video/*">
                             </div>
 
-                            <button type="submit" class="service-btn-submit">Gửi Yêu Cầu Bảo Hành</button>
+                            <div class="service-action-buttons">
+                                <a href="../profile.php?action=orders" class="service-btn-cancel">Hủy bỏ</a>
+                                <button type="submit" class="service-btn-submit">Gửi Yêu Cầu Bảo Hành</button>
+                            </div>
                         </div>
-                        
-                        <div id="warranty_error_area" class="service-error-box" style="display:none;"></div>
+
+                        <div id="warranty_error_area" class="service-error-box" style="display:none; margin-bottom: 20px;"></div>
+                        <div id="warranty_error_btn" style="display:none; text-align: center;">
+                            <a href="../profile.php?action=orders" class="service-btn-cancel" style="display: inline-block; width: auto; padding: 10px 30px;">Quay lại danh sách đơn hàng</a>
+                        </div>
                     </form>
                 </div>
 
@@ -281,39 +430,42 @@ require_once '../../includes/header.php';
 </div>
 
 <script>
-function switchServiceTab(evt, tabId) {
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("service-tab-content");
-    for (i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; }
-    tablinks = document.getElementsByClassName("service-tab-btn");
-    for (i = 0; i < tablinks.length; i++) { tablinks[i].className = tablinks[i].className.replace(" active", ""); }
-    document.getElementById(tabId).style.display = "block";
-    evt.currentTarget.className += " active";
-}
-
-function checkWarrantyDeadline() {
-    var select = document.getElementById('warranty_product');
-    var selectedOption = select.options[select.selectedIndex];
-    if(!selectedOption.value) return;
-    
-    var isExpired = selectedOption.getAttribute('data-expired');
-    var months = selectedOption.getAttribute('data-months');
-    var fieldsArea = document.getElementById('warranty_fields_area');
-    var errorArea = document.getElementById('warranty_error_area');
-
-    if (isExpired === 'true') {
-        fieldsArea.style.display = 'none';
-        errorArea.style.display = 'block';
-        errorArea.innerText = 'Sản phẩm kỹ thuật này đã vượt quá thời hạn bảo hành (' + months + ' tháng kể từ thời điểm xuất kho).';
-    } else {
-        fieldsArea.style.display = 'block';
-        errorArea.style.display = 'none';
+    function switchServiceTab(evt, tabId) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("service-tab-content");
+        for (i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; }
+        tablinks = document.getElementsByClassName("service-tab-btn");
+        for (i = 0; i < tablinks.length; i++) { tablinks[i].className = tablinks[i].className.replace(" active", ""); }
+        document.getElementById(tabId).style.display = "block";
+        evt.currentTarget.className += " active";
     }
-}
-checkWarrantyDeadline();
+
+    function checkWarrantyDeadline() {
+        var select = document.getElementById('warranty_product');
+        var selectedOption = select.options[select.selectedIndex];
+        if (!selectedOption.value) return;
+
+        var isExpired = selectedOption.getAttribute('data-expired');
+        var months = selectedOption.getAttribute('data-months');
+        var fieldsArea = document.getElementById('warranty_fields_area');
+        var errorArea = document.getElementById('warranty_error_area');
+        var errorBtn = document.getElementById('warranty_error_btn');
+
+        if (isExpired === 'true') {
+            fieldsArea.style.display = 'none';
+            errorArea.style.display = 'block';
+            errorBtn.style.display = 'block';
+            errorArea.innerText = 'Sản phẩm kỹ thuật này đã vượt quá thời hạn bảo hành (' + months + ' tháng kể từ thời điểm nhận hàng).';
+        } else {
+            fieldsArea.style.display = 'block';
+            errorArea.style.display = 'none';
+            errorBtn.style.display = 'none';
+        }
+    }
+    checkWarrantyDeadline();
 </script>
 
-<?php 
+<?php
 // 3. NHÚNG FOOTER DÙNG CHUNG CỦA TRANG
-require_once '../includes/footer.php'; 
+require_once '../../includes/footer.php';
 ?>

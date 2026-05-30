@@ -1,31 +1,22 @@
 <?php
 session_start();
 require_once '../../config/database.php';
-require_once '../../includes/fd_member_helper.php'; // Nạp helper tính điểm thành viên
+require_once '../../includes/fd_member_helper.php';
 
 $user_id = $_SESSION['user_id'] ?? 0;
-if ($user_id <= 0) { 
-    header("Location: ../../auth/login.php"); 
-    exit(); 
-}
+if ($user_id <= 0) { header("Location: ../../auth/login.php"); exit(); }
 
 $address = trim($_POST['address'] ?? '');
 $selectedItems = $_POST['selected_items'] ?? '';
 $payment_method = $_POST['payment_method'] ?? 'cod';
 $use_points = isset($_POST['use_points']) ? (int)$_POST['use_points'] : 0;
-$point_value = 100; // Quy đổi: 1 điểm = 100đ
+$point_value = 100;
 
 if ($use_points < 0) $use_points = 0;
-if (empty($selectedItems)) { 
-    header("Location: ../cart.php?error=no_items"); 
-    exit(); 
-}
+if (empty($selectedItems)) { header("Location: ../cart.php?error=no_items"); exit(); }
 
 $selectedArray = array_filter(explode(',', $selectedItems));
-if (empty($selectedArray)) { 
-    header("Location: ../cart.php?error=no_items"); 
-    exit(); 
-}
+if (empty($selectedArray)) { header("Location: ../cart.php?error=no_items"); exit(); }
 
 if (!in_array($payment_method, ['cod', 'bank'])) $payment_method = 'cod';
 
@@ -39,27 +30,14 @@ if ($payment_method === 'bank') {
     $payment_status = 'unpaid';
 }
 
-// Lấy danh sách sản phẩm được chọn từ giỏ hàng
 $placeholders = implode(',', array_fill(0, count($selectedArray), '?'));
-$stmt = $pdo->prepare("
-    SELECT 
-        c.product_id, c.quantity, c.id, p.price, p.discount_price, p.stock_quantity, 
-        COALESCE(NULLIF(p.discount_price, 0), p.price) AS display_price, 
-        p.name AS product_name, p.image_url AS product_image 
-    FROM cart_items c 
-    JOIN products p ON c.product_id = p.id 
-    WHERE c.user_id = ? AND c.id IN ($placeholders)
-");
+$stmt = $pdo->prepare("SELECT c.product_id, c.quantity, c.id, p.price, p.discount_price, p.stock_quantity, COALESCE(NULLIF(p.discount_price, 0), p.price) AS display_price, p.name AS product_name, p.image_url AS product_image FROM cart_items c JOIN products p ON c.product_id = p.id WHERE c.user_id = ? AND c.id IN ($placeholders)");
 $params = array_merge([$user_id], $selectedArray);
 $stmt->execute($params);
 $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (empty($cartItems)) { 
-    header("Location: ../cart.php?error=cart_empty"); 
-    exit(); 
-}
+if (empty($cartItems)) { header("Location: ../cart.php?error=cart_empty"); exit(); }
 
-// Kiểm tra nhanh tồn kho trước khi chạy Transaction
 $total = 0;
 foreach ($cartItems as $item) {
     if ((int)$item['quantity'] > (int)$item['stock_quantity']) {
@@ -74,34 +52,28 @@ foreach ($cartItems as $item) {
 try {
     $pdo->beginTransaction();
 
-    // 1. Khóa và lấy thông tin điểm của User chống tranh chấp dữ liệu (Race Condition)
+    // Lấy point và gộp thêm trường email để phục vụ cho việc gửi hóa đơn ở cuối
     $stmtUser = $pdo->prepare("SELECT point, email FROM users WHERE id = ? LIMIT 1 FOR UPDATE");
     $stmtUser->execute([$user_id]);
     $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
     if (!$user) throw new Exception('Không tìm thấy thông tin người dùng.');
 
-    // 2. Tính toán hạng thành viên và mức chiết khấu giảm giá hạng
     $period_points = getUserPeriodFDp($pdo, $user_id);
     $current_tier = getFDMemberTierByPoint($pdo, $period_points);
     $member_tier_name = $current_tier['tier_name'] ?? 'Đồng';
     $member_discount_percent = (float)($current_tier['discount_percent'] ?? 0);
 
-    // 3. Tính toán điểm FDp muốn sử dụng hợp lệ
     $current_point = (int)($user['point'] ?? 0);
     $max_points_by_total = (int)floor($total / $point_value);
     $max_usable_points = min($current_point, $max_points_by_total);
 
-    if ($use_points > $max_usable_points) {
-        throw new Exception('Số FDp sử dụng không hợp lệ hoặc vượt quá số FDp hiện có.');
-    }
+    if ($use_points > $max_usable_points) throw new Exception('Số FDp sử dụng không hợp lệ hoặc vượt quá số FDp hiện có.');
 
-    // 4. Khấu trừ giảm giá (Điểm ưu tiên trừ trước -> Chiết khấu hạng tính trên số tiền còn lại)
     $point_discount = $use_points * $point_value;
     $after_point_total = max($total - $point_discount, 0);
     $member_discount = (int)floor($after_point_total * $member_discount_percent / 100);
     $final_total = max($after_point_total - $member_discount, 0);
 
-    // 5. Cập nhật trừ điểm trong bảng users
     if ($use_points > 0) {
         $payment_note .= ' | Đã dùng ' . $use_points . ' FDp, giảm ' . number_format($point_discount, 0, ',', '.') . 'đ';
         $stmtMinusPoint = $pdo->prepare("UPDATE users SET point = COALESCE(point, 0) - ? WHERE id = ? AND COALESCE(point, 0) >= ?");
@@ -109,30 +81,17 @@ try {
         if ($stmtMinusPoint->rowCount() <= 0) throw new Exception('Không thể trừ FDp. Vui lòng kiểm tra lại FDp hiện có.');
     }
 
-    if ($member_discount > 0) {
-        $payment_note .= ' | Ưu đãi FD Member hạng ' . $member_tier_name . ' giảm ' . number_format($member_discount, 0, ',', '.') . 'đ';
-    }
+    if ($member_discount > 0) $payment_note .= ' | Ưu đãi FD Member hạng ' . $member_tier_name . ' giảm ' . number_format($member_discount, 0, ',', '.') . 'đ';
 
-    // 6. Tạo đơn hàng mới
-    $stmtOrder = $pdo->prepare("
-        INSERT INTO orders(user_id, total_amount, status, shipping_address, note, payment_method, payment_status, used_points) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ");
+    $stmtOrder = $pdo->prepare("INSERT INTO orders(user_id, total_amount, status, shipping_address, note, payment_method, payment_status, used_points) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmtOrder->execute([$user_id, $final_total, $order_status, $address, $payment_note, $payment_method, $payment_status, $use_points]);
     $order_id = $pdo->lastInsertId();
 
-    // 7. Lưu lịch sử giao dịch điểm thành viên nếu có dùng điểm
     if ($use_points > 0) {
         $stmtPointHistory = $pdo->prepare("INSERT INTO fd_point_transactions(user_id, order_id, type, points, description) VALUES (?, ?, 'redeem', ?, ?)");
-        $stmtPointHistory->execute([
-            $user_id, 
-            $order_id, 
-            -$use_points, 
-            'Dùng ' . $use_points . ' FDp để giảm ' . number_format($point_discount, 0, ',', '.') . 'đ cho đơn hàng #FD-' . $order_id
-        ]);
+        $stmtPointHistory->execute([$user_id, $order_id, -$use_points, 'Dùng ' . $use_points . ' FDp để giảm ' . number_format($point_discount, 0, ',', '.') . 'đ cho đơn hàng #FD-' . $order_id]);
     }
 
-    // 8. Tạo mã thanh toán nếu chọn Chuyển khoản (Bank)
     if ($payment_method === 'bank') {
         $payment_code = 'FDTECH' . $order_id;
         $bank_note = 'Chuyển khoản ngân hàng - Nội dung: ' . $payment_code;
@@ -143,7 +102,6 @@ try {
         $stmtPaymentCode->execute([$payment_code, $bank_note, $order_id]);
     }
 
-    // 9. Thêm chi tiết mặt hàng và trừ kho sản phẩm
     $stmtItem = $pdo->prepare("INSERT INTO order_items(order_id, product_id, quantity, price, product_name, product_image) VALUES (?, ?, ?, ?, ?, ?)");
     $stmtUpdateStock = $pdo->prepare("UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ? AND stock_quantity >= ?");
 
@@ -152,29 +110,28 @@ try {
         $quantity = (int)$item['quantity'];
 
         $stmtUpdateStock->execute([$quantity, $product_id, $quantity]);
-        if ($stmtUpdateStock->rowCount() <= 0) {
-            throw new Exception("Sản phẩm " . $item['product_name'] . " không đủ tồn kho.");
-        }
+        if ($stmtUpdateStock->rowCount() <= 0) throw new Exception("Sản phẩm " . $item['product_name'] . " không đủ tồn kho.");
 
         $stmtItem->execute([$order_id, $product_id, $quantity, $item['display_price'], $item['product_name'], $item['product_image']]);
     }
 
-    // 10. Xóa các sản phẩm đã thanh toán khỏi giỏ hàng
     $deletePlaceholders = implode(',', array_fill(0, count($selectedArray), '?'));
     $stmtDelete = $pdo->prepare("DELETE FROM cart_items WHERE user_id = ? AND id IN ($deletePlaceholders)");
     $deleteParams = array_merge([$user_id], $selectedArray);
     $stmtDelete->execute($deleteParams);
 
-    // Xác nhận lưu toàn bộ thay đổi dữ liệu ổn định vào database
     $pdo->commit();
 
     // =========================================================================
-    // 🔥 TỰ ĐỘNG GỬI EMAIL HÓA ĐƠN PDF (CHỈ DÀNH CHO BANK)
+    // 🔥 TỰ ĐỘNG GỬI EMAIL HÓA ĐƠN PDF CHO KHÁCH CHỌN CHUYỂN KHOẢN (BANK)
     // =========================================================================
     if ($payment_method === 'bank') {
         if ($user && !empty($user['email'])) {
-            // Nhúng file helper tạo & gửi email hóa đơn
-            require_once 'xu_ly/send_bill_helper.php'; 
+            // Nhúng trực tiếp file bill.php chứa hàm định nghĩa gửi thư
+            // (Hãy điều chỉnh lại đường dẫn liên kết cho đúng vị trí file bill.php của bạn)
+            require_once 'bill.php'; 
+            
+            // Gọi hàm xử lý gửi hóa đơn
             send_order_bill_email($user['email'], $order_id, $pdo);
         }
 
@@ -182,17 +139,16 @@ try {
         exit();
     }
 
-    // Nếu chọn COD, chuyển hướng thẳng về trang hoàn tất
     header("Location: ../checkout.php?status=success&order_id=" . $order_id);
     exit();
 
 } catch (Exception $e) {
-    // Hoàn tác dữ liệu lỗi tránh hụt kho hoặc lỗi điểm âm
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
+    if ($pdo->inTransaction()) $pdo->rollBack();
+
     $_SESSION['noti_message'] = $e->getMessage();
     $_SESSION['noti_type'] = 'error';
+
     header("Location: ../cart.php");
     exit();
 }
+?>
