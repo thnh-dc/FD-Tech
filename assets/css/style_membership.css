@@ -1,0 +1,345 @@
+/* ===== FD MEMBER - SIDEBAR RANK LINK ===== */
+
+.member-rank-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--secondary);
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.member-rank-link:hover {
+    color: var(--primary);
+}
+
+.member-rank-link i {
+    color: #f59e0b;
+}
+
+
+/* ===== FD MEMBER PAGE ===== */
+
+.membership-wrapper {
+    width: 100%;
+}
+
+.membership-hero {
+    background: linear-gradient(135deg, var(--primary), #16456f);
+    color: var(--bg-main);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.membership-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.membership-hero h2 {
+    font-size: var(--text-xl);
+    margin-bottom: 6px;
+}
+
+.membership-hero p {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: var(--text-sm);
+}
+
+.current-rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.current-rank-badge i {
+    color: #facc15;
+}
+
+.member-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+}
+
+.member-summary-card {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.member-summary-card span {
+    display: block;
+    font-size: var(--text-xs);
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 6px;
+}
+
+.member-summary-card strong {
+    font-size: var(--text-lg);
+    color: var(--bg-main);
+}
+
+
+/* ===== RANK CARDS ===== */
+
+.member-tier-section {
+    background: var(--bg-main);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.member-section-title {
+    color: var(--primary);
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-md);
+}
+
+.member-tier-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+}
+
+.member-tier-card {
+    position: relative;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    background: var(--bg-main);
+    transition: 0.3s ease;
+}
+
+.member-tier-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+}
+
+.member-tier-card.active {
+    border: 2px solid var(--secondary);
+    box-shadow: 0 0 0 4px rgba(35, 181, 211, 0.12);
+}
+
+.member-tier-card.active::after {
+    content: "Hạng hiện tại";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--secondary);
+    color: var(--bg-main);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 999px;
+}
+
+.member-tier-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+    font-size: var(--text-lg);
+}
+
+.member-bronze .member-tier-icon {
+    background: #fff1e6;
+    color: #b45309;
+}
+
+.member-silver .member-tier-icon {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.member-gold .member-tier-icon {
+    background: #fef9c3;
+    color: #ca8a04;
+}
+
+.member-diamond .member-tier-icon {
+    background: #e0f7fb;
+    color: var(--secondary);
+}
+
+.member-tier-card h3 {
+    color: var(--primary);
+    font-size: var(--text-base);
+    margin-bottom: 6px;
+}
+
+.member-tier-card p {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    margin-bottom: 6px;
+}
+
+.member-tier-card strong {
+    color: var(--danger);
+}
+
+
+/* ===== PROGRESS ===== */
+
+.member-progress-box {
+    margin-top: var(--space-lg);
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.member-progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-sm);
+    color: var(--text-dark);
+}
+
+.member-progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.member-progress-fill {
+    height: 100%;
+    background: var(--secondary);
+    border-radius: 999px;
+}
+
+
+/* ===== TABS ===== */
+
+.member-tabs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.member-tab-btn {
+    border: none;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.member-tab-btn:hover,
+.member-tab-btn.active {
+    background: var(--primary);
+    color: var(--bg-main);
+}
+
+.member-tab-content {
+    display: none;
+}
+
+.member-tab-content.active {
+    display: block;
+}
+
+
+/* ===== BENEFITS ===== */
+
+.member-benefit-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+.member-benefit-item {
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    display: flex;
+    gap: var(--space-sm);
+    align-items: flex-start;
+}
+
+.member-benefit-item i {
+    color: var(--secondary);
+    font-size: var(--text-lg);
+    margin-top: 2px;
+}
+
+.member-benefit-item h4 {
+    color: var(--primary);
+    font-size: var(--text-base);
+    margin-bottom: 4px;
+}
+
+.member-benefit-item p {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+
+
+/* ===== POINT HISTORY ===== */
+
+.member-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-main);
+}
+
+.member-history-table th,
+.member-history-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eeeeee;
+    text-align: left;
+    font-size: var(--text-sm);
+}
+
+.member-history-table th {
+    background: var(--bg-light);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.member-point-plus {
+    color: var(--success);
+    font-weight: 700;
+}
+
+.member-point-minus {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.member-history-empty {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--text-muted);
+}
+
+.member-history-empty i {
+    font-size: 38px;
+    color: #d1d5db;
+    margin-bottom: var(--space-sm);
+}

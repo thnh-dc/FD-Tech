@@ -135,18 +135,31 @@ include '../../includes/notification.php';
                 </h3>
 
                 <p>
-                    Vui lòng chuyển khoản đúng thông tin bên dưới. 
-                    Sau khi hệ thống nhận được giao dịch, đơn hàng sẽ tự động chuyển sang trạng thái 
-                    <b>Đang xử lý</b>.
+                    <i>Đơn hàng sẽ tự động hủy sau 15 phút nếu bạn chưa thanh toán !</i>
                 </p>
 
                 <div class="bank-payment-box">
                     <div class="bank-qr-box">
-                        <img 
-                            src="/FD-Tech/assets/images/qr-payment.jpg" 
-                            alt="QR thanh toán" 
-                            class="bank-qr-img"
-                        >
+                        <?php
+                            $bank_bin = '970418'; // BIDV
+                            $account_no = '96247FD2026'; // sửa lại đúng số tài khoản thật của bạn
+                            $account_name = 'FD TECH';
+                            $amount = (int)$order['total_amount'];
+                            $payment_content = $order['payment_code'];
+
+                            $qr_url = 'https://img.vietqr.io/image/' 
+                                . $bank_bin . '-' 
+                                . $account_no . '-compact2.png?amount=' 
+                                . $amount 
+                                . '&addInfo=' . urlencode($payment_content) 
+                                . '&accountName=' . urlencode($account_name);
+                            ?>
+
+                            <img 
+                                src="<?= htmlspecialchars($qr_url) ?>" 
+                                alt="QR thanh toán" 
+                                class="bank-qr-img"
+                            >
                     </div>
 
                     <div class="bank-info-box">
@@ -168,7 +181,8 @@ include '../../includes/notification.php';
 
                         <p>
                             <b>Số tiền:</b> 
-                            <?= number_format($order['total_amount'], 0, ',', '.') ?>₫
+                            <?= number_format($order['total_amount'], 0, ',', '.') ?>₫ 
+                            <i>(đã bao gồm giảm giá)</i>
                         </p>
                         <p>
                             <b>Nội dung chuyển khoản:</b> 
@@ -228,17 +242,11 @@ include '../../includes/notification.php';
 
             <div class="checkout-section">
                 <p>
-                    <i class="fa-solid fa-money-check-dollar"></i>
-                    Tổng tiền:
-                    <b><?= number_format($order['total_amount'], 0, ',', '.') ?>₫</b>
-                </p>
-
-                <p>
                     <i class="fa-solid fa-hourglass-half"></i>
                     Trạng thái thanh toán:
                     <b>Chưa thanh toán</b>
                 </p>
-
+                </br>
                 <button 
                     type="button" 
                     onclick="window.location.href='bank_payment.php?order_id=<?= $order['id'] ?>&check_payment=1'" 
