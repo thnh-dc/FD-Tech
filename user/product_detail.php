@@ -139,9 +139,8 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
                 <?php endif; ?>
             </div>
             <div class="product-status">
-                Trạng thái: 
                 <span class="<?= $sp['stock_quantity'] > 0 ? 'text-success' : 'text-danger' ?>">
-                    <?= $sp['stock_quantity'] > 0 ? 'Còn hàng (' . $sp['stock_quantity'] . ')' : 'Hết hàng' ?>
+                    <?= $sp['stock_quantity'] > 0 ? '✔ Còn hàng (' . $sp['stock_quantity'] . ')' : '❌ Hết hàng' ?>
                 </span>
             </div>
             <form action="../user/action_product_detail/action_product.php" method="POST" class="product-form" id="addToCartForm">

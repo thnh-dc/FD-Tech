@@ -13,6 +13,7 @@ if ($order_id <= 0) {
     header("Location: ../cart.php");
     exit();
 }
+
 $stmtOrder = $pdo->prepare("
     SELECT 
         id,
@@ -53,6 +54,7 @@ $stmtItems = $pdo->prepare("
 
 $stmtItems->execute([$order_id]);
 $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
+
 if (
     isset($_GET['check_payment']) &&
     $_GET['check_payment'] == '1' &&
@@ -61,71 +63,126 @@ if (
     $_SESSION['noti_message'] = 'Chưa nhận được thanh toán. Vui lòng kiểm tra lại sau ít phút hoặc đảm bảo đã chuyển đúng số tiền và nội dung chuyển khoản.';
     $_SESSION['noti_type'] = 'error';
 }
+
 $custom_css = '
     <link rel="stylesheet" href="/FD-Tech/assets/css/style_checkout.css">
     <link rel="stylesheet" href="/FD-Tech/assets/css/style_notification.css">
 ';
+
 include '../../includes/header.php';
 include '../../includes/notification.php';
 ?>
+
 <div class="container">
     <div class="checkout-layout">
+
         <?php if ($order['payment_status'] === 'paid'): ?>
+
             <div class="success-page-wrapper">
                 <div class="success-card">
-                    <h1 class="success-title">Đặt hàng & thanh toán thành công!</h1>
+                    <h1 class="success-title">
+                        <i class="fa-solid fa-circle-check"></i>
+                        Đặt hàng & thanh toán thành công!
+                    </h1>
+
                     <p class="success-message">
                         Đơn hàng của bạn đã được ghi nhận.
                     </p>
+
                     <?php if (!empty($order['paid_at'])): ?>
                         <p class="success-message">
+                            <i class="fa-solid fa-clock"></i>
                             Thời gian thanh toán:
                             <b><?= date('d/m/Y H:i', strtotime($order['paid_at'])) ?></b>
                         </p>
                     <?php endif; ?>
+
                     <button onclick="window.location.href='../index.php'" class="btn btn-primary">
+                        <i class="fa-solid fa-cart-shopping"></i>
                         Tiếp tục mua sắm
                     </button>
                 </div>
             </div>
+
         <?php elseif ($order['status'] === 'cancelled'): ?>
+
             <div class="success-page-wrapper">
                 <div class="success-card">
-                    <h1 class="success-title" style="color: #dc2626;">Đơn hàng đã bị hủy!</h1>
+                    <h1 class="success-title" style="color: #dc2626;">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        Đơn hàng đã bị hủy!
+                    </h1>
+
                     <p class="success-message">
                         Đơn hàng 
                         <b>#FD-<?= htmlspecialchars($order['id']) ?></b>
                         đã bị hủy do quá thời gian thanh toán hoặc do người dùng/admin hủy.
                     </p>
+
                     <button onclick="window.location.href='../index.php'" class="btn btn-primary">
+                        <i class="fa-solid fa-cart-shopping"></i>
                         Tiếp tục mua sắm
                     </button>
                 </div>
             </div>
+
         <?php else: ?>
+
             <div class="checkout-section">
-                <h3>💳 Thanh toán chuyển khoản</h3>
+                <h3>
+                    <i class="fa-solid fa-credit-card"></i>
+                    Thanh toán chuyển khoản
+                </h3>
+
                 <p>
-                    Vui lòng chuyển khoản đúng thông tin bên dưới. 
-                    Sau khi hệ thống nhận được giao dịch, đơn hàng sẽ tự động chuyển sang trạng thái 
-                    <b>Đang xử lý</b>.
+                    <i>Đơn hàng sẽ tự động hủy sau 15 phút nếu bạn chưa thanh toán !</i>
                 </p>
+
                 <div class="bank-payment-box">
                     <div class="bank-qr-box">
-                        <img 
-                            src="/FD-Tech/assets/images/qr-payment.jpg" 
-                            alt="QR thanh toán" 
-                            class="bank-qr-img"
-                        >
+                        <?php
+                            $bank_bin = '970418'; // BIDV
+                            $account_no = '96247FD2026'; // sửa lại đúng số tài khoản thật của bạn
+                            $account_name = 'FD TECH';
+                            $amount = (int)$order['total_amount'];
+                            $payment_content = $order['payment_code'];
+
+                            $qr_url = 'https://img.vietqr.io/image/' 
+                                . $bank_bin . '-' 
+                                . $account_no . '-compact2.png?amount=' 
+                                . $amount 
+                                . '&addInfo=' . urlencode($payment_content) 
+                                . '&accountName=' . urlencode($account_name);
+                            ?>
+
+                            <img 
+                                src="<?= htmlspecialchars($qr_url) ?>" 
+                                alt="QR thanh toán" 
+                                class="bank-qr-img"
+                            >
                     </div>
+
                     <div class="bank-info-box">
-                        <p><b>Mã đơn hàng:</b> #FD-<?= htmlspecialchars($order['id']) ?></p>
-                        <p><b>Ngân hàng:</b> Ngân hàng BIDV</p>
-                        <p><b>Chủ tài khoản:</b> FD TECH</p>
-                        <p><b>Số tài khoản:</b> 96247FD2026</p>
+                        <p>
+                            <b>Mã đơn hàng:</b> #FD-<?= htmlspecialchars($order['id']) ?>
+                        </p>
+
+                        <p>
+                            <b>Ngân hàng:</b> Ngân hàng BIDV
+                        </p>
+
+                        <p>
+                            <b>Chủ tài khoản:</b> FD TECH
+                        </p>
+
+                        <p>
+                            <b>Số tài khoản:</b> 96247FD2026
+                        </p>
+
                         <p>
                             <b>Số tiền:</b> 
-                            <?= number_format($order['total_amount'], 0, ',', '.') ?>₫
+                            <?= number_format($order['total_amount'], 0, ',', '.') ?>₫ 
+                            <i>(đã bao gồm giảm giá)</i>
                         </p>
                         <p>
                             <b>Nội dung chuyển khoản:</b> 
@@ -139,11 +196,17 @@ include '../../includes/notification.php';
                     </div>
                 </div>
             </div>
+
             <div class="checkout-section">
-                <h3>📦 Sản phẩm thanh toán</h3>
+                <h3>
+                    <i class="fa-solid fa-box-open"></i>
+                    Sản phẩm thanh toán
+                </h3>
+
                 <?php foreach ($items as $item): ?>
                     <?php
                         $img = $item['product_image'] ?? '';
+
                         if (empty($img)) {
                             $img_src = "/FD-Tech/assets/images/logo-fd.jpg";
                         } elseif (filter_var($img, FILTER_VALIDATE_URL)) {
@@ -154,6 +217,7 @@ include '../../includes/notification.php';
                             $img_src = "/FD-Tech/upload/product_image/" . $img;
                         }
                     ?>
+
                     <div class="checkout-item">
                         <img 
                             src="<?= htmlspecialchars($img_src) ?>" 
@@ -161,10 +225,12 @@ include '../../includes/notification.php';
                             alt="<?= htmlspecialchars($item['product_name']) ?>"
                             onerror="this.src='/FD-Tech/assets/images/logo-fd.jpg'"
                         >
+
                         <div class="checkout-info">
                             <p class="checkout-name">
                                 <?= htmlspecialchars($item['product_name']) ?>
                             </p>
+
                             <p class="checkout-price">
                                 <?= number_format($item['price'], 0, ',', '.') ?>₫
                                 x <?= htmlspecialchars($item['quantity']) ?>
@@ -173,31 +239,36 @@ include '../../includes/notification.php';
                     </div>
                 <?php endforeach; ?>
             </div>
+
             <div class="checkout-section">
                 <p>
-                    Tổng tiền:
-                    <b><?= number_format($order['total_amount'], 0, ',', '.') ?>₫</b>
-                </p>
-                <p>
+                    <i class="fa-solid fa-hourglass-half"></i>
                     Trạng thái thanh toán:
                     <b>Chưa thanh toán</b>
                 </p>
+                </br>
                 <button 
                     type="button" 
                     onclick="window.location.href='bank_payment.php?order_id=<?= $order['id'] ?>&check_payment=1'" 
                     class="btn btn-primary"
                 >
+                    <i class="fa-solid fa-rotate"></i>
                     Kiểm tra thanh toán
                 </button>
+
                 <button 
                     type="button" 
                     onclick="window.location.href='../index.php'" 
                     class="btn btn-secondary"
                 >
+                    <i class="fa-solid fa-cart-shopping"></i>
                     Tiếp tục mua sắm
                 </button>
             </div>
+
         <?php endif; ?>
+
     </div>
 </div>
+
 <?php include '../../includes/footer.php'; ?>
