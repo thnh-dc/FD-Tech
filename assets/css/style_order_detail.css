@@ -274,6 +274,7 @@
     .order-detail-actions,
     .order-update-card,
     .order-detail-header,
+    .order-detail-actions,
     script {
         display: none !important;
     }
