@@ -148,3 +148,63 @@
     color: #e55353;
     font-weight: bold;
 }
+/* CSS cho phần nền mờ phía sau popup */
+.adv-popup-overlay {
+    display: flex; /* Hiện popup mặc định khi load trang */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Nền đen mờ */
+    z-index: 99999; /* Đảm bảo luôn nằm trên cùng mọi phần tử khác */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Khung chứa ảnh và nút đóng */
+.adv-popup-content {
+    position: relative;
+    max-width: 650px; /* Độ rộng tối đa của ảnh popup */
+    width: 90%;
+    animation: zoomIn 0.4s ease; /* Hiệu ứng hiện hình mượt mà */
+}
+
+/* Style cho ảnh quảng cáo */
+.adv-popup-img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    display: block;
+}
+
+.adv-popup-close {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background-color: #333;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    z-index: 100000;
+    
+    /* Dùng flexbox để căn icon Font Awesome chuẩn giữa tâm vòng tròn */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px; 
+    transition: 0.3s;
+}
+.adv-popup-close:hover {
+    background-color: #ff0000;
+}
+
+/* Hiệu ứng zoom khi popup xuất hiện */
+@keyframes zoomIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
