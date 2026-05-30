@@ -1,0 +1,128 @@
+/* Giao diện Form cập nhật vận chuyển */
+.shipping-update-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.shipping-update-box h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #1e293b;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.shipping-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.shipping-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.shipping-form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.shipping-form-group input, 
+.shipping-form-group select {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: #fff;
+    color: #334155;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.shipping-form-group input:focus, 
+.shipping-form-group select:focus {
+    border-color: #2563eb;
+}
+
+/* Tiến trình Vận chuyển trực quan (Shipping Timeline) */
+.shipping-timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 25px 0;
+    position: relative;
+    padding: 0 10px;
+}
+
+.shipping-timeline::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #e2e8f0;
+    z-index: 1;
+}
+
+/* Thanh tiến trình chạy theo trạng thái đơn */
+.shipping-timeline-bar {
+    position: absolute;
+    top: 25px;
+    left: 0;
+    height: 4px;
+    background: #16a34a;
+    z-index: 2;
+    transition: width 0.4s ease;
+}
+
+.timeline-step {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.timeline-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #cbd5e1;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.timeline-text {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+/* Các trạng thái kích hoạt active */
+.timeline-step.active .timeline-icon {
+    border-color: #16a34a;
+    background: #16a34a;
+    color: #fff;
+    box-shadow: 0 0 0 4px #dcfce7;
+}
+
+.timeline-step.active .timeline-text {
+    color: #16a34a;
+}
