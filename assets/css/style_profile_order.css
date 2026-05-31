@@ -236,15 +236,25 @@
     gap: 10px;
 }
 
+/* --- Đã sửa: Nút Xem chi tiết dạng ô bao quanh, không gạch chân --- */
 .btn-toggle-detail {
-    background: none;
-    border: none;
+    background: #fff;
+    color: #1a9bb8;
+    border: 1px solid #1a9bb8;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
     cursor: pointer;
-    color: #555;
-    text-decoration: underline;
-    font-size: 14px;
     margin: 0 15px;
     white-space: nowrap;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-toggle-detail:hover {
+    background: #1a9bb8;
+    color: #fff;
 }
 
 .btn-cancel-order {
@@ -294,4 +304,171 @@
 
 .btn-confirm-received:hover {
     opacity: 0.9;
+}
+
+/* =========================================================================
+   🔥 CSS CỦA TRANG YÊU CẦU ĐỔI TRẢ / BẢO HÀNH (REQUEST_SERVICE.PHP)
+   ========================================================================= */
+.service-request-container {
+    background: #FFFFFF;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 6px 6px rgba(1, 0, 0, 0.5);
+    margin: 10px auto;
+    max-width: 100%;
+}
+
+.service-request-container h2 {
+    color: #0B2A4A;
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.btn-back-link {
+    color: #6C757D;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s;
+}
+
+.btn-back-link:hover {
+    color: #0B2A4A;
+}
+
+.service-request-container .order-meta {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #6C757D;
+}
+
+.service-request-container .order-meta strong {
+    color: #0B2A4A;
+}
+
+/* Tabs tinh chỉnh hợp với layout nhỏ gọn bên trong Profile */
+.service-tabs {
+    display: flex;
+    border-bottom: 2px solid #E5E7EB;
+    margin: 20px 0;
+}
+
+.service-tab-btn {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    background: #E5E7EB;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6C757D;
+    transition: all 0.3s;
+}
+
+.service-tab-btn.active {
+    background: #0B2A4A;
+    color: #FFFFFF;
+}
+
+.service-tab-content {
+    display: none;
+}
+
+.service-tab-content.active {
+    display: block;
+}
+
+/* Form Fields */
+.service-form-group {
+    margin-bottom: 18px;
+}
+
+.service-form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333333;
+}
+
+.service-form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333333;
+    background: #FFFFFF;
+    resize: none; 
+}
+
+.service-form-control:focus {
+    outline: none;
+    border-color: #23B5D3;
+}
+
+/* Buttons */
+.service-action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.service-btn-submit {
+    background: #0B2A4A;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    flex: 3;
+    transition: 0.3s;
+    text-align: center;
+}
+
+.service-btn-submit:hover {
+    opacity: 0.85;
+}
+
+#tab-warranty .service-btn-submit {
+    background: #23B5D3;
+}
+
+.service-btn-cancel {
+    background: #F8F9FA;
+    color: #495057;
+    border: 1px solid #CED4DA;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    flex: 1;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.service-btn-cancel:hover {
+    background: #E2E6EA;
+    color: #212529;
+}
+
+.service-error-box {
+    background: #FFF5F5;
+    color: #ff0019;
+    padding: 15px;
+    border: 1px solid #FED7D7;
+    border-radius: 4px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 14px;
 }
