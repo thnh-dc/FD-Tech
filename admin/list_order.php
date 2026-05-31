@@ -6,28 +6,48 @@ require_once '../user/action_checkout/auto_cancel_unpaid_orders.php';
 
 autoCancelUnpaidBankOrders($pdo, 15);
 
-try {
-    $user_filter = $_GET['user_id'] ?? '';
+$orders = [];
+$user_filter = trim($_GET['user_id'] ?? '');
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$limit = 20;
+$offset = ($page - 1) * $limit;
+$total_orders = 0;
+$total_pages = 1;
 
-    if ($user_filter != '') {
+try {
+    if ($user_filter !== '') {
+        $stmtCount = $pdo->prepare("SELECT COUNT(*) FROM orders WHERE user_id = ?");
+        $stmtCount->execute([$user_filter]);
+        $total_orders = (int)$stmtCount->fetchColumn();
+
         $sql = "SELECT o.*, u.username
                 FROM orders o
                 JOIN users u ON o.user_id = u.id
                 WHERE o.user_id = ?
-                ORDER BY o.created_at DESC";
+                ORDER BY o.created_at DESC
+                LIMIT $limit OFFSET $offset";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$user_filter]);
     } else {
+        $stmtCount = $pdo->query("SELECT COUNT(*) FROM orders");
+        $total_orders = (int)$stmtCount->fetchColumn();
+
         $sql = "SELECT o.*, u.username
                 FROM orders o
                 JOIN users u ON o.user_id = u.id
-                ORDER BY o.created_at DESC";
+                ORDER BY o.created_at DESC
+                LIMIT $limit OFFSET $offset";
 
         $stmt = $pdo->query($sql);
     }
 
-    $orders = $stmt->fetchAll();
+    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $total_pages = max(1, (int)ceil($total_orders / $limit));
+
+    if ($page > $total_pages) {
+        $page = $total_pages;
+    }
 
 } catch (PDOException $e) {
     die("Lỗi truy vấn: " . $e->getMessage());
@@ -49,9 +69,16 @@ include 'includes/header.php';
                 <section class="section-block">
                     <div class="card shadow-card" style="background: var(--bg-main); padding: var(--space-lg); border-radius: var(--radius-md);">
                         <form method="GET" class="filter-form">
-                            <input type="number" name="user_id" placeholder="Nhập User ID..." value="<?= htmlspecialchars($_GET['user_id'] ?? '') ?>">
+                            <input type="number" name="user_id" placeholder="Nhập User ID..." value="<?= htmlspecialchars($user_filter) ?>">
                             <button type="submit" class="btn btn-primary">Lọc</button>
+                            <?php if ($user_filter !== ''): ?>
+                                <a href="list_order.php" class="btn btn-secondary">Bỏ lọc</a>
+                            <?php endif; ?>
                         </form>
+
+                        <div class="order-list-meta">
+                            Tổng số đơn: <b><?= number_format($total_orders, 0, ',', '.') ?></b>
+                        </div>
 
                         <table class="data-table">
                             <thead>
@@ -94,7 +121,6 @@ include 'includes/header.php';
 
                                             <td style="position: relative;">
                                                 <div class="action-buttons">
-
                                                     <a href="action_list_order/order_detail.php?id=<?= $row['id'] ?>" class="btn btn-primary" title="Xem chi tiết đơn hàng">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </a>
@@ -120,6 +146,59 @@ include 'includes/header.php';
                                 <?php endif; ?>
                             </tbody>
                         </table>
+
+                        <?php if ($total_pages > 1): ?>
+                            <div class="order-pagination">
+                                <?php
+                                    $queryBase = [];
+                                    if ($user_filter !== '') {
+                                        $queryBase['user_id'] = $user_filter;
+                                    }
+                                ?>
+
+                                <?php if ($page > 1): ?>
+                                    <?php $queryBase['page'] = $page - 1; ?>
+                                    <a class="page-link" href="list_order.php?<?= http_build_query($queryBase) ?>">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </a>
+                                <?php endif; ?>
+
+                                <?php
+                                    $startPage = max(1, $page - 2);
+                                    $endPage = min($total_pages, $page + 2);
+                                ?>
+
+                                <?php if ($startPage > 1): ?>
+                                    <?php $queryBase['page'] = 1; ?>
+                                    <a class="page-link" href="list_order.php?<?= http_build_query($queryBase) ?>">1</a>
+                                    <?php if ($startPage > 2): ?>
+                                        <span class="page-dots">...</span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
+                                <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                                    <?php $queryBase['page'] = $i; ?>
+                                    <a class="page-link <?= $i == $page ? 'active' : '' ?>" href="list_order.php?<?= http_build_query($queryBase) ?>">
+                                        <?= $i ?>
+                                    </a>
+                                <?php endfor; ?>
+
+                                <?php if ($endPage < $total_pages): ?>
+                                    <?php if ($endPage < $total_pages - 1): ?>
+                                        <span class="page-dots">...</span>
+                                    <?php endif; ?>
+                                    <?php $queryBase['page'] = $total_pages; ?>
+                                    <a class="page-link" href="list_order.php?<?= http_build_query($queryBase) ?>"><?= $total_pages ?></a>
+                                <?php endif; ?>
+
+                                <?php if ($page < $total_pages): ?>
+                                    <?php $queryBase['page'] = $page + 1; ?>
+                                    <a class="page-link" href="list_order.php?<?= http_build_query($queryBase) ?>">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </section>
             </div>

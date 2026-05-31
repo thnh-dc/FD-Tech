@@ -10,10 +10,11 @@
     text-align: center; 
     padding: 60px 20px; }
 .empty-cart-icon { 
-    width: 120px; 
-    height: 120px; 
-    margin-bottom: 20px; 
-    opacity: 0.5; }
+    font-size: 110px;
+    color: var(--text-muted);
+    opacity: 0.45;
+    margin-bottom: 20px;
+}
 .empty-cart-title { 
     color: var(--text-dark); 
     margin-bottom: 8px; 
