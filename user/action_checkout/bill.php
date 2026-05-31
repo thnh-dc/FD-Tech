@@ -1,26 +1,19 @@
 <?php
-// FILE: ../user/handle/bill.php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Nạp các thư viện theo đường dẫn lùi cấp của bạn
 require_once __DIR__ . '/../../libs/dompdf/autoload.inc.php';
 require_once __DIR__ . '/../../libs/PHPMailer/Exception.php';
 require_once __DIR__ . '/../../libs/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/../../libs/PHPMailer/SMTP.php';
 
-// Khai báo Namespace CHỮ HOA ĐÚNG CHUẨN để PHP nhận diện
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// =========================================================================
-// 2. HÀM 1: SINH CHUỖI DỮ LIỆU PDF HÓA ĐƠN
-// =========================================================================
 function generateBillPDF($order_id, $pdo) {
-    // 1. Lấy thông tin đơn hàng
     $stmt = $pdo->prepare("SELECT o.*, u.username FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = ?");
     $stmt->execute([$order_id]);
     $order = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -29,91 +22,103 @@ function generateBillPDF($order_id, $pdo) {
 
     $order_date = $order['created_at']; 
 
-    // 2. Lấy danh sách sản phẩm thuộc đơn hàng
     $stmtDetails = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
     $stmtDetails->execute([$order_id]);
     $items = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
 
     $pttt = ($order['payment_method'] == 'cod') ? 'Thanh toán khi nhận hàng (COD)' : 'Chuyển khoản ngân hàng (Đã thanh toán)';
-
-    // Định danh ID đơn hàng sạch sẽ trước khi đưa vào HTML
     $clean_order_id = htmlspecialchars($order['id']);
 
-    // 3. Cấu trúc HTML/CSS
     $html = '
     <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <style>
-            @page { margin: 25px 30px; }
+            @page { margin: 20px 25px; }
             body { 
                 font-family: "DejaVu Sans", sans-serif; 
                 font-size: 11px; 
-                color: #333333; 
-                line-height: 1.6; 
+                color: #2b2b2b; 
+                line-height: 1.5; 
             }
-            .header-table { width: 100%; margin-bottom: 15px; }
+            
+            /* Cấu trúc phần Header */
+            .header-table { width: 100%; margin-bottom: 15px; border-collapse: collapse; }
+            .header-table td { vertical-align: top; }
             .store-logo { font-size: 24px; font-weight: 800; color: #0B2A4A; letter-spacing: -0.5px; }
             .store-logo span { color: #23B5D3; }
-            .store-sub { font-size: 9.5px; color: #6C757D; margin-top: 3px; }
-            .bill-title { text-align: right; font-size: 18px; font-weight: bold; color: #0B2A4A; letter-spacing: 1px; }
-            .barcode-box { text-align: right; margin-top: 5px; color: #333333; }
-            .barcode-line { font-size: 13px; letter-spacing: -0.5px; font-weight: 300; color: #0B2A4A; }
+            .store-sub { font-size: 9.5px; color: #6C757D; margin-top: 3px; line-height: 1.4; }
+            .bill-title { text-align: right; font-size: 20px; font-weight: bold; color: #0B2A4A; letter-spacing: 0.5px; }
+            .barcode-box { text-align: right; margin-top: 5px; }
+            .barcode-line { font-size: 13px; letter-spacing: -0.5px; font-weight: 300; color: #0B2A4A; line-height: 1; }
             .barcode-text { font-size: 8.5px; color: #6C757D; margin-top: 2px; }
+            
+            /* Thông tin khách hàng */
             .meta-table { width: 100%; margin-bottom: 20px; border-collapse: collapse; }
             .meta-table td { vertical-align: top; width: 50%; }
             .meta-box-left { padding-right: 15px; }
-            .meta-box-right { padding-left: 15px; border-left: 1px solid #ccc; }
-            .section-title { font-size: 9.5px; font-weight: bold; color: #6C757D; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+            .meta-box-right { padding-left: 15px; border-left: 1px solid #e2e8f0; }
+            .section-title { font-size: 10px; font-weight: bold; color: #0B2A4A; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
             .info-text { font-size: 11px; color: #333333; margin-bottom: 4px; }
             .info-text strong { color: #0B2A4A; }
-            .product-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+            
+            /* Bảng sản phẩm gọn gàng, không chứa tag ngày tháng */
+            .product-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
             .product-table th { 
-                background-color: #F4F6F9; 
                 color: #0B2A4A; 
                 font-weight: bold; 
-                border-bottom: 2px solid #0B2A4A; 
-                padding: 10px 12px; 
+                border-top: 1.5px solid #0B2A4A;
+                border-bottom: 1.5px solid #0B2A4A; 
+                padding: 8px 6px; 
                 text-align: left; 
-                font-size: 10px; 
+                font-size: 10.5px; 
                 text-transform: uppercase;
             }
-            .product-table td { padding: 10px 12px; border-bottom: 1px solid #F4F6F9; color: #333333; font-size: 11px; vertical-align: middle; }
-            .product-table tr:last-child td { border-bottom: 2px solid #0B2A4A; }
-            .date-tag { display: block; font-size: 9px; color: #6C757D; margin-top: 4px; }
-            .date-tag strong { color: #ff0019; } 
-            .date-tag .refund-date { color: #23B5D3; } 
+            .product-table td { padding: 10px 6px; border-bottom: 1px solid #E2E8F0; color: #333333; font-size: 11px; }
+            .product-table tr.last-row td { border-bottom: 1.5px solid #0B2A4A; }
+            
+            /* Khối hậu mãi nằm riêng biệt hoàn toàn dưới bảng */
+            .service-container { width: 100%; margin-top: 15px; margin-bottom: 15px; background-color: #F8FAFC; padding: 10px; border-radius: 4px; }
+            .service-title { font-size: 10.5px; font-weight: bold; color: #0B2A4A; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+            .service-item { margin-bottom: 8px; }
+            .service-item-name { font-weight: bold; color: #333333; font-size: 11px; }
+            .service-item-sub { font-size: 10px; color: #4A5568; margin-top: 2px; }
+            .service-item-sub strong { color: #ff0019; }
+            
             .text-center { text-align: center; }
             .text-right { text-align: right; }
-            .footer-section { width: 100%; }
+            
+            /* Tổng tiền */
+            .footer-layout { width: 100%; margin-top: 10px; }
             .summary-table { width: 45%; margin-left: 55%; border-collapse: collapse; }
-            .summary-table td { padding: 5px 8px; font-size: 11px; color: #333333; }
-            .total-row { background-color: #F4F6F9; }
+            .summary-table td { padding: 4px 6px; font-size: 11px; color: #333333; }
             .total-row td { 
                 font-size: 13px; 
                 font-weight: bold; 
                 color: #0B2A4A; 
-                padding: 8px 8px; 
-                border-top: 1px solid #ccc; 
-                border-bottom: 1px solid #ccc;
+                padding: 6px 6px; 
+                border-top: 1px dashed #cbd5e1; 
+                border-bottom: 1px dashed #cbd5e1;
             }
             .total-price { color: #23B5D3 !important; font-size: 14px !important; }
-            .warranty-divider { border-top: 1px dashed #ccc; margin: 20px 0 12px 0; }
-            .warranty-note { text-align: center; font-size: 9.5px; color: #6C757D; line-height: 1.5; }
-            .thanks-box { text-align: center; margin-top: 15px; }
+            
+            .warranty-divider { border-top: 1px dashed #cbd5e1; margin: 15px 0 10px 0; }
+            .warranty-note { text-align: center; font-size: 9.5px; color: #718096; line-height: 1.5; }
+            .thanks-box { text-align: center; margin-top: 10px; }
             .thanks-text { font-weight: bold; color: #0B2A4A; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-            .sub-thanks { font-size: 9px; color: #6C757D; margin-top: 4px; }
+            .sub-thanks { font-size: 9px; color: #a0aec0; margin-top: 3px; }
         </style>
     </head>
     <body>
+        
         <table class="header-table">
             <tr>
-                <td>
-                    <div class="store-logo">FD-TECH<span>.</span></div>
+                <td style="width: 55%;">
+                    <div class="store-logo">FD-TECH</div>
                     <div class="store-sub">Hệ thống phân phối linh kiện máy tính & Công nghệ cao cấp</div>
-                    <div class="store-sub">Địa chỉ: Thôn Đa, Di Trạch, Hoài Đức, Hà Nội | Hotline: 1900 8888</div>
+                    <div class="store-sub">Địa chỉ: Quy Nhơn, Gia Lai | Hotline: 1900 1000</div>
                 </td>
-                <td style="vertical-align: top;">
+                <td style="width: 45%; vertical-align: top;">
                     <div class="bill-title">HÓA ĐƠN BÁN HÀNG</div>
                     <div class="barcode-box">
                         <div class="barcode-line">||||||||||||||||||||||||||||||</div>
@@ -130,15 +135,15 @@ function generateBillPDF($order_id, $pdo) {
                         <div class="section-title">Hóa đơn gửi đến</div>
                         <div class="info-text">Khách hàng: <strong>'.htmlspecialchars($order['username']).'</strong></div>
                         <div class="info-text">Địa chỉ nhận hàng:</div>
-                        <div class="info-text" style="color:#6C757D; font-size: 10.5px; line-height: 1.4;">'.htmlspecialchars($order['shipping_address'] ?? 'Chưa cập nhật địa chỉ').'</div>
+                        <div class="info-text" style="color:#4A5568; font-size: 10.5px; line-height: 1.4;">'.htmlspecialchars($order['shipping_address'] ?? 'Chưa cập nhật địa chỉ').'</div>
                     </div>
                 </td>
                 <td>
                     <div class="meta-box-right">
                         <div class="section-title">Thông tin giao dịch</div>
                         <div class="info-text">Ngày bán: <strong>'.date('d/m/Y - H:i', strtotime($order_date)).'</strong></div>
-                        <div class="info-text">N/V: <strong>Phần mềm Bán Hàng</strong></div>
-                        <div class="info-text">Phương thức: <span style="color: #23B5D3; font-weight: bold;">'.$order['payment_method'].'</span></div>
+                        <div class="info-text">N/V: <strong>FD Tech</strong></div>
+                        <div class="info-text">Phương thức: <span style="color: #23B5D3; font-weight: bold;">'.strtoupper($order['payment_method']).'</span></div>
                         <div class="info-text" style="font-size: 9.5px; color: #6C757D;">('.$pttt.')</div>
                     </div>
                 </td>
@@ -148,39 +153,59 @@ function generateBillPDF($order_id, $pdo) {
         <table class="product-table">
             <thead>
                 <tr>
-                    <th style="width: 48%;">Thông tin sản phẩm / Dịch vụ hậu mãi</th>
+                    <th style="width: 50%;">Thông tin sản phẩm</th>
                     <th class="text-center" style="width: 8%;">SL</th>
-                    <th class="text-right" style="width: 14%;">ĐG</th>
-                    <th class="text-center" style="width: 8%;">CK</th>
-                    <th class="text-right" style="width: 22%;">Thành tiền</th>
+                    <th class="text-right" style="width: 16%;">ĐG</th>
+                    <th class="text-center" style="width: 6%;">CK</th>
+                    <th class="text-right" style="width: 20%;">Thành tiền</th>
                 </tr>
             </thead>
             <tbody>';
+            
             $total_items_quantity = 0;
-            foreach ($items as $item) {
+            $warranty_data_list = [];
+            $count = count($items);
+
+            for ($i = 0; $i < $count; $i++) {
+                $item = $items[$i];
                 $total_items_quantity += $item['quantity'];
                 $subtotal = $item['price'] * $item['quantity'];
                 
                 $refund_expiry = date('d/m/Y', strtotime($order_date . ' + 7 days'));
 
                 $productNameLower = mb_strtolower($item['product_name'], 'UTF-8');
-                if (strpos($productNameLower, 'chuột') !== false || strpos($productNameLower, 'bàn phím') !== false || strpos($productNameLower, 'tai nghe') !== false) {
-                    $warranty_months = 12;
-                } elseif (strpos($productNameLower, 'cpu') !== false || strpos($productNameLower, 'vga') !== false || strpos($productNameLower, 'mainboard') !== false || strpos($productNameLower, 'nguồn') !== false || strpos($productNameLower, 'ssd') !== false || strpos($productNameLower, 'ram') !== false) {
-                    $warranty_months = 36;
+                
+                if (
+                    strpos($productNameLower, 'chuột') !== false || 
+                    strpos($productNameLower, 'bàn phím') !== false || 
+                    strpos($productNameLower, 'tai nghe') !== false || 
+                    strpos($productNameLower, 'loa') !== false
+                ) {
+                    $warranty_months = 6;
+                } elseif (
+                    strpos($productNameLower, 'laptop') !== false || 
+                    strpos($productNameLower, 'màn hình') !== false || 
+                    strpos($productNameLower, 'linh kiện') !== false
+                ) {
+                    $warranty_months = 18;
                 } else {
-                    $warranty_months = 24;
+                    $warranty_months = 12; 
                 }
                 
                 $warranty_expiry = date('d/m/Y', strtotime($order_date . " + $warranty_months months"));
 
-                $html .= '<tr>';
-                $html .= '  <td>';
-                $html .= '      <span style="font-weight: bold; color: #0B2A4A; display:block;">'.htmlspecialchars($item['product_name']).'</span>';
-                $html .= '      <span class="date-tag">• Hạn hoàn hàng/đổi trả: <span class="refund-date"><strong>'.$refund_expiry.'</strong></span> (7 ngày)</span>';
-                $html .= '      <span class="date-tag">• Hạn bảo hành đến ngày: <strong>'.$warranty_expiry.'</strong> ('.$warranty_months.' tháng)</span>';
-                $html .= '  </td>';
-                $html .= '  <td class="text-center" style="color: #333333;">'.$item['quantity'].'</td>';
+                $warranty_data_list[] = [
+                    'name' => $item['product_name'],
+                    'refund' => $refund_expiry,
+                    'warranty' => $warranty_expiry,
+                    'months' => $warranty_months
+                ];
+
+                $isLast = ($i === $count - 1) ? 'class="last-row"' : '';
+
+                $html .= '<tr '.$isLast.'>';
+                $html .= '  <td style="font-weight: bold; color: #0B2A4A;">'.htmlspecialchars($item['product_name']).'</td>';
+                $html .= '  <td class="text-center">'.$item['quantity'].'</td>';
                 $html .= '  <td class="text-right">'.number_format($item['price'], 0, ',', '.').'</td>';
                 $html .= '  <td class="text-center">0</td>';
                 $html .= '  <td class="text-right" style="font-weight: bold; color: #0B2A4A;">'.number_format($subtotal, 0, ',', '.').'</td>';
@@ -190,7 +215,19 @@ function generateBillPDF($order_id, $pdo) {
             </tbody>
         </table>
 
-        <div class="footer-section">
+        <div class="service-container">
+            <div class="service-title">Thông tin sản phẩm / Dịch vụ hậu mãi</div>';
+            foreach ($warranty_data_list as $wData) {
+                $html .= '<div class="service-item">';
+                $html .= '  <div class="service-item-name">• '.htmlspecialchars($wData['name']).'</div>';
+                $html .= '  <div class="service-item-sub">&nbsp;&nbsp;&nbsp;- Hạn hoàn hàng/đổi trả: <strong>'.$wData['refund'].'</strong> (7 ngày)</div>';
+                $html .= '  <div class="service-item-sub">&nbsp;&nbsp;&nbsp;- Hạn bảo hành đến ngày: <strong>'.$wData['warranty'].'</strong> ('.$wData['months'].' tháng)</div>';
+                $html .= '</div>';
+            }
+    $html .= '
+        </div>
+
+        <div class="footer-layout">
             <table class="summary-table">
                 <tr>
                     <td>Tổng số lượng:</td>
@@ -225,19 +262,18 @@ function generateBillPDF($order_id, $pdo) {
 
         <div class="warranty-divider"></div>
         <div class="warranty-note">
-            * <strong>Lưu ý hậu mãi:</strong> Lịch đổi trả hàng/hoàn tiền và thời gian bảo hành kỹ thuật được tính chính xác dựa trên thời điểm xuất kho sản phẩm.<br>
-            Vui lòng giữ lại file hóa đơn điện tử này hoặc cung cấp mã đơn hàng khi liên hệ bảo hành tại FD-Tech Store.
+            * <strong>Lưu ý hậu mãi:</strong> Lịch đổi trả hàng/hoàn tiền và thời gian bảo hành kỹ thuật được tính chính xác từ lúc bạn xác nhận nhận hàng.<br>
+            Vui lòng giữ lại file hóa đơn điện tử này hoặc cung cấp mã đơn hàng khi liên hệ bảo hành tại FD Tech.
         </div>
-        <div class="warranty-divider" style="margin: 12px 0 20px 0;"></div>
+        <div class="warranty-divider" style="margin: 10px 0 15px 0;"></div>
 
         <div class="thanks-box">
             <div class="thanks-text">Cảm ơn và hẹn gặp lại quý khách!</div>
-            <div class="sub-thanks">Hóa đơn điện tử được đồng bộ và xác thực bởi FD-Tech Store.</div>
+            <div class="sub-thanks">Hóa đơn điện tử được đồng bộ và xác thực bởi FD Tech.</div>
         </div>
     </body>
     </html>';
 
-    // Bắt buộc gọi đúng Class chữ hoa chính thống của thư viện
     $options = new Options();
     $options->set('defaultFont', 'DejaVu Sans');
     $options->set('isHtml5ParserEnabled', true);
@@ -250,9 +286,6 @@ function generateBillPDF($order_id, $pdo) {
     return $dompdf->output(); 
 }
 
-// =========================================================================
-// 3. HÀM 2: CẤU HÌNH GỬI EMAIL ĐÍNH KÈM FILE PDF
-// =========================================================================
 function send_order_bill_email($to_email, $order_id, $pdo) {
     $pdf_content = generateBillPDF($order_id, $pdo);
     if (!$pdf_content) return false;
@@ -299,9 +332,6 @@ function send_order_bill_email($to_email, $order_id, $pdo) {
     }
 }
 
-// =========================================================================
-// 4. ĐÓN NHẬN REQUEST XEM FILE TRỰC TIẾP
-// =========================================================================
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     require_once __DIR__ . '/../../config/database.php'; 
     

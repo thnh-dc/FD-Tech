@@ -200,7 +200,7 @@ if (!function_exists('translateOrderStatus')) {
                     </button>
                 </div>
 
-                <div id="detail-<?= $order['id'] ?>" class="order-detail-box">
+                <div id="detail-<?= $order['id'] ?>" class="order-detail-box" style="display: none;">
                     <div class="order-info-row">
                         <span>Mã đơn: <strong>#<?= $order['id'] ?></strong></span>
                         <span>Ngày đặt: <strong><?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></strong></span>
@@ -260,7 +260,7 @@ if (!function_exists('translateOrderStatus')) {
                             <span class="order-total-amount"><?= number_format($order['total_amount'], 0, ',', '.') ?>đ</span>
                         </div>
 
-                        <div class="order-actions-group" style="display: flex; gap: 10px; align-items: center;">
+                        <div class="order-actions-group">
                             <?php if ($order['status'] == 'pending' || $order['status'] == 'processing'): ?>
                                 <form action="" method="POST" style="margin: 0;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #<?= $order['id'] ?> này không? Thao tác này sẽ tự động hoàn lại sản phẩm vào kho hàng và hoàn lại FDp đã dùng nếu có.');">
                                     <input type="hidden" name="action" value="cancel_order">
@@ -269,7 +269,7 @@ if (!function_exists('translateOrderStatus')) {
                                 </form>
                                 
                                 <?php if ($order['status'] == 'pending' && ($order['payment_method'] ?? '') === 'bank'): ?>
-                                    <a href="/FD-Tech/user/action_checkout/bank_payment.php?order_id=<?= $order['id'] ?>" class="btn btn-primary">Thanh toán ngay</a>
+                                    <a href="/FD-Tech/user/action_checkout/bank_payment.php?order_id=<?= $order['id'] ?>" class="btn-pay-now">Thanh toán ngay</a>
                                 <?php endif; ?>
 
                             <?php elseif ($order['status'] == 'shipped' || $order['status'] == 'shipping'): ?>
@@ -280,11 +280,11 @@ if (!function_exists('translateOrderStatus')) {
                                 </form>
 
                             <?php elseif ($order['status'] == 'completed'): ?>
-                                <a href="../user/action_checkout/bill.php?id=<?= $order['id'] ?>" target="_blank" style="background-color: #1a9bb8; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;">
+                                <a href="../user/action_checkout/bill.php?id=<?= $order['id'] ?>" target="_blank" style="background-color: #1a9bb8; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
                                     &#128442; Xuất hóa đơn
                                 </a>
                                 
-                                <a href="../user/action_profile/request_service.php?order_id=<?= $order['id'] ?>" style="background-color: #db4437; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;">
+                                <a href="../user/action_profile/request_service.php?order_id=<?= $order['id'] ?>" style="background-color: #db4437; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
                                     &#10226; Hoàn hàng / Bảo hành
                                 </a>
                             <?php endif; ?>

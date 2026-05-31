@@ -122,16 +122,10 @@ try {
 
     $pdo->commit();
 
-    // =========================================================================
-    // 🔥 TỰ ĐỘNG GỬI EMAIL HÓA ĐƠN PDF CHO KHÁCH CHỌN CHUYỂN KHOẢN (BANK)
-    // =========================================================================
     if ($payment_method === 'bank') {
         if ($user && !empty($user['email'])) {
-            // Nhúng trực tiếp file bill.php chứa hàm định nghĩa gửi thư
-            // (Hãy điều chỉnh lại đường dẫn liên kết cho đúng vị trí file bill.php của bạn)
             require_once 'bill.php'; 
             
-            // Gọi hàm xử lý gửi hóa đơn
             send_order_bill_email($user['email'], $order_id, $pdo);
         }
 
