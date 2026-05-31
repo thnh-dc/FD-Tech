@@ -62,16 +62,15 @@ try {
     }
 }
 
-// --- Logic kiểm tra quyền đánh giá (Chỉ người đã mua) ---
 $can_review = false;
 if (isset($_SESSION['user_id'])) {
     try {
         $stmtCheck = $pdo->prepare("
             SELECT COUNT(*) 
-            FROM order_details od 
-            JOIN orders o ON od.order_id = o.id 
+            FROM order_items oi 
+            JOIN orders o ON oi.order_id = o.id 
             WHERE o.user_id = :user_id 
-            AND od.product_id = :product_id 
+            AND oi.product_id = :product_id 
             AND o.status = 'completed' 
         ");
         $stmtCheck->execute(['user_id' => $_SESSION['user_id'], 'product_id' => $id]);
@@ -79,7 +78,6 @@ if (isset($_SESSION['user_id'])) {
             $can_review = true;
         }
     } catch (PDOException $e) {
-        // Fallback nếu chưa có bảng orders/order_details
         $can_review = false;
     }
 }

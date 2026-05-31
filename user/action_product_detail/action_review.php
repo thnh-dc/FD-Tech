@@ -3,7 +3,6 @@ session_start();
 require_once '../../config/database.php';
 header('Content-Type: application/json; charset=utf-8');
 
-// 1. Kiểm tra phương thức
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode([
         'success' => false,
@@ -12,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 2. Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['noti_message'] = 'Oppss, bạn chưa đăng nhập rồi!';
     $_SESSION['noti_type'] = 'error';
@@ -29,7 +27,6 @@ $product_id = isset($_POST['product_id']) ? (int) $_POST['product_id'] : 0;
 $rating = isset($_POST['rating']) ? (int) $_POST['rating'] : 5;
 $comment = isset($_POST['comment']) ? trim($_POST['comment']) : '';
 
-// 3. Kiểm tra tính hợp lệ của dữ liệu đầu vào
 if ($product_id <= 0) {
     echo json_encode([
         'success' => false,
@@ -53,7 +50,6 @@ if ($comment === '') {
 }
 
 try {
-    // 4. Kiểm tra sản phẩm có tồn tại hay không
     $stmtProduct = $pdo->prepare("
         SELECT id FROM products WHERE id = ? LIMIT 1
     ");
@@ -67,13 +63,12 @@ try {
         exit;
     }
 
-    // 5. Kiểm tra người dùng đã mua sản phẩm này chưa
     $stmtCheck = $pdo->prepare("
         SELECT COUNT(*) 
-        FROM order_details od 
-        JOIN orders o ON od.order_id = o.id 
+        FROM order_items oi 
+        JOIN orders o ON oi.order_id = o.id 
         WHERE o.user_id = :user_id 
-        AND od.product_id = :product_id 
+        AND oi.product_id = :product_id 
         AND o.status = 'completed'
     ");
     $stmtCheck->execute([
@@ -88,7 +83,6 @@ try {
         exit;
     }
 
-    // 6. Xử lý upload ảnh (Nếu người dùng có đính kèm)
     $image_url = null;
     if (isset($_FILES['review_image']) && $_FILES['review_image']['error'] === UPLOAD_ERR_OK) {
         $file = $_FILES['review_image'];
@@ -97,7 +91,6 @@ try {
         if (in_array($file['type'], $allowed_types)) {
             $upload_dir = '../../upload/review_image/'; 
             
-            // Tự động tạo thư mục nếu chưa tồn tại
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
@@ -124,7 +117,6 @@ try {
         }
     }
 
-    // 7. Lưu đánh giá (và link ảnh) vào Database
     $stmt = $pdo->prepare("
         INSERT INTO product_reviews (
             product_id, user_id, rating, comment, image_url, status
@@ -148,7 +140,6 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    // Để an toàn và bảo mật, không nên in $e->getMessage() ra frontend ở môi trường Production
     echo json_encode([
         'success' => false,
         'message' => 'Lỗi lưu trữ dữ liệu.'
