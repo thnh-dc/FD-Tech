@@ -52,7 +52,8 @@ foreach ($cartItems as $item) {
 try {
     $pdo->beginTransaction();
 
-    $stmtUser = $pdo->prepare("SELECT point FROM users WHERE id = ? LIMIT 1 FOR UPDATE");
+    // Lấy point và gộp thêm trường email để phục vụ cho việc gửi hóa đơn ở cuối
+    $stmtUser = $pdo->prepare("SELECT point, email FROM users WHERE id = ? LIMIT 1 FOR UPDATE");
     $stmtUser->execute([$user_id]);
     $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
     if (!$user) throw new Exception('Không tìm thấy thông tin người dùng.');
@@ -121,7 +122,16 @@ try {
 
     $pdo->commit();
 
-    if ($payment_method === 'bank') { header("Location: bank_payment.php?order_id=" . $order_id); exit(); }
+    if ($payment_method === 'bank') {
+        if ($user && !empty($user['email'])) {
+            require_once 'bill.php'; 
+            
+            send_order_bill_email($user['email'], $order_id, $pdo);
+        }
+
+        header("Location: bank_payment.php?order_id=" . $order_id);
+        exit();
+    }
 
     header("Location: ../checkout.php?status=success&order_id=" . $order_id);
     exit();

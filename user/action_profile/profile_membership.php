@@ -17,11 +17,41 @@ $current_tier = getFDMemberTierByPoint($pdo, $period_points);
 $next_tier = getNextFDMemberTier($pdo, $period_points);
 $progress = getFDMemberProgress($period_points, $next_tier);
 $tiers = getAllFDMemberTiers($pdo);
-$histories = getUserFDPointHistory($pdo, $user_id, 30);
 
 $current_tier_key = $current_tier['tier_key'];
 $current_tier_class = getFDMemberClass($current_tier_key);
 $current_tier_icon = getFDMemberIcon($current_tier_key);
+
+$history_per_page = 10;
+$history_page = isset($_GET['fdp_page']) ? max(1, (int)$_GET['fdp_page']) : 1;
+
+$stmt_history_count = $pdo->prepare("SELECT COUNT(*) FROM fd_point_transactions WHERE user_id = ?");
+$stmt_history_count->execute([$user_id]);
+$total_histories = (int)$stmt_history_count->fetchColumn();
+
+$total_history_pages = max(1, (int)ceil($total_histories / $history_per_page));
+
+if ($history_page > $total_history_pages) {
+    $history_page = $total_history_pages;
+}
+
+$history_offset = ($history_page - 1) * $history_per_page;
+
+$stmt_history = $pdo->prepare("
+    SELECT 
+        fpt.*,
+        o.total_amount,
+        o.status AS order_status
+    FROM fd_point_transactions fpt
+    LEFT JOIN orders o ON fpt.order_id = o.id
+    WHERE fpt.user_id = ?
+    ORDER BY fpt.created_at DESC
+    LIMIT $history_per_page OFFSET $history_offset
+");
+$stmt_history->execute([$user_id]);
+$histories = $stmt_history->fetchAll(PDO::FETCH_ASSOC);
+
+$is_history_tab_active = isset($_GET['fdp_page']);
 ?>
 
 <div class="membership-wrapper">
@@ -129,18 +159,18 @@ $current_tier_icon = getFDMemberIcon($current_tier_key);
 
     <div class="member-tier-section">
         <div class="member-tabs">
-            <button type="button" class="member-tab-btn active" data-tab="benefits">
+            <button type="button" class="member-tab-btn <?= !$is_history_tab_active ? 'active' : '' ?>" data-tab="benefits">
                 <i class="fas fa-gift"></i>
                 Ưu đãi thành viên
             </button>
 
-            <button type="button" class="member-tab-btn" data-tab="history">
+            <button type="button" class="member-tab-btn <?= $is_history_tab_active ? 'active' : '' ?>" data-tab="history">
                 <i class="fas fa-clock-rotate-left"></i>
                 Lịch sử FDp
             </button>
         </div>
 
-        <div class="member-tab-content active" id="member-tab-benefits">
+        <div class="member-tab-content <?= !$is_history_tab_active ? 'active' : '' ?>" id="member-tab-benefits">
             <div class="member-benefit-list">
                 <div class="member-benefit-item">
                     <i class="fas fa-percent"></i>
@@ -190,7 +220,7 @@ $current_tier_icon = getFDMemberIcon($current_tier_key);
             </div>
         </div>
 
-        <div class="member-tab-content" id="member-tab-history">
+        <div class="member-tab-content <?= $is_history_tab_active ? 'active' : '' ?>" id="member-tab-history">
             <?php if (empty($histories)): ?>
                 <div class="member-history-empty">
                     <i class="fas fa-receipt"></i>
@@ -214,7 +244,6 @@ $current_tier_icon = getFDMemberIcon($current_tier_key);
                                 <?php
                                     $type = $history['type'];
                                     $points = (int)$history['points'];
-
                                     $point_class = $points >= 0 ? 'member-point-plus' : 'member-point-minus';
                                     $point_sign = $points > 0 ? '+' : '';
 
@@ -247,6 +276,31 @@ $current_tier_icon = getFDMemberIcon($current_tier_key);
                         </tbody>
                     </table>
                 </div>
+
+                <?php if ($total_history_pages > 1): ?>
+                    <div class="member-pagination">
+                        <?php if ($history_page > 1): ?>
+                            <a href="profile.php?action=membership&fdp_page=<?= $history_page - 1 ?>#member-tab-history" class="member-page-link">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        <?php endif; ?>
+
+                        <?php for ($i = 1; $i <= $total_history_pages; $i++): ?>
+                            <a 
+                                href="profile.php?action=membership&fdp_page=<?= $i ?>#member-tab-history" 
+                                class="member-page-link <?= $i == $history_page ? 'active' : '' ?>"
+                            >
+                                <?= $i ?>
+                            </a>
+                        <?php endfor; ?>
+
+                        <?php if ($history_page < $total_history_pages): ?>
+                            <a href="profile.php?action=membership&fdp_page=<?= $history_page + 1 ?>#member-tab-history" class="member-page-link">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </div>

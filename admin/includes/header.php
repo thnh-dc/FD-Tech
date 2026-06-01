@@ -11,8 +11,9 @@ $custom_css = $custom_css ?? '';
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($page_title) ?> - FD Tech</title>
 
-    <link rel="stylesheet" href="../assets/css/style_chung.css">
-    <link rel="stylesheet" href="../assets/css/style_dashboard.css">
+    <link rel="stylesheet" href="/FD-Tech/assets/css/style_chung.css">
+    <link rel="stylesheet" href="/FD-Tech/assets/css/style_dashboard.css">
+    <link rel="stylesheet" href="/FD-Tech/assets/css/style_sidebar.css">
     <?= $custom_css ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -28,6 +29,6 @@ $custom_css = $custom_css ?? '';
             </h1>
             <div class="admin-profile">
                 <span class="text-muted">Xin chào, <b>Admin</b></span>
-                <img src="../assets/images/logo-fd.jpg" alt="Admin">
+                <img src="/FD-Tech/assets/images/logo-fd.jpg" alt="Admin">
             </div>
         </div>

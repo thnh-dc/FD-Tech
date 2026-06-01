@@ -1,10 +1,8 @@
 <?php
-// FILE: ../libs/mail_helper.php
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Nạp các file lõi của thư viện PHPMailer (Đảm bảo đúng đường dẫn từ file này đến thư mục PHPMailer)
 require_once __DIR__ . '/Exception.php';
 require_once __DIR__ . '/PHPMailer.php';
 require_once __DIR__ . '/SMTP.php';
@@ -29,12 +27,10 @@ function send_system_email($to_email, $otp_code, $action) {
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
-        // --- 2. CẤU HÌNH THÔNG TIN GỬI ---
-        $mail->setFrom('fdtechshop@gmail.com', 'FD-Tech Shop');
+        $mail->setFrom('fdtechshop@gmail.com', 'FD Tech');
         $mail->addAddress($to_email); 
         $mail->isHTML(true);
 
-        // --- 3. ĐỊNH NGHĨA TIÊU ĐỀ & NỘI DUNG THEO TỪNG CHỨC NĂNG ---
         $subject = '[FD TECH] Mã xác thực hệ thống';
         $title_display = 'MÃ XÁC THỰC BẢO MẬT';
         $body_display = 'Hệ thống nhận được yêu cầu xác minh thông tin từ tài khoản của bạn.';
@@ -61,7 +57,6 @@ function send_system_email($to_email, $otp_code, $action) {
                 break;
         }
 
-        //4. RÁP DỮ LIỆU VÀO GIAO DIỆN EMAIL HTML CHUNG
         $mail->Subject = $subject;
         $mail->Body    = "
             <div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; max-width: 500px; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);'>
