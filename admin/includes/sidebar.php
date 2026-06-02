@@ -17,7 +17,11 @@
                 <i class="fa-solid fa-cart-shopping"></i> Quản lý đơn hàng
             </a>
         </li>
-
+        <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'shipping_orders.php') ? 'active' : '' ?>">
+            <a href="/FD-Tech/admin/shipping_orders.php">
+                <i class="fa-solid fa-truck-fast"></i> Quản lí vận chuyển
+            </a>
+        </li>
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : '' ?>">
             <a href="/FD-Tech/admin/manage_requests.php">
                 <i class="fa-solid fa-clipboard-question"></i> Quản lý yêu cầu
