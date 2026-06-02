@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include '../config/database.php'; 
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '../../auth/check_admin.php';
 
 // Tự động tạo nhà cung cấp mẫu nếu database trống
 $checkSuppliers = $pdo->query("SELECT COUNT(*) FROM suppliers")->fetchColumn();

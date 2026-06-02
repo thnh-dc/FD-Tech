@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../config/database.php';
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '../../auth/check_admin.php';
 
 $search = $_GET['search'] ?? '';
 $category_id = $_GET['category_id'] ?? '';
@@ -51,7 +51,7 @@ function getProductImage($image_url)
 ?>
 
 <?php
-$page_title = 'Quản lí sản phẩm';
+$page_title = 'Quản lý sản phẩm';
 $page_icon = 'fa-solid fa-box-open';
 $custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_list_product.css">';
 
