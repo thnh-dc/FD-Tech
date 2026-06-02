@@ -3,8 +3,6 @@
 -- FD TECH
 -- ==========================================
 
-DROP TABLE IF EXISTS order_shipping;
-
 CREATE TABLE order_shipping (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
