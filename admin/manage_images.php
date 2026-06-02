@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
-require_once __DIR__ . '../../auth/check_admin.php';
+
 // Cấu hình các biến Header cho hệ thống Admin của bạn
 $page_title = 'Quản lí banner, popup';
 $page_icon = 'fa-solid fa-images';
