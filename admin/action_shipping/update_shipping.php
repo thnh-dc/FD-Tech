@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../check_admin.php';
+require_once __DIR__ . '/../../auth/check_admin.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../shipping_orders.php");

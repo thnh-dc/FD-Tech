@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '/../auth/check_admin.php';
 
 $search = trim($_GET['search'] ?? '');
 $status_filter = trim($_GET['status'] ?? '');
