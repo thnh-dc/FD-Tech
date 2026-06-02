@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($user && password_verify($password, $user['password'])) {
 
-                // 1. Kiểm tra nếu tài khoản bị khóa
                 if (isset($user['status']) && $user['status'] === 'blocked') {
                     $_SESSION['noti_message'] = 'Tài khoản bạn bị khoá vui lòng dùng tài khoản khác!';
                     $_SESSION['noti_type'] = 'error';
@@ -26,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     exit();
                 }
 
-                // 2. Nếu là quyền ADMIN -> Đẩy ngay sang file riêng của Admin
                 elseif (isset($user['role']) && $user['role'] === 'admin') {
                     $_SESSION['pending_admin_login'] = true;
                     $_SESSION['admin_step'] = 1;
@@ -36,13 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     exit();
                 }
 
-                // 3. Nếu là USER THƯỜNG -> Tiến hành gửi OTP và xử lý
                 else {
                     $otp_code = rand(100000, 999999);
 
-                    // Gọi hàm gửi email với hành động 'login'
                     if (send_system_email($user['email'], $otp_code, 'login')) {
-                        // Lưu thông tin tạm thời để chuẩn bị đối chiếu ở bước 2
                         $_SESSION['temp_user_data'] = [
                             'id' => $user['id'],
                             'username' => $user['username'],
@@ -50,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             'avatar' => $user['avatar']
                         ];
                         $_SESSION['temp_user_otp'] = $otp_code;
-                        $_SESSION['user_login_step'] = 2; // Chuyển sang bước 2
+                        $_SESSION['user_login_step'] = 2;
 
                         $_SESSION['noti_message'] = 'Mã OTP xác thực đăng nhập đã được gửi vào Email của bạn!';
                         $_SESSION['noti_type'] = 'success';
@@ -72,20 +67,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // BƯỚC 2: XỬ LÝ XÁC THỰC MÃ OTP (CHỈ DÀNH CHO USER)
     if (isset($_POST['btn_step_2'])) {
         $user_otp = trim($_POST['otp_input']);
         $system_otp = $_SESSION['temp_user_otp'] ?? '';
         $temp_user = $_SESSION['temp_user_data'] ?? null;
 
         if (!empty($system_otp) && $user_otp == $system_otp && $temp_user) {
-            // Đăng nhập chính thức thành công
             $_SESSION['user_id'] = $temp_user['id'];
             $_SESSION['username'] = $temp_user['username'];
             $_SESSION['role'] = $temp_user['role'];
             $_SESSION['avatar'] = $temp_user['avatar'];
 
-            // Xóa dọn dẹp các session rác của bước xác thực
             unset($_SESSION['temp_user_data'], $_SESSION['temp_user_otp'], $_SESSION['user_login_step']);
             header("Location: ../user/index.php");
             exit();

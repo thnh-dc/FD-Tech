@@ -3,19 +3,16 @@ session_start();
 require_once '../config/database.php';
 require_once '../libs/PHPMailer/send_email.php';
 
-// Xác định bước hiện tại (Mặc định bước 1: Nhập thông tin đăng ký)
 $register_step = $_SESSION['user_register_step'] ?? 1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
-    // BƯỚC 1: KIỂM TRA THÔNG TIN & GỬI OTP
+
     if (isset($_POST['btn_register_step_1'])) {
         $username = trim($_POST['username']);
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
         $confirm_password = trim($_POST['confirm_password']);
 
-        // 1. Kiểm tra định dạng dữ liệu phía Server
         if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]{2,19}$/', $username)) {
             $_SESSION['noti_message'] = 'Tên đăng nhập phải từ 3-20 ký tự, không chứa ký tự đặc biệt và phải bắt đầu bằng chữ cái!';
             $_SESSION['noti_type'] = 'error';
@@ -29,11 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['noti_message'] = 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.';
             $_SESSION['noti_type'] = 'error';
         } else {
-            // Mã hóa mật khẩu trước khi lưu tạm
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
             try {
-                // 2. Kiểm tra trùng lặp tài khoản trong Database
                 $stmt = $pdo->prepare("SELECT username, email FROM users WHERE username = ? OR email = ? LIMIT 1");
                 $stmt->execute([$username, $email]);
                 $existing_user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -46,18 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                     $_SESSION['noti_type'] = 'error';
                 } else {
-                    // 3. Thông tin sạch -> Tạo OTP gửi qua Email
                     $otp_code = rand(100000, 999999);
 
                     if (send_system_email($email, $otp_code, 'register')) {
-                        // Lưu thông tin đăng ký tạm vào Session
                         $_SESSION['temp_register_data'] = [
                             'username' => $username,
                             'email' => $email,
                             'password' => $hashed_password
                         ];
                         $_SESSION['temp_register_otp'] = $otp_code;
-                        $_SESSION['user_register_step'] = 2; // Đẩy sang bước nhập mã
+                        $_SESSION['user_register_step'] = 2;
 
                         $_SESSION['noti_message'] = 'Mã OTP xác thực đăng ký đã gửi đến Email của bạn!';
                         $_SESSION['noti_type'] = 'success';
@@ -75,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // BƯỚC 2: KIỂM TRA MÃ OTP & LƯU CHÍNH THỨC
     if (isset($_POST['btn_register_step_2'])) {
         $user_otp = trim($_POST['otp_input']);
         $system_otp = $_SESSION['temp_register_otp'] ?? '';
@@ -83,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!empty($system_otp) && $user_otp == $system_otp && $reg_data) {
             try {
-                // Thỏa mãn OTP -> Lưu chính thức vào database
                 $stmt = $pdo->prepare("INSERT INTO users (username, password, email, role, status) VALUES (?, ?, ?, 'user', 'active')");
                 $stmt->execute([$reg_data['username'], $reg_data['password'], $reg_data['email']]);
 
@@ -91,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['noti_message'] = 'Đăng ký tài khoản thành công! Vui lòng đăng nhập.';
                 $_SESSION['noti_type'] = 'success';
-                
+
                 header("Location: login.php");
                 exit();
             } catch (PDOException $e) {
@@ -162,11 +153,12 @@ include '../includes/auth_header.php';
             Chào mừng bạn! Hệ thống đã gửi một mã OTP xác nhận tài khoản mới tới hòm thư Email bạn vừa điền.
         </p>
         <div class="input-group">
-            <input type="text" name="otp_input" placeholder="Nhập mã kích hoạt 6 số" maxlength="6" required autocomplete="off" 
-                   style="text-align: center; font-size: 18px; letter-spacing: 5px; font-weight: bold;">
+            <input type="text" name="otp_input" placeholder="Nhập mã kích hoạt 6 số" maxlength="6" required
+                autocomplete="off" style="text-align: center; font-size: 18px; letter-spacing: 5px; font-weight: bold;">
         </div>
 
-        <button type="submit" class="btn-login" style="background-color: #1a9bb8; border-color: #1a9bb8;">Xác nhận kích hoạt</button>
+        <button type="submit" class="btn-login" style="background-color: #1a9bb8; border-color: #1a9bb8;">Xác nhận kích
+            hoạt</button>
 
         <div class="register-link" style="margin-top: 25px;">
             <a href="?action=cancel_reg" style="color: #db4437;"><i class="fas fa-arrow-left"></i> Thay đổi thông tin</a>
@@ -181,4 +173,5 @@ include '../includes/auth_header.php';
 <?php include '../includes/notification.php'; ?>
 
 </body>
+
 </html>
