@@ -1,0 +1,141 @@
+.review-container {
+    width: 100%;
+    background: var(--bg-main);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+}
+
+.review-container h2 {
+    color: var(--primary);
+    margin-bottom: var(--space-md);
+}
+
+.review-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--space-md);
+}
+
+.review-container th,
+.review-container td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.review-container th {
+    background: var(--primary);
+    color: var(--bg-main);
+}
+
+.filter-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-bar select,
+.filter-bar button,
+.filter-bar input,
+.filter-bar a {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid #ccc;
+    font-size: var(--text-sm);
+}
+
+.filter-bar button {
+    background: var(--primary);
+    color: var(--bg-main);
+    cursor: pointer;
+    border: none;
+    font-weight: bold;
+}
+
+.btn-hide {
+    background: var(--danger);
+    color: var(--bg-main);
+    padding: 6px 10px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.btn-show {
+    background: var(--success);
+    color: var(--bg-main);
+    padding: 6px 10px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.reply-box {
+    margin-top: 10px;
+    background: var(--bg-light);
+    padding: 10px;
+    border-left: 3px solid var(--primary);
+    font-size: 0.9em;
+}
+
+.reply-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.reply-form textarea {
+    width: 100%;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid #ccc;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.reply-form button {
+    background: var(--secondary);
+    color: var(--bg-main);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.review-status-show {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.review-status-hidden {
+    color: var(--danger);
+    font-weight: bold;
+}
+
+.clear-filter-btn {
+    padding: 8px 12px;
+    background: var(--text-muted);
+    color: var(--bg-main);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    font-weight: bold;
+    border: none;
+}
+
+.select2-container .select2-selection--single {
+    height: 35px;
+    border: 1px solid #ccc;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 33px;
+}

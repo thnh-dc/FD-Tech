@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '../../auth/check_admin.php';
 
 $search = trim($_GET['search'] ?? '');
 $status = $_GET['status'] ?? '';
@@ -71,8 +71,8 @@ function getAvatarSrc($avatar)
 ?>
 
 <?php
-$page_title = 'Quản lí người dùng';
-$page_icon = 'fa-solid fa-users';
+$page_title = 'Tài khoản người dùng';
+$page_icon = 'fa-solid fa-user-gear';
 
 $custom_css = '
     <link rel="stylesheet" href="/FD-Tech/assets/css/style_user_management.css">
