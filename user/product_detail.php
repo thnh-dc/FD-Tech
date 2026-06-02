@@ -294,7 +294,18 @@ $display_price = $has_discount ? $sp['discount_price'] : $sp['price'];
                                         <?= str_repeat('⭐', $r['rating'] ?? 5) ?>
                                     </span>
                                 </div>
+
                                 <p><?= nl2br(htmlspecialchars($r['comment'] ?? '')) ?></p>
+
+                                <?php if (!empty($r['admin_reply'])): ?>
+                                    <div class="admin-reply-box">
+                                        <strong>
+                                            <i class="fa-solid fa-reply"></i>
+                                            Phản hồi từ FD Tech:
+                                        </strong>
+                                        <p><?= nl2br(htmlspecialchars($r['admin_reply'])) ?></p>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>

@@ -17,12 +17,13 @@
                 <i class="fa-solid fa-cart-shopping"></i> Quản lý đơn hàng
             </a>
         </li>
-        
+
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'shipping_orders.php') ? 'active' : '' ?>">
             <a href="/FD-Tech/admin/shipping_orders.php">
                 <i class="fa-solid fa-truck-fast"></i> Quản lí vận chuyển
             </a>
         </li>
+
 
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : '' ?>">
             <a href="/FD-Tech/admin/manage_requests.php">
@@ -31,9 +32,10 @@
         </li>
 
         <?php
-            $user_pages = ['chat_list.php', 'chat_detail.php', 'list_users.php', 'user_detail.php'];
+            $user_pages = ['chat_list.php', 'chat_detail.php', 'list_users.php', 'user_detail.php', 'admin_reviews.php'];
             $is_user_active = in_array(basename($_SERVER['PHP_SELF']), $user_pages);
         ?>
+
         <li class="menu-item has-submenu">
             <a href="#" class="submenu-toggle">
                 <i class="fa-solid fa-users"></i> Quản lý người dùng
@@ -46,11 +48,13 @@
                         <i class="fa-solid fa-comments"></i> Tin nhắn khách hàng
                     </a>
                 </li>
+
                 <li>
-                    <a href="#" class="<?= (basename($_SERVER['PHP_SELF']) == '#' || basename($_SERVER['PHP_SELF']) == '#') ? 'active-sub' : '' ?>">
+                    <a href="/FD-Tech/admin/admin_reviews.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'admin_reviews.php') ? 'active-sub' : '' ?>">
                         <i class="fa-regular fa-comment"></i> Đánh giá khách hàng
                     </a>
                 </li>
+
                 <li>
                     <a href="/FD-Tech/admin/list_users.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_users.php' || basename($_SERVER['PHP_SELF']) == 'user_detail.php') ? 'active-sub' : '' ?>">
                         <i class="fa-solid fa-user-gear"></i> Tài khoản người dùng
