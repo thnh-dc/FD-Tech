@@ -50,9 +50,7 @@ if ($comment === '') {
 }
 
 try {
-    $stmtProduct = $pdo->prepare("
-        SELECT id FROM products WHERE id = ? LIMIT 1
-    ");
+    $stmtProduct = $pdo->prepare("SELECT id FROM products WHERE id = ? LIMIT 1");
     $stmtProduct->execute([$product_id]);
     $product = $stmtProduct->fetch(PDO::FETCH_ASSOC);
     if (!$product) {
@@ -83,54 +81,19 @@ try {
         exit;
     }
 
-    $image_url = null;
-    if (isset($_FILES['review_image']) && $_FILES['review_image']['error'] === UPLOAD_ERR_OK) {
-        $file = $_FILES['review_image'];
-        $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        
-        if (in_array($file['type'], $allowed_types)) {
-            $upload_dir = '../../upload/review_image/'; 
-            
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-            
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = 'review_' . time() . '_' . uniqid() . '.' . $ext; 
-            $destination = $upload_dir . $filename;
-            
-            if (move_uploaded_file($file['tmp_name'], $destination)) {
-                $image_url = 'upload/review_image/' . $filename;
-            } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Không thể lưu ảnh tải lên máy chủ. Vui lòng thử lại.'
-                ]);
-                exit;
-            }
-        } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Định dạng ảnh không hợp lệ. Chỉ chấp nhận JPG, PNG, GIF hoặc WEBP.'
-            ]);
-            exit;
-        }
-    }
-
     $stmt = $pdo->prepare("
         INSERT INTO product_reviews (
-            product_id, user_id, rating, comment, image_url, status
+            product_id, user_id, rating, comment, status
         ) 
         VALUES (
-            :product_id, :user_id, :rating, :comment, :image_url, 'show'
+            :product_id, :user_id, :rating, :comment, 'show'
         )
     ");
     $stmt->execute([
         'product_id' => $product_id,
         'user_id' => $user_id,
         'rating' => $rating,
-        'comment' => $comment,
-        'image_url' => $image_url
+        'comment' => $comment
     ]);
 
     echo json_encode([
@@ -142,7 +105,7 @@ try {
 } catch (PDOException $e) {
     echo json_encode([
         'success' => false,
-        'message' => 'Lỗi lưu trữ dữ liệu.'
+        'message' => 'Lỗi SQL: ' . $e->getMessage()
     ]);
     exit;
 }
