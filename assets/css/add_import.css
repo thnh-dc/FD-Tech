@@ -1,0 +1,213 @@
+/* Giao diện Lập Phiếu Nhập Kho - FD Tech Admin */
+.import-container {
+    padding: 20px;
+}
+
+.import-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.import-header-title {
+    color: #1e293b; 
+    font-size: 1.6rem; 
+    font-weight: 700; 
+    margin: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.import-header-sub {
+    color: #64748b; 
+    margin: 0 0 25px 0;
+    font-size: 0.95rem;
+}
+
+/* Khối thông tin chung về Chứng từ */
+.import-meta-grid {
+    display: grid; 
+    grid-template-columns: 1fr 2fr; 
+    gap: 25px; 
+    background: #f8fafc; 
+    padding: 20px; 
+    border-radius: 8px; 
+    border: 1px solid #e2e8f0;
+    margin-bottom: 25px;
+}
+
+.form-group-label {
+    display: block; 
+    margin-bottom: 8px; 
+    font-weight: 600; 
+    color: #475569; 
+    font-size: 0.9rem;
+}
+
+.form-control-select,
+.form-control-input,
+.form-control-textarea {
+    width: 100%; 
+    padding: 10px 12px; 
+    border: 1px solid #cbd5e1; 
+    border-radius: 6px; 
+    box-sizing: border-box; 
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.form-control-select:focus,
+.form-control-input:focus,
+.form-control-textarea:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Khu vực Danh sách linh kiện nhập kho */
+.import-items-section {
+    margin-top: 30px;
+}
+
+.section-title {
+    color: #1e293b; 
+    font-size: 1.15rem; 
+    font-weight: 600; 
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.import-table-wrapper {
+    border: 1px solid #e2e8f0; 
+    border-radius: 8px; 
+    overflow: hidden; 
+    margin-bottom: 15px;
+}
+
+.import-table {
+    width: 100%; 
+    border-collapse: collapse; 
+    text-align: left;
+}
+
+.import-table th {
+    background: #f1f5f9; 
+    color: #475569; 
+    font-weight: 600; 
+    padding: 12px 15px; 
+    font-size: 0.85rem;
+}
+
+.import-item-row td {
+    padding: 12px 15px; 
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+}
+
+.row-subtotal {
+    font-weight: bold; 
+    color: #0f172a;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Tổng kết hóa đơn nhập */
+.import-summary-box {
+    background: #eff6ff; 
+    padding: 20px; 
+    border-radius: 8px; 
+    border: 1px solid #bfdbfe; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 25px;
+}
+
+.summary-label {
+    margin: 0; 
+    font-size: 0.95rem; 
+    font-weight: 600; 
+    color: #1e40af;
+}
+
+.summary-value {
+    margin: 0; 
+    color: #2563eb; 
+    font-size: 1.6rem; 
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Các loại nút hành động */
+.btn-import {
+    padding: 10px 20px; 
+    font-weight: 600; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: none;
+    transition: background 0.2s;
+}
+
+.btn-import-primary {
+    background: #2563eb; 
+    color: #fff;
+}
+
+.btn-import-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-import-secondary {
+    background: #94a3b8; 
+    color: #fff;
+}
+
+.btn-import-secondary:hover {
+    background: #64748b;
+}
+
+.btn-import-outline {
+    background: #fff; 
+    color: #2563eb; 
+    border: 1px solid #bfdbfe;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+.btn-import-outline:hover {
+    background: #f0f5ff;
+}
+
+.btn-remove-row {
+    background: #fee2e2; 
+    color: #ef4444; 
+    border: none; 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 6px; 
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-remove-row:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+.import-actions-bar {
+    margin-top: 25px; 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 12px;
+}

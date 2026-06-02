@@ -1,0 +1,474 @@
+.order-filter-tabs {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    width: 100%; 
+}
+
+.order-filter-tabs a {
+    flex: 1; 
+    text-align: center;
+    padding: 14px 5px; 
+    color: #555;
+    font-size: 14px;
+    border-right: 1px solid #eee;
+    text-decoration: none;
+
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    display: block; 
+}
+
+.order-filter-tabs a:last-child {
+    border: none;
+}
+
+.order-filter-tabs a:hover,
+.order-filter-tabs a.active {
+    color: #1a9bb8;
+    background: #f0f8ff;
+}
+
+.order-filter-tabs a.active {
+    border-bottom: 2px solid #1a9bb8;
+    font-weight: bold;
+}
+
+.order-empty-state,
+.order-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.order-empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    border-color: #eee;
+}
+
+.order-card {
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.order-summary,
+.order-footer,
+.order-info-row,
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-summary {
+    gap: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.order-summary-left {
+    flex: 1;
+    min-width: 180px;
+}
+
+.order-summary-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.order-summary-status {
+    font-size: 13px;
+    color: #666;
+}
+
+.status-badge-text {
+    color: #26aa99; 
+    font-weight: 500;
+    display: inline-block !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+}
+
+.order-info-row,
+.order-address-row,
+.order-item-meta {
+    font-size: 13px;
+    color: #666;
+}
+
+.order-summary-price,
+.order-total-text {
+    font-size: 14px;
+    color: #555;
+}
+
+.order-item-price,
+.order-total-amount,
+.order-summary-price strong {
+    color: #ee4d2d;
+    font-weight: bold;
+}
+
+.order-total-amount {
+    font-size: 18px;
+}
+
+.order-item-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.order-item-info {
+    flex: 1;
+}
+
+.order-detail-box {
+    display: none;
+    background: #fafafa;
+    padding: 15px;
+}
+
+.order-info-row,
+.order-address-row {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ccc;
+}
+
+.order-item {
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 12px;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.order-item-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 4px;
+    background: #f0f0f0;
+    flex-shrink: 0;
+}
+
+.order-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.order-customer-info {
+    background-color: #f9f9f9;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    margin-left: -15px; 
+    margin-right: -15px;  
+    text-align: left;
+    font-size: 14px;      
+    color: #444;
+    line-height: 1.6;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.order-customer-info div {
+    margin-bottom: 6px;
+}
+
+.order-customer-info div:last-child {
+    margin-bottom: 0;
+}
+
+.order-customer-info strong {
+    color: #222;
+    font-weight: 500;
+}
+
+.order-payment-method-box {
+    text-align: left;
+    font-size: 14px; 
+    color: #444;
+    padding: 12px 0;
+    margin-top: 15px;
+    border-top: 1px dashed #eee; 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;            
+}
+
+.order-payment-method-box strong {
+    color: #222;
+    font-weight: 500;
+}
+
+.order-payment-method-box span {
+    color: #666;
+    line-height: 1.5;
+    background: #f5f5f5;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: block;
+}
+
+.order-footer {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.order-actions-group {
+    display: flex; 
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- Đã sửa: Nút Xem chi tiết dạng ô bao quanh, không gạch chân --- */
+.btn-toggle-detail {
+    background: #fff;
+    color: #1a9bb8;
+    border: 1px solid #1a9bb8;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0 15px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-toggle-detail:hover {
+    background: #1a9bb8;
+    color: #fff;
+}
+
+.btn-cancel-order {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+}
+
+.btn-cancel-order:hover {
+    background: #f8f9fa;
+}
+
+.btn-pay-now {
+    background-color: #ee4d2d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.btn-pay-now:hover {
+    background-color: #d73211;
+}
+
+.btn-confirm-received {
+    background-color: #26aa99; 
+    color: #fff; 
+    border: none; 
+    padding: 8px 15px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.btn-confirm-received:hover {
+    opacity: 0.9;
+}
+
+/* =========================================================================
+   🔥 CSS CỦA TRANG YÊU CẦU ĐỔI TRẢ / BẢO HÀNH (REQUEST_SERVICE.PHP)
+   ========================================================================= */
+.service-request-container {
+    background: #FFFFFF;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 6px 6px rgba(1, 0, 0, 0.5);
+    margin: 10px auto;
+    max-width: 100%;
+}
+
+.service-request-container h2 {
+    color: #0B2A4A;
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.btn-back-link {
+    color: #6C757D;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s;
+}
+
+.btn-back-link:hover {
+    color: #0B2A4A;
+}
+
+.service-request-container .order-meta {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #6C757D;
+}
+
+.service-request-container .order-meta strong {
+    color: #0B2A4A;
+}
+
+/* Tabs tinh chỉnh hợp với layout nhỏ gọn bên trong Profile */
+.service-tabs {
+    display: flex;
+    border-bottom: 2px solid #E5E7EB;
+    margin: 20px 0;
+}
+
+.service-tab-btn {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    background: #E5E7EB;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6C757D;
+    transition: all 0.3s;
+}
+
+.service-tab-btn.active {
+    background: #0B2A4A;
+    color: #FFFFFF;
+}
+
+.service-tab-content {
+    display: none;
+}
+
+.service-tab-content.active {
+    display: block;
+}
+
+/* Form Fields */
+.service-form-group {
+    margin-bottom: 18px;
+}
+
+.service-form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333333;
+}
+
+.service-form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333333;
+    background: #FFFFFF;
+    resize: none; 
+}
+
+.service-form-control:focus {
+    outline: none;
+    border-color: #23B5D3;
+}
+
+/* Buttons */
+.service-action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.service-btn-submit {
+    background: #0B2A4A;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    flex: 3;
+    transition: 0.3s;
+    text-align: center;
+}
+
+.service-btn-submit:hover {
+    opacity: 0.85;
+}
+
+#tab-warranty .service-btn-submit {
+    background: #23B5D3;
+}
+
+.service-btn-cancel {
+    background: #F8F9FA;
+    color: #495057;
+    border: 1px solid #CED4DA;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    flex: 1;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.service-btn-cancel:hover {
+    background: #E2E6EA;
+    color: #212529;
+}
+
+.service-error-box {
+    background: #FFF5F5;
+    color: #ff0019;
+    padding: 15px;
+    border: 1px solid #FED7D7;
+    border-radius: 4px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 14px;
+}
