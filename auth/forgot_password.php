@@ -1,5 +1,4 @@
 <?php
-// FILE: forgot_password.php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -8,8 +7,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once '../config/database.php';
-
-// NẠP FILE HÀM GỬI EMAIL DÙNG CHUNG VỪA TẠO
 require_once '../libs/PHPMailer/send_email.php';
 
 $referer = $_SERVER['HTTP_REFERER'] ?? '';
@@ -21,19 +18,17 @@ if (!empty($referer) && strpos($referer, 'forgot_password.php') === false) {
 $step = $_SESSION['reset_step'] ?? 1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
-    // --- BƯỚC 1: KIỂM TRA TÀI KHOẢN & GỬI EMAIL ---
+
     if (isset($_POST['step_1'])) {
         $user_input = trim($_POST['user_input']);
-        
+
         $stmt = $pdo->prepare("SELECT id, email FROM users WHERE (email = ? OR phone = ?) AND role != 'admin'");
         $stmt->execute([$user_input, $user_input]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
-            $real_otp = rand(100000, 999999); 
-            
-            // GỌI HÀM DÙNG CHUNG: Truyền email, mã OTP và hành động 'forgot_password'
+            $real_otp = rand(100000, 999999);
+
             if (send_system_email($user['email'], $real_otp, 'forgot_password')) {
                 $_SESSION['reset_step'] = 2;
                 $_SESSION['reset_user_id'] = $user['id'];
@@ -53,13 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // --- BƯỚC 2: KIỂM TRA MÃ OTP ---
     if (isset($_POST['step_2'])) {
         $user_otp = trim($_POST['otp_input']);
         $system_otp = $_SESSION['system_otp'] ?? '';
 
         if (!empty($system_otp) && $user_otp == $system_otp) {
-            $_SESSION['reset_step'] = 3; 
+            $_SESSION['reset_step'] = 3;
             $_SESSION['noti_message'] = 'Xác thực OTP thành công! Vui lòng đặt mật khẩu mới.';
             $_SESSION['noti_type'] = 'success';
         } else {
@@ -70,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // --- BƯỚC 3: CẬP NHẬT MẬT KHẨU MỚI ---
     if (isset($_POST['step_3'])) {
         $new_pass = $_POST['new_password'];
         $conf_pass = $_POST['confirm_password'];
@@ -81,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($new_pass === $conf_pass) {
             $hashed_password = password_hash($new_pass, PASSWORD_BCRYPT);
             $user_id = $_SESSION['reset_user_id'] ?? 0;
-            
+
             try {
                 if ($user_id > 0) {
                     $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ? AND role != 'admin'");
@@ -121,10 +114,13 @@ include '../includes/auth_header.php';
 
 <div class="form-header">
     <h2 class="form-title">
-        <?php 
-            if ($step == 1) echo 'Lấy lại mật khẩu';
-            elseif ($step == 2) echo 'Nhập mã xác thực';
-            else echo 'Mật khẩu mới';
+        <?php
+        if ($step == 1)
+            echo 'Lấy lại mật khẩu';
+        elseif ($step == 2)
+            echo 'Nhập mã xác thực';
+        else
+            echo 'Mật khẩu mới';
         ?>
     </h2>
 </div>
@@ -133,7 +129,8 @@ include '../includes/auth_header.php';
     <form action="" method="POST">
         <input type="hidden" name="step_1" value="1">
         <div class="input-group">
-            <input type="text" name="user_input" placeholder="Nhập Email hoặc Số điện thoại của tài khoản" required autocomplete="off">
+            <input type="text" name="user_input" placeholder="Nhập Email hoặc Số điện thoại của tài khoản" required
+                autocomplete="off">
         </div>
         <button type="submit" class="btn-login">Gửi mã OTP qua Email</button>
     </form>
@@ -145,21 +142,25 @@ include '../includes/auth_header.php';
             Hệ thống đã gửi một thư chứa mã OTP đến Email của bạn.<br>Vui lòng kiểm tra.
         </p>
         <div class="input-group">
-            <input type="text" name="otp_input" placeholder="Nhập mã xác thực gồm 6 số" maxlength="6" required autocomplete="off" style="text-align: center; font-size: 18px; letter-spacing: 5px;">
+            <input type="text" name="otp_input" placeholder="Nhập mã xác thực gồm 6 số" maxlength="6" required
+                autocomplete="off" style="text-align: center; font-size: 18px; letter-spacing: 5px;">
         </div>
-        <button type="submit" class="btn-login" style="background-color: #1a9bb8; border-color: #1a9bb8;">Xác minh mã OTP</button>
+        <button type="submit" class="btn-login" style="background-color: #1a9bb8; border-color: #1a9bb8;">Xác minh mã
+            OTP</button>
     </form>
 
 <?php else: ?>
     <form action="" method="POST">
         <input type="hidden" name="step_3" value="1">
         <div class="input-group">
-            <input type="password" name="new_password" placeholder="Mật khẩu mới (Tối thiểu 6 ký tự)" required minlength="6">
+            <input type="password" name="new_password" placeholder="Mật khẩu mới (Tối thiểu 6 ký tự)" required
+                minlength="6">
         </div>
         <div class="input-group">
             <input type="password" name="confirm_password" placeholder="Nhập lại mật khẩu mới" required minlength="6">
         </div>
-        <button type="submit" class="btn-login" style="background-color: #1a9bb8; border-color: #1a9bb8;">Xác nhận đổi mật khẩu</button>
+        <button type="submit" class="btn-login" style="background-color: #1a9bb8; border-color: #1a9bb8;">Xác nhận đổi mật
+            khẩu</button>
     </form>
 <?php endif; ?>
 
@@ -169,9 +170,10 @@ include '../includes/auth_header.php';
 
 </div>
 </div>
-</div> 
+</div>
 
 <?php include '../includes/footer.php'; ?>
 <?php include '../includes/notification.php'; ?>
 </body>
+
 </html>

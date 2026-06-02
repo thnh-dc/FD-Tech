@@ -10,7 +10,7 @@ if (!isset($_SESSION['pending_admin_login'])) {
 $step = $_SESSION['admin_step'] ?? 1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     if (isset($_POST['verify_step_1'])) {
         $username = trim($_POST['username']);
         $password = $_POST['password'];
