@@ -5,19 +5,26 @@ require_once __DIR__ . '/check_admin.php';
 
 $search = $_GET['search'] ?? '';
 $category_id = $_GET['category_id'] ?? '';
+$tag_id = $_GET['tag_id'] ?? '';
 
 try {
     $categories = $pdo->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
+    $tags = $pdo->query("SELECT * FROM tags ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
 
     $sql = "SELECT 
                 p.id,
                 p.name,
                 p.price,
+                p.discount_price,
                 p.image_url,
                 p.description,
-                c.name AS cat_name
+                c.name AS cat_name,
+                GROUP_CONCAT(t.name ORDER BY t.id SEPARATOR ',') AS tag_names,
+                GROUP_CONCAT(t.id ORDER BY t.id SEPARATOR ',') AS tag_ids
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN product_tags pt ON p.id = pt.product_id
+            LEFT JOIN tags t ON pt.tag_id = t.id
             WHERE p.name LIKE ?";
 
     $params = ["%$search%"];
@@ -27,11 +34,30 @@ try {
         $params[] = $category_id;
     }
 
-    $sql .= " ORDER BY p.id DESC";
+    if (!empty($tag_id)) {
+        $sql .= " AND EXISTS (
+                    SELECT 1 
+                    FROM product_tags pt_filter
+                    WHERE pt_filter.product_id = p.id
+                    AND pt_filter.tag_id = ?
+                  )";
+        $params[] = $tag_id;
+    }
+
+    $sql .= " GROUP BY 
+                p.id,
+                p.name,
+                p.price,
+                p.discount_price,
+                p.image_url,
+                p.description,
+                c.name
+              ORDER BY p.id DESC";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
     die("Lỗi query: " . $e->getMessage());
 }
@@ -48,6 +74,28 @@ function getProductImage($image_url)
 
     return "../upload/product_image/" . $image_url;
 }
+
+function renderProductTags($tag_ids)
+{
+    if (empty($tag_ids)) {
+        return '<span style="color:#999;font-size:12px;">Chưa gắn tag</span>';
+    }
+
+    $ids = explode(',', $tag_ids);
+    $html = '';
+
+    foreach ($ids as $id) {
+        if ((int)$id === 1) {
+            $html .= '<span class="product-tag tag-featured"><i class="fa-solid fa-star"></i> Nổi bật</span>';
+        }
+
+        if ((int)$id === 2) {
+            $html .= '<span class="product-tag tag-sale"><i class="fa-solid fa-bolt"></i> Flash Sale</span>';
+        }
+    }
+
+    return $html;
+}
 ?>
 
 <?php
@@ -57,6 +105,63 @@ $custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/style_list_produ
 
 include 'includes/header.php';
 ?>
+
+<style>
+    .price-old {
+        display: block;
+        color: #999;
+        text-decoration: line-through;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .price-sale {
+        display: block;
+        color: #dc2626;
+        font-weight: 800;
+        font-size: 15px;
+    }
+
+    .price-normal {
+        color: #dc2626;
+        font-weight: 800;
+    }
+
+    .tag-list {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+    }
+
+    .product-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .tag-featured {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .tag-sale {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .search-form {
+        flex-wrap: wrap;
+    }
+
+    .tag-select {
+        min-width: 170px;
+    }
+</style>
 
         <div class="product-wrapper">
 
@@ -84,9 +189,31 @@ include 'includes/header.php';
                             <?php endforeach; ?>
                         </select>
 
+                        <select name="tag_id" class="form-control tag-select" onchange="this.form.submit()">
+                            <option value="">Tất cả tag</option>
+
+                            <?php foreach ($tags as $tag): ?>
+                                <option value="<?= $tag['id'] ?>" <?= ($tag_id == $tag['id']) ? 'selected' : '' ?>>
+                                    <?php if ($tag['id'] == 1): ?>
+                                        Nổi bật
+                                    <?php elseif ($tag['id'] == 2): ?>
+                                        Flash Sale
+                                    <?php else: ?>
+                                        <?= htmlspecialchars($tag['name']) ?>
+                                    <?php endif; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
                         <button class="btn btn-primary">
                             <i class="fa-solid fa-search"></i>
                         </button>
+
+                        <?php if ($search !== '' || $category_id !== '' || $tag_id !== ''): ?>
+                            <a href="list_products.php" class="btn btn-secondary">
+                                Bỏ lọc
+                            </a>
+                        <?php endif; ?>
 
                     </form>
 
@@ -117,6 +244,9 @@ include 'includes/header.php';
 
                             <?php
                                 $image_src = getProductImage($p['image_url']);
+                                $price = (float)$p['price'];
+                                $discount_price = isset($p['discount_price']) ? (float)$p['discount_price'] : 0;
+                                $has_sale = $discount_price > 0 && $discount_price < $price;
                             ?>
 
                             <tr>
@@ -132,6 +262,10 @@ include 'includes/header.php';
 
                                 <td>
                                     <strong><?= htmlspecialchars($p['name']) ?></strong>
+
+                                    <div class="tag-list">
+                                        <?= renderProductTags($p['tag_ids']) ?>
+                                    </div>
                                 </td>
 
                                 <td>
@@ -139,7 +273,19 @@ include 'includes/header.php';
                                 </td>
 
                                 <td class="product-price">
-                                    <?= number_format($p['price'], 0, ',', '.') ?>₫
+                                    <?php if ($has_sale): ?>
+                                        <span class="price-old">
+                                            <?= number_format($price, 0, ',', '.') ?>₫
+                                        </span>
+
+                                        <span class="price-sale">
+                                            <?= number_format($discount_price, 0, ',', '.') ?>₫
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="price-normal">
+                                            <?= number_format($price, 0, ',', '.') ?>₫
+                                        </span>
+                                    <?php endif; ?>
                                 </td>
 
                                 <td>

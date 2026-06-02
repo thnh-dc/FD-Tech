@@ -30,58 +30,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // --- XỬ LÝ SẢN PHẨM ---
-    $tags = $_POST['tags'] ?? [];
-    $is_new = in_array('is_new', $tags) ? 1 : 0;
-    $is_hot = in_array('is_hot', $tags) ? 1 : 0;
-    $is_flash_sale = isset($_POST['is_flash_sale']) ? 1 : 0;
-    $flash_sale_price = ($is_flash_sale && !empty($_POST['flash_sale_price'])) ? (float)$_POST['flash_sale_price'] : null;
-
     $name = trim($_POST['name'] ?? '');
     $category_id = (int)($_POST['category_id'] ?? 0);
     $price = (float)($_POST['price'] ?? 0);
     $stock_quantity = (int)($_POST['stock_quantity'] ?? 0);
     $description = trim($_POST['description'] ?? '');
 
+    $tags = $_POST['tags'] ?? [];
+
+    $discount_price = null;
+    if (in_array('2', $tags) && !empty($_POST['discount_price'])) {
+        $discount_price = (float)$_POST['discount_price'];
+    }
+
     try {
         $pdo->beginTransaction();
 
-        $stmt = $pdo->prepare("INSERT INTO products (name, category_id, price, stock_quantity, image_url, description, is_new, is_hot, is_flash_sale, flash_sale_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $category_id, $price, $stock_quantity, $image_url, $description, $is_new, $is_hot, $is_flash_sale, $flash_sale_price]);
-        
+        $stmt = $pdo->prepare("
+            INSERT INTO products
+            (category_id, name, price, discount_price, stock_quantity, image_url, description)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+
+        $stmt->execute([
+            $category_id,
+            $name,
+            $price,
+            $discount_price,
+            $stock_quantity,
+            $image_url,
+            $description
+        ]);
+
         $product_id = $pdo->lastInsertId();
 
-        // Xử lý lưu thông số kỹ thuật động
-        if (!empty($_POST['spec_names']) && !empty($_POST['spec_values'])) {
-            $spec_names = $_POST['spec_names'];
-            $spec_values = $_POST['spec_values'];
+        if (!empty($tags)) {
+            $stmt_tag = $pdo->prepare("
+                INSERT INTO product_tags(product_id, tag_id)
+                VALUES (?, ?)
+            ");
 
-            $stmt_spec = $pdo->prepare("INSERT INTO product_specifications (product_id, spec_name, spec_value) VALUES (?, ?, ?)");
-            for ($i = 0; $i < count($spec_names); $i++) {
-                $s_name = trim($spec_names[$i]);
-                $s_val = trim($spec_values[$i]);
-                if (!empty($s_name) && !empty($s_val)) {
-                    $stmt_spec->execute([$product_id, $s_name, $s_val]);
+            foreach ($tags as $tag_id) {
+                $tag_id = (int)$tag_id;
+
+                if (in_array($tag_id, [1, 2])) {
+                    $stmt_tag->execute([$product_id, $tag_id]);
                 }
             }
         }
 
-        // Xử lý lưu album ảnh phụ (Gallery)
+        if (!empty($_POST['spec_names']) && !empty($_POST['spec_values'])) {
+            $spec_names = $_POST['spec_names'];
+            $spec_values = $_POST['spec_values'];
+
+            $stmt_spec = $pdo->prepare("
+                INSERT INTO product_specs(product_id, spec_name, spec_value, sort_order)
+                VALUES (?, ?, ?, ?)
+            ");
+
+            $sort_order = 1;
+
+            for ($i = 0; $i < count($spec_names); $i++) {
+                $s_name = trim($spec_names[$i]);
+                $s_val = trim($spec_values[$i] ?? '');
+
+                if (!empty($s_name)) {
+                    $stmt_spec->execute([
+                        $product_id,
+                        $s_name,
+                        $s_val,
+                        $sort_order
+                    ]);
+
+                    $sort_order++;
+                }
+            }
+        }
+
         if (isset($_FILES['gallery_images'])) {
             $gallery_dir = "../upload/product_gallery/";
+
             if (!is_dir($gallery_dir)) {
                 mkdir($gallery_dir, 0777, true);
             }
 
-            $stmt_gal = $pdo->prepare("INSERT INTO product_images (product_id, image_url) VALUES (?, ?)");
-            
+            $stmt_gal = $pdo->prepare("
+                INSERT INTO product_images(product_id, image_url)
+                VALUES (?, ?)
+            ");
+
             foreach ($_FILES['gallery_images']['tmp_name'] as $key => $tmp_name) {
                 if ($_FILES['gallery_images']['error'][$key] == 0) {
                     $g_type = $_FILES['gallery_images']['type'][$key];
+
                     if (in_array($g_type, ['image/jpeg', 'image/png', 'image/jpg'])) {
                         $g_ext = pathinfo($_FILES["gallery_images"]["name"][$key], PATHINFO_EXTENSION);
                         $g_file_name = time() . "_" . $key . "." . $g_ext;
-                        
+
                         if (move_uploaded_file($tmp_name, $gallery_dir . $g_file_name)) {
                             $stmt_gal->execute([$product_id, $g_file_name]);
                         }
@@ -102,7 +147,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $page_title = 'Thêm sản phẩm mới';
 $page_icon = 'fa-solid fa-plus';
-// Nhúng file CSS được bóc tách riêng biệt của trang
 $custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/add.css">';
 
 include 'includes/header.php';
@@ -110,7 +154,7 @@ include 'includes/header.php';
 
 <div class="add-product-container">
     <h2><i class="fa-solid fa-box-open"></i> Thêm sản phẩm linh kiện mới</h2>
-    
+
     <form action="add.php" method="POST" enctype="multipart/form-data">
         <div class="form-grid">
             <div class="form-group">
@@ -151,21 +195,24 @@ include 'includes/header.php';
 
             <div class="form-group full-width">
                 <label><i class="fa-solid fa-star"></i> Nhãn trạng thái hiển thị</label>
+
                 <div class="tags-group">
                     <label class="tag-checkbox">
-                        <input type="checkbox" name="tags[]" value="is_new"> Sản phẩm Mới (New)
+                        <input type="checkbox" name="tags[]" value="1">
+                        Sản phẩm nổi bật
                     </label>
+
                     <label class="tag-checkbox">
-                        <input type="checkbox" name="tags[]" value="is_hot"> Sản phẩm Bán Chạy (Hot)
-                    </label>
-                    <label class="tag-checkbox">
-                        <input type="checkbox" name="is_flash_sale" value="1" id="flash_sale_checkbox"> Kích hoạt chương trình Flash Sale
+                        <input type="checkbox" name="tags[]" value="2" id="flash_sale_checkbox">
+                        Flash Sale
                     </label>
                 </div>
 
-                <div id="flash-sale-price-group">
-                    <label style="color: #be123c;"><i class="fa-solid fa-bolt"></i> Giá Flash Sale đặc biệt (₫)</label>
-                    <input type="number" name="flash_sale_price" class="form-control" placeholder="Nhập mức giá ưu đãi khi chạy Flash Sale...">
+                <div id="flash-sale-price-group" style="display: none;">
+                    <label style="color: #be123c;">
+                        <i class="fa-solid fa-bolt"></i> Giá Flash Sale đặc biệt (₫)
+                    </label>
+                    <input type="number" name="discount_price" class="form-control" placeholder="Nhập mức giá ưu đãi khi chạy Flash Sale...">
                 </div>
             </div>
 
@@ -177,6 +224,7 @@ include 'includes/header.php';
 
         <div class="specs-section">
             <h3><i class="fa-solid fa-sliders"></i> Cấu hình thông số kỹ thuật chi tiết</h3>
+
             <div id="specs-wrapper">
                 <div class="spec-item">
                     <input type="text" name="spec_names[]" class="form-control" placeholder="Tên thông số (VD: Chipset)" style="flex: 1;">
@@ -184,6 +232,7 @@ include 'includes/header.php';
                     <button type="button" class="btn btn-danger remove-spec-btn" style="padding: 0 15px; border-radius: 4px;">Xóa</button>
                 </div>
             </div>
+
             <button type="button" id="add-spec-btn" class="btn btn-success" style="margin-top: 12px;">
                 <i class="fa-solid fa-circle-plus"></i> Thêm dòng thông số mới
             </button>
@@ -193,6 +242,7 @@ include 'includes/header.php';
             <a href="list_products.php" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
             </a>
+
             <button type="submit" class="btn btn-primary">
                 <i class="fa-solid fa-floppy-disk"></i> Lưu sản phẩm
             </button>
@@ -202,6 +252,7 @@ include 'includes/header.php';
 
 </main>
 </div>
+
 <script src="../assets/js/script_dashboard.js"></script>
 <script src="../assets/js/add.js"></script>
 </body>
