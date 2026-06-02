@@ -104,7 +104,7 @@ $images = $stmt->fetchAll();
 
     </div>
 </div>
-
+<script src="/FD-Tech/assets/js/script_dashboard.js"></script>
 <script src="../assets/js/manage_images.js"></script>
 
 </main> </div> </body>
