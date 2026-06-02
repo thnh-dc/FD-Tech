@@ -1,4 +1,0 @@
-ALTER TABLE users
-ADD COLUMN point INT DEFAULT 0;
-ALTER TABLE orders
-ADD COLUMN used_points INT DEFAULT 0 AFTER payment_status;
