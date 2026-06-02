@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../config/database.php';
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '../../auth/check_admin.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

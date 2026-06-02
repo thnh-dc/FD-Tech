@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../check_admin.php';
 
 header('Content-Type: application/json; charset=utf-8');
 

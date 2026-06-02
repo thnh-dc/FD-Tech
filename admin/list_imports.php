@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include '../config/database.php';
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '../../auth/check_admin.php';
 
 try {
     // Truy vấn danh sách lịch sử phiếu nhập kèm tên nhà cung cấp

@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once '../config/database.php'; // Đảm bảo đúng đường dẫn file database của bạn
-
+require_once __DIR__ . '../../auth/check_admin.php';
 $action = $_GET['action'] ?? '';
 
 // 1. API LẤY DANH SÁCH CHO TRANG CHỦ HOẶC ADMIN
