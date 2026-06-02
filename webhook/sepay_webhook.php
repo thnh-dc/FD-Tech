@@ -14,7 +14,6 @@ file_put_contents(
 
 if (!$data) {
     http_response_code(400);
-
     echo json_encode([
         'success' => false,
         'message' => 'Dữ liệu webhook không hợp lệ.'
@@ -37,13 +36,13 @@ $content = strtoupper(trim($content));
 
 if ($amount <= 0 || $content === '') {
     http_response_code(400);
-
     echo json_encode([
         'success' => false,
         'message' => 'Thiếu số tiền hoặc nội dung chuyển khoản.'
     ]);
     exit;
 }
+
 preg_match('/FDTECH(\d+)/', $content, $matches);
 
 if (empty($matches[1])) {
@@ -61,14 +60,16 @@ try {
 
     $stmt = $pdo->prepare("
         SELECT 
-            id,
-            total_amount,
-            status,
-            payment_method,
-            payment_status,
-            payment_code
-        FROM orders
-        WHERE id = ?
+            o.id,
+            o.total_amount,
+            o.status,
+            o.payment_method,
+            o.payment_status,
+            o.payment_code,
+            u.email
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = ?
         LIMIT 1
     ");
 
@@ -85,7 +86,6 @@ try {
 
     if ($order['payment_status'] === 'paid') {
         $pdo->commit();
-
         echo json_encode([
             'success' => true,
             'message' => 'Đơn hàng đã được xác nhận thanh toán trước đó.'
@@ -112,14 +112,21 @@ try {
             updated_at = NOW()
         WHERE id = ?
     ");
-
     $stmtUpdate->execute([$order_id]);
+    if (!empty($order['email'])) {
+        $bill_file_path = __DIR__ . '/FD-Tech/user/action_checkout/bill.php'; 
+
+        if (file_exists($bill_file_path)) {
+            require_once $bill_file_path;
+            send_order_bill_email($order['email'], $order_id, $pdo);
+        }
+    }
 
     $pdo->commit();
 
     echo json_encode([
         'success' => true,
-        'message' => 'Xác nhận thanh toán thành công.'
+        'message' => 'Xác nhận thanh toán thành công và đã gửi mail hóa đơn.'
     ]);
     exit;
 
@@ -129,7 +136,6 @@ try {
     }
 
     http_response_code(400);
-
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()

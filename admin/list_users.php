@@ -71,8 +71,8 @@ function getAvatarSrc($avatar)
 ?>
 
 <?php
-$page_title = 'Quản lí người dùng';
-$page_icon = 'fa-solid fa-users';
+$page_title = 'Tài khoản người dùng';
+$page_icon = 'fa-solid fa-user-gear';
 
 $custom_css = '
     <link rel="stylesheet" href="/FD-Tech/assets/css/style_user_management.css">

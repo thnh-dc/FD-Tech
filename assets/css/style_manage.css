@@ -1,0 +1,383 @@
+/* ==========================================================================
+   CSS TOÀN DIỆN CHO TRANG QUẢN LÝ YÊU CẦU ĐỔI TRẢ / BẢO HÀNH (style_manage.css)
+   ========================================================================== */
+
+.product-wrapper {
+    padding: var(--space-xl, 25px);
+}
+
+.product-card {
+    background: white;
+    border-radius: var(--radius-md, 12px);
+    box-shadow: var(--shadow-card, 0 4px 12px rgba(0,0,0,0.05));
+    overflow: hidden;
+}
+
+.product-header {
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+}
+
+.request-filter-select {
+    width: 200px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    background: #f8fafc;
+    padding: 18px;
+    text-align: left;
+    color: #475569;
+    font-weight: 600;
+}
+
+.admin-table td {
+    padding: 18px;
+    border-top: 1px solid #eee;
+    color: #334155;
+}
+
+.admin-table tr:hover {
+    background: #fafafa;
+}
+
+/* Badges trạng thái duyệt đơn */
+.stock-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-approved { 
+    background: #dcfce7; 
+    color: #166534; 
+}
+.status-pending { 
+    background: #fef3c7; 
+    color: #92400e; 
+}
+.status-rejected { 
+    background: #fee2e2; 
+    color: #991b1b; 
+}
+
+.action-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-view {
+    background: #0f2c59;
+}
+.btn-view:hover {
+    opacity: 0.9;
+}
+
+.empty-box {
+    padding: 50px;
+    text-align: center;
+    color: #999;
+}
+
+.empty-box i {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+/* --------------------------------------------------------------------------
+   CẤU TRÚC MODAL POPUP XEM CHI TIẾT SỰ CỐ
+   -------------------------------------------------------------------------- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.modal.show { 
+    display: flex; 
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: var(--radius-md, 12px);
+    width: 600px;
+    max-width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    color: #333;
+    text-align: left;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.2s;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.media-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.media-img:hover {
+    transform: scale(1.05);
+}
+
+.media-video {
+    width: 100%;
+    max-height: 220px;
+    border-radius: 8px;
+    background: #000;
+    margin-top: 8px;
+}
+
+.form-group {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-sm, 8px);
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.btn-submit-approve { 
+    background: #166534; 
+    color: white; 
+    border: none; 
+    padding: 10px 18px; 
+    border-radius: 8px; 
+    font-weight: 600; 
+    cursor: pointer; 
+}
+
+.btn-submit-reject { 
+    background: #dc2626; 
+    color: white; 
+    border: none; 
+    padding: 10px 18px; 
+    border-radius: 8px; 
+    font-weight: 600; 
+    cursor: pointer; 
+}
+
+/* --- Request Filter & Header --- */
+.request-filter-select {
+    height: 38px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+}
+
+.product-card h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #0f2c59;
+    font-weight: 700;
+}
+
+/* --- Table Styles --- */
+.admin-table td.req-code {
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.admin-table td.product-cell {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Modal Layout & Typography --- */
+.modal-content h3 {
+    margin-bottom: 20px;
+    color: #0f2c59;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-grid-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #475569;
+}
+
+.modal-grid-info .full-width {
+    grid-column: span 2;
+}
+
+.modal-grid-info .product-highlight {
+    color: #1e293b;
+    font-weight: bold;
+}
+
+.modal-desc-section {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.modal-desc-box {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 6px;
+    white-space: pre-line;
+    border-left: 4px solid #2563eb;
+}
+
+.modal-evidence-section {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.image-evidence-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.video-evidence-container {
+    margin-top: 10px;
+}
+
+.evidence-blank {
+    color: #94a3b8;
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* --- Form & Dynamic Controls --- */
+#adminActionSection {
+    margin-top: 20px;
+}
+
+.reject-reason-label {
+    color: #dc2626;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.reject-reason-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+}
+
+.modal-footer-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.modal-footer-actions button {
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#btnRejectSubmit {
+    background: #dc2626;
+}
+
+#btnApproveSubmit {
+    background: #166534;
+}
+
+/* --- Dynamic Evidence Elements (Generated via JS) --- */
+.img-evidence-item {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #cbd5e1;
+}
+
+.video-evidence-item {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+}

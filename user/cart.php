@@ -22,9 +22,6 @@
     $stmt->execute([$user_id]);
     $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total = 0;
-    foreach ($cartItems as $item) {
-        $total += $item['display_price'] * $item['quantity'];
-    }
 ?>
 <style>
     .data-table {
@@ -99,14 +96,14 @@
                                 <td class="item-price" data-price="<?= $item['display_price'] ?>">
                                     <?php if (!empty($item['discount_price']) && $item['discount_price'] > 0): ?>
                                         <span class="old-price">
-                                            <?= number_format($item['price'], 0, ',', '.') ?> vn₫
+                                            <?= number_format($item['price'], 0, ',', '.') ?> ₫
                                         </span>
                                         <br>
                                         <span>
-                                            <?= number_format($item['discount_price'], 0, ',', '.') ?> vn₫
+                                            <?= number_format($item['discount_price'], 0, ',', '.') ?> ₫
                                         </span>
                                     <?php else: ?>
-                                        <?= number_format($item['price'], 0, ',', '.') ?> vn₫
+                                        <?= number_format($item['price'], 0, ',', '.') ?> ₫
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -125,7 +122,7 @@
                                     </div>
                                 </td>
                                 <td class="item-subtotal">
-                                    <?= number_format($item['display_price'] * $item['quantity'], 0, ',', '.') ?> vn₫
+                                    <?= number_format($item['display_price'] * $item['quantity'], 0, ',', '.') ?> ₫
                                 </td>
                                 <td>
                                     <button class="btn btn-danger btn-delete" data-id="<?= $item['id'] ?>">
@@ -141,7 +138,7 @@
                         <br>
                         <b>Tổng thanh toán: </b>
                         <span class="price-highlight">
-                            <?= number_format($total, 0, ',', '.') ?> vn₫
+                            <?= number_format($total, 0, ',', '.') ?> ₫
                         </span>
                     </p>
                     <br>
@@ -154,11 +151,7 @@
                 </div>
             <?php else: ?>
                 <div class="empty-cart-container">
-                    <svg class="empty-cart-icon" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
-                        <circle cx="9" cy="21" r="1"></circle>
-                        <circle cx="20" cy="21" r="1"></circle>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
+                    <i class="fa-solid fa-cart-shopping empty-cart-icon"></i>
                     <h2 class="empty-cart-title">Giỏ hàng trống</h2>
                     <p class="empty-cart-desc">Không có sản phẩm nào trong giỏ hàng</p>
                     <a href="index.php">

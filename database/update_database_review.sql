@@ -1,1 +1,0 @@
-ALTER TABLE product_reviews ADD admin_reply TEXT NULL DEFAULT NULL;
