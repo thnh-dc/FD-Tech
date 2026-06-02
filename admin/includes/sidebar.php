@@ -13,6 +13,11 @@
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'list_order.php') ? 'active' : '' ?>">
             <a href="list_order.php"><i class="fa-solid fa-cart-shopping"></i> Quản lí đơn hàng</a>
         </li>
+
+        <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : '' ?>">
+            <a href="manage_requests.php"><i class="fa-solid fa-clipboard-question"></i> Xử lý yêu cầu</a>
+        </li>
+
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'chat_list.php' || basename($_SERVER['PHP_SELF']) == 'chat_detail.php') ? 'active' : '' ?>">
             <a href="chat_list.php"><i class="fa-solid fa-comments"></i> Tin nhắn khách hàng</a>
         </li>
