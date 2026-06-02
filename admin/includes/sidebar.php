@@ -103,6 +103,9 @@
                 </li>
             </ul>
         </li>
+        <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'manage_images.php') ? 'active' : '' ?>">
+            <a href="manage_images.php"><i class="fa-solid fa-images"></i> Quản lí banner, popup</a>
+        </li>
     </ul>
     <div class="sidebar-footer">
         <a href="/FD-Tech/auth/logout.php" class="btn btn-danger logout-btn">
