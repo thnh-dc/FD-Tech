@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once '../../config/database.php';
-require_once __DIR__ . '/../check_admin.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../chat_list.php");

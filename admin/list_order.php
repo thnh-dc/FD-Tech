@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '../../auth/check_admin.php';
 require_once '../user/action_checkout/auto_cancel_unpaid_orders.php';
 
 autoCancelUnpaidBankOrders($pdo, 15);
@@ -55,7 +55,7 @@ try {
 ?>
 
 <?php
-$page_title = 'Quản lí đơn hàng';
+$page_title = 'Quản lý đơn hàng';
 $page_icon = 'fa-solid fa-cart-shopping';
 $custom_css = '
     <link rel="stylesheet" href="/FD-Tech/assets/css/style_list_oder.css">

@@ -11,15 +11,12 @@
 <div id="advPopup" class="adv-popup-overlay">
     <div class="adv-popup-content">
         <span class="adv-popup-close" onclick="closePopup(event)"><i class="fa-solid fa-xmark"></i></span>
-        <img src="../assets/images/PR_1.png" alt="FD_Tech Siêu Sale Công Nghệ" class="adv-popup-img" onclick="dieuHuongKhuyenMai()" style="cursor: pointer;">
+        <img src="" alt="FD_Tech Siêu Sale Công Nghệ" class="adv-popup-img" style="cursor: pointer;">
     </div>
 </div>
 
 <div class="banner-container">
-    <div class="banner-track" id="bannerTrack">
-        <div class="banner-slide"><img src="../assets/images/banner1.jpg"></div>
-        <div class="banner-slide"><img src="../assets/images/banner.jpg"></div>
-    </div>
+    <div class="banner-track" id="bannerTrack"></div>
 </div>
 <div class="container"> 
     

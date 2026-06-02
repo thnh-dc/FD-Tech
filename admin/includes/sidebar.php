@@ -14,7 +14,7 @@
 
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'list_order.php') ? 'active' : '' ?>">
             <a href="/FD-Tech/admin/list_order.php">
-                <i class="fa-solid fa-cart-shopping"></i> Quản lí đơn hàng
+                <i class="fa-solid fa-cart-shopping"></i> Quản lý đơn hàng
             </a>
         </li>
         
@@ -26,7 +26,7 @@
 
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : '' ?>">
             <a href="/FD-Tech/admin/manage_requests.php">
-                <i class="fa-solid fa-clipboard-question"></i> Xử lý yêu cầu
+                <i class="fa-solid fa-clipboard-question"></i> Quản lý yêu cầu
             </a>
         </li>
 
@@ -36,7 +36,7 @@
         ?>
         <li class="menu-item has-submenu">
             <a href="#" class="submenu-toggle">
-                <i class="fa-solid fa-users"></i> Quản lí người dùng
+                <i class="fa-solid fa-users"></i> Quản lý người dùng
                 <i class="fa-solid fa-chevron-down arrow-icon"></i>
             </a>
 
@@ -46,7 +46,11 @@
                         <i class="fa-solid fa-comments"></i> Tin nhắn khách hàng
                     </a>
                 </li>
-
+                <li>
+                    <a href="#" class="<?= (basename($_SERVER['PHP_SELF']) == '#' || basename($_SERVER['PHP_SELF']) == '#') ? 'active-sub' : '' ?>">
+                        <i class="fa-regular fa-comment"></i> Đánh giá khách hàng
+                    </a>
+                </li>
                 <li>
                     <a href="/FD-Tech/admin/list_users.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_users.php' || basename($_SERVER['PHP_SELF']) == 'user_detail.php') ? 'active-sub' : '' ?>">
                         <i class="fa-solid fa-user-gear"></i> Tài khoản người dùng
@@ -72,7 +76,7 @@
                 </li>
                 <li>
                     <a href="/FD-Tech/admin/list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_products.php') ? 'active-sub' : '' ?>">
-                        <i class="fa-solid fa-list"></i> Quản lí sản phẩm
+                        <i class="fa-solid fa-list"></i> Quản lý sản phẩm
                     </a>
                 </li>
                 <li>
@@ -89,7 +93,7 @@
         ?>
         <li class="menu-item has-submenu">
             <a href="#" class="submenu-toggle">
-                <i class="fa-solid fa-boxes-packing"></i> Quản lí nhập hàng
+                <i class="fa-solid fa-boxes-packing"></i> Quản lý nhập hàng
                 <i class="fa-solid fa-chevron-down arrow-icon"></i>
             </a>
             <ul class="submenu <?= $is_import_active ? 'show' : '' ?>">
@@ -104,6 +108,9 @@
                     </a>
                 </li>
             </ul>
+        </li>
+        <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'manage_images.php') ? 'active' : '' ?>">
+            <a href="/FD-Tech/admin/manage_images.php"><i class="fa-solid fa-images"></i> Quản lí banner, popup</a>
         </li>
     </ul>
     <div class="sidebar-footer">
