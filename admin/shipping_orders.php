@@ -152,126 +152,162 @@ include 'includes/header.php';
                 <?php foreach ($orders as $row): ?>
                     <?php
                         $isCompleted = $row['status'] === 'completed';
-                        $isShipped = $row['status'] === 'shipped';
+                        $form_id = 'shipping-form-' . $row['order_id'];
                     ?>
 
                     <tr class="<?= $isCompleted ? 'row-completed' : '' ?>">
-                        <form method="POST" action="action_shipping/update_shipping.php">
-                            <input type="hidden" name="order_id" value="<?= $row['order_id'] ?>">
 
-                            <td>
-                                <strong>#FD-<?= htmlspecialchars($row['order_id']) ?></strong>
+                        <td>
+                            <form id="<?= $form_id ?>" method="POST" action="action_shipping/update_shipping.php"></form>
 
-                                <a 
-                                    href="action_list_order/order_detail.php?id=<?= $row['order_id'] ?>" 
-                                    class="detail-link"
+                            <input
+                                form="<?= $form_id ?>"
+                                type="hidden"
+                                name="order_id"
+                                value="<?= $row['order_id'] ?>"
+                            >
+
+                            <strong>#FD-<?= htmlspecialchars($row['order_id']) ?></strong>
+
+                            <a 
+                                href="action_list_order/order_detail.php?id=<?= $row['order_id'] ?>" 
+                                class="detail-link"
+                            >
+                                Chi tiết
+                            </a>
+                        </td>
+
+                        <td>
+                            <strong><?= htmlspecialchars($row['username'] ?? 'Không rõ') ?></strong>
+                            <div class="shipping-address">
+                                <?= nl2br(htmlspecialchars($row['shipping_address'] ?? '')) ?>
+                            </div>
+                        </td>
+
+                        <td class="price">
+                            <?= number_format($row['total_amount'], 0, ',', '.') ?>₫
+                        </td>
+
+                        <td>
+                            <span class="status-badge <?= statusClass($row['status']) ?>">
+                                <?= statusText($row['status']) ?>
+                            </span>
+
+                            <select
+                                form="<?= $form_id ?>"
+                                name="order_status"
+                                class="form-control small-select status-select"
+                                <?= $isCompleted ? 'disabled' : '' ?>
+                            >
+                                <option value="processing" <?= $row['status'] === 'processing' ? 'selected' : '' ?>>Đang xử lý</option>
+                                <option value="shipped" <?= $row['status'] === 'shipped' ? 'selected' : '' ?>>Đang giao</option>
+                                <option value="completed" <?= $row['status'] === 'completed' ? 'selected' : '' ?>>Hoàn thành</option>
+                            </select>
+
+                            <?php if ($isCompleted): ?>
+                                <input
+                                    form="<?= $form_id ?>"
+                                    type="hidden"
+                                    name="order_status"
+                                    value="completed"
                                 >
-                                    Chi tiết
-                                </a>
-                            </td>
+                            <?php endif; ?>
+                        </td>
 
-                            <td>
-                                <strong><?= htmlspecialchars($row['username'] ?? 'Không rõ') ?></strong>
-                                <div class="shipping-address">
-                                    <?= nl2br(htmlspecialchars($row['shipping_address'] ?? '')) ?>
+                        <td>
+                            <select
+                                form="<?= $form_id ?>"
+                                name="carrier_name"
+                                class="form-control small-select"
+                                <?= $isCompleted ? 'disabled' : '' ?>
+                                required
+                            >
+                                <option value="">-- Chọn --</option>
+                                <?php
+                                $carriers = ['GHTK', 'GHN', 'Viettel Post', 'J&T Express', 'VNPost', 'Ninja Van'];
+                                foreach ($carriers as $carrier):
+                                ?>
+                                    <option value="<?= $carrier ?>" <?= $row['carrier_name'] === $carrier ? 'selected' : '' ?>>
+                                        <?= $carrier ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <?php if ($isCompleted): ?>
+                                <input
+                                    form="<?= $form_id ?>"
+                                    type="hidden"
+                                    name="carrier_name"
+                                    value="<?= htmlspecialchars($row['carrier_name'] ?? '') ?>"
+                                >
+                            <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <input
+                                form="<?= $form_id ?>"
+                                type="text"
+                                name="tracking_number"
+                                class="form-control tracking-input"
+                                value="<?= htmlspecialchars($row['tracking_number'] ?? '') ?>"
+                                placeholder="VD: GHN123456"
+                                <?= $isCompleted ? 'readonly' : '' ?>
+                                required
+                            >
+
+                            <input
+                                form="<?= $form_id ?>"
+                                type="number"
+                                name="shipping_cost"
+                                class="form-control shipping-cost"
+                                value="<?= htmlspecialchars($row['shipping_cost'] ?? 0) ?>"
+                                placeholder="Phí ship"
+                                <?= $isCompleted ? 'readonly' : '' ?>
+                            >
+                        </td>
+
+                        <td>
+                            <input
+                                form="<?= $form_id ?>"
+                                type="date"
+                                name="estimated_delivery"
+                                class="form-control"
+                                value="<?= htmlspecialchars($row['estimated_delivery'] ?? '') ?>"
+                                <?= $isCompleted ? 'readonly' : '' ?>
+                            >
+
+                            <textarea
+                                form="<?= $form_id ?>"
+                                name="notes"
+                                class="form-control shipping-note"
+                                placeholder="Ghi chú..."
+                                <?= $isCompleted ? 'readonly' : '' ?>
+                            ><?= htmlspecialchars($row['notes'] ?? '') ?></textarea>
+
+                            <?php if (!empty($row['shipping_updated_at'])): ?>
+                                <div class="updated-time">
+                                    Cập nhật: <?= date('d/m/Y H:i', strtotime($row['shipping_updated_at'])) ?>
                                 </div>
-                            </td>
+                            <?php endif; ?>
+                        </td>
 
-                            <td class="price">
-                                <?= number_format($row['total_amount'], 0, ',', '.') ?>₫
-                            </td>
-
-                            <td>
-                                <span class="status-badge <?= statusClass($row['status']) ?>">
-                                    <?= statusText($row['status']) ?>
-                                </span>
-
-                                <select name="order_status" class="form-control small-select status-select" <?= $isCompleted ? 'disabled' : '' ?>>
-                                    <option value="processing" <?= $row['status'] === 'processing' ? 'selected' : '' ?>>Đang xử lý</option>
-                                    <option value="shipped" <?= $row['status'] === 'shipped' ? 'selected' : '' ?>>Đang giao</option>
-                                    <option value="completed" <?= $row['status'] === 'completed' ? 'selected' : '' ?>>Hoàn thành</option>
-                                </select>
-
-                                <?php if ($isCompleted): ?>
-                                    <input type="hidden" name="order_status" value="completed">
-                                <?php endif; ?>
-                            </td>
-
-                            <td>
-                                <select name="carrier_name" class="form-control small-select" <?= $isCompleted ? 'disabled' : '' ?> required>
-                                    <option value="">-- Chọn --</option>
-                                    <?php
-                                    $carriers = ['GHTK', 'GHN', 'Viettel Post', 'J&T Express', 'VNPost', 'Ninja Van'];
-                                    foreach ($carriers as $carrier):
-                                    ?>
-                                        <option value="<?= $carrier ?>" <?= $row['carrier_name'] === $carrier ? 'selected' : '' ?>>
-                                            <?= $carrier ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-
-                                <?php if ($isCompleted): ?>
-                                    <input type="hidden" name="carrier_name" value="<?= htmlspecialchars($row['carrier_name'] ?? '') ?>">
-                                <?php endif; ?>
-                            </td>
-
-                            <td>
-                                <input
-                                    type="text"
-                                    name="tracking_number"
-                                    class="form-control tracking-input"
-                                    value="<?= htmlspecialchars($row['tracking_number'] ?? '') ?>"
-                                    placeholder="VD: GHN123456"
-                                    <?= $isCompleted ? 'readonly' : '' ?>
-                                    required
+                        <td>
+                            <?php if ($isCompleted): ?>
+                                <button type="button" class="btn btn-disabled" disabled>
+                                    Đã khóa
+                                </button>
+                            <?php else: ?>
+                                <button
+                                    form="<?= $form_id ?>"
+                                    type="submit"
+                                    class="btn btn-primary btn-save-shipping"
                                 >
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    Lưu
+                                </button>
+                            <?php endif; ?>
+                        </td>
 
-                                <input
-                                    type="number"
-                                    name="shipping_cost"
-                                    class="form-control shipping-cost"
-                                    value="<?= htmlspecialchars($row['shipping_cost'] ?? 0) ?>"
-                                    placeholder="Phí ship"
-                                    <?= $isCompleted ? 'readonly' : '' ?>
-                                >
-                            </td>
-
-                            <td>
-                                <input
-                                    type="date"
-                                    name="estimated_delivery"
-                                    class="form-control"
-                                    value="<?= htmlspecialchars($row['estimated_delivery'] ?? '') ?>"
-                                    <?= $isCompleted ? 'readonly' : '' ?>
-                                >
-
-                                <textarea
-                                    name="notes"
-                                    class="form-control shipping-note"
-                                    placeholder="Ghi chú..."
-                                    <?= $isCompleted ? 'readonly' : '' ?>
-                                ><?= htmlspecialchars($row['notes'] ?? '') ?></textarea>
-
-                                <?php if (!empty($row['shipping_updated_at'])): ?>
-                                    <div class="updated-time">
-                                        Cập nhật: <?= date('d/m/Y H:i', strtotime($row['shipping_updated_at'])) ?>
-                                    </div>
-                                <?php endif; ?>
-                            </td>
-
-                            <td>
-                                <?php if ($isCompleted): ?>
-                                    <button type="button" class="btn btn-disabled" disabled>
-                                        Đã khóa
-                                    </button>
-                                <?php else: ?>
-                                    <button type="submit" class="btn btn-primary btn-save-shipping">
-                                        <i class="fa-solid fa-floppy-disk"></i>
-                                        Lưu
-                                    </button>
-                                <?php endif; ?>
-                            </td>
-                        </form>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>

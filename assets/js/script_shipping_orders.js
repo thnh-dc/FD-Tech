@@ -1,11 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const forms = document.querySelectorAll('.shipping-table form');
+    const forms = document.querySelectorAll('form[id^="shipping-form-"]');
 
     forms.forEach(function (form) {
         form.addEventListener('submit', function (e) {
-            const status = form.querySelector('select[name="order_status"]');
-            const carrier = form.querySelector('select[name="carrier_name"]');
-            const tracking = form.querySelector('input[name="tracking_number"]');
+            const formId = form.getAttribute('id');
+
+            const status = document.querySelector(`select[name="order_status"][form="${formId}"]`);
+            const carrier = document.querySelector(`select[name="carrier_name"][form="${formId}"]`);
+            const tracking = document.querySelector(`input[name="tracking_number"][form="${formId}"]`);
 
             if (status && status.value === 'completed') {
                 const okComplete = confirm('Bạn chắc chắn muốn chuyển đơn này sang Hoàn thành? Sau khi hoàn thành, thông tin vận chuyển sẽ bị khóa.');
@@ -19,14 +21,18 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!carrier || !carrier.value.trim()) {
                 e.preventDefault();
                 alert('Vui lòng chọn đơn vị vận chuyển.');
-                carrier.focus();
+                if (carrier) {
+                    carrier.focus();
+                }
                 return;
             }
 
             if (!tracking || !tracking.value.trim()) {
                 e.preventDefault();
                 alert('Vui lòng nhập mã vận đơn.');
-                tracking.focus();
+                if (tracking) {
+                    tracking.focus();
+                }
                 return;
             }
 
