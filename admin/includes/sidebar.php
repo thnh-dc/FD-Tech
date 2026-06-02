@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../assets/css/style_sidebar.css">
+<link rel="stylesheet" href="/FD-Tech/assets/css/style_sidebar.css">
 
 <aside class="sidebar">
     <div class="sidebar-header">
@@ -7,19 +7,19 @@
 
     <ul class="sidebar-menu">
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'admin_dashboard.php') ? 'active' : '' ?>">
-            <a href="admin_dashboard.php"><i class="fa-solid fa-chart-pie"></i> Thống kê</a>
+            <a href="/FD-Tech/admin/admin_dashboard.php"><i class="fa-solid fa-chart-pie"></i> Thống kê</a>
         </li>
 
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'list_order.php') ? 'active' : '' ?>">
-            <a href="list_order.php"><i class="fa-solid fa-cart-shopping"></i> Quản lí đơn hàng</a>
+            <a href="/FD-Tech/admin/list_order.php"><i class="fa-solid fa-cart-shopping"></i> Quản lí đơn hàng</a>
         </li>
 
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : '' ?>">
-            <a href="manage_requests.php"><i class="fa-solid fa-clipboard-question"></i> Xử lý yêu cầu</a>
+            <a href="/FD-Tech/admin/manage_requests.php"><i class="fa-solid fa-clipboard-question"></i> Xử lý yêu cầu</a>
         </li>
 
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'chat_list.php' || basename($_SERVER['PHP_SELF']) == 'chat_detail.php') ? 'active' : '' ?>">
-            <a href="chat_list.php"><i class="fa-solid fa-comments"></i> Tin nhắn khách hàng</a>
+            <a href="/FD-Tech/admin/chat_list.php"><i class="fa-solid fa-comments"></i> Tin nhắn khách hàng</a>
         </li>
         
         <?php 
@@ -34,17 +34,17 @@
             </a>
             <ul class="submenu <?= $is_product_active ? 'show' : '' ?>">
                 <li>
-                    <a href="add.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active-sub' : '' ?>">
+                    <a href="/FD-Tech/admin/add.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active-sub' : '' ?>">
                         <i class="fa-solid fa-plus"></i> Thêm sản phẩm
                     </a>
                 </li>
                 <li>
-                    <a href="list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_products.php') ? 'active-sub' : '' ?>">
+                    <a href="/FD-Tech/admin/list_products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_products.php') ? 'active-sub' : '' ?>">
                         <i class="fa-solid fa-list"></i> Quản lí sản phẩm
                     </a>
                 </li>
                 <li>
-                    <a href="manage_warehouse.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'manage_warehouse.php') ? 'active-sub' : '' ?>">
+                    <a href="/FD-Tech/admin/manage_warehouse.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'manage_warehouse.php') ? 'active-sub' : '' ?>">
                         <i class="fa-solid fa-warehouse"></i> Quản lý kho hàng
                     </a>
                 </li>
@@ -62,19 +62,19 @@
             </a>
             <ul class="submenu <?= $is_import_active ? 'show' : '' ?>">
                 <li>
-                    <a href="add_import.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add_import.php') ? 'active-sub' : '' ?>">
+                    <a href="/FD-Tech/admin/add_import.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'add_import.php') ? 'active-sub' : '' ?>">
                         <i class="fa-solid fa-plus"></i> Tạo phiếu nhập
                     </a>
                 </li>
                 <li>
-                    <a href="list_imports.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_imports.php') ? 'active-sub' : '' ?>">
+                    <a href="/FD-Tech/admin/list_imports.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'list_imports.php') ? 'active-sub' : '' ?>">
                         <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhập kho
                     </a>
                 </li>
             </ul>
         </li>
         <li class="menu-item <?= (basename($_SERVER['PHP_SELF']) == 'list_users.php' || basename($_SERVER['PHP_SELF']) == 'user_detail.php') ? 'active' : '' ?>">
-            <a href="list_users.php"><i class="fa-solid fa-users"></i> Quản lí người dùng</a>
+            <a href="/FD-Tech/admin/list_users.php"><i class="fa-solid fa-users"></i> Quản lí người dùng</a>
         </li>
     </ul>
     <div class="sidebar-footer">
