@@ -41,7 +41,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="<?= (basename($_SERVER['PHP_SELF']) == '#' || basename($_SERVER['PHP_SELF']) == '#') ? 'active-sub' : '' ?>">
+                    <a href="/FD-Tech/admin/admin_reviews.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'admin_review.php') ? 'active-sub' : '' ?>">
                         <i class="fa-regular fa-comment"></i> Đánh giá khách hàng
                     </a>
                 </li>
