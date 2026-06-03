@@ -2,6 +2,7 @@
 session_start();
 require_once '../../config/database.php';
 header('Content-Type: application/json; charset=utf-8');
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode([
         'success' => false,
@@ -9,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ]);
     exit;
 }
+
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['noti_message'] = 'Oppss, bạn chưa đăng nhập rồi!';
     $_SESSION['noti_type'] = 'error';
@@ -19,10 +21,12 @@ if (!isset($_SESSION['user_id'])) {
     ]);
     exit;
 }
+
 $user_id = (int) $_SESSION['user_id'];
 $product_id = isset($_POST['product_id']) ? (int) $_POST['product_id'] : 0;
 $rating = isset($_POST['rating']) ? (int) $_POST['rating'] : 5;
 $comment = isset($_POST['comment']) ? trim($_POST['comment']) : '';
+
 if ($product_id <= 0) {
     echo json_encode([
         'success' => false,
@@ -44,10 +48,9 @@ if ($comment === '') {
     ]);
     exit;
 }
+
 try {
-    $stmtProduct = $pdo->prepare("
-        SELECT id FROM products WHERE id = ? LIMIT 1
-    ");
+    $stmtProduct = $pdo->prepare("SELECT id FROM products WHERE id = ? LIMIT 1");
     $stmtProduct->execute([$product_id]);
     $product = $stmtProduct->fetch(PDO::FETCH_ASSOC);
     if (!$product) {
@@ -57,12 +60,33 @@ try {
         ]);
         exit;
     }
+
+    $stmtCheck = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM order_items oi 
+        JOIN orders o ON oi.order_id = o.id 
+        WHERE o.user_id = :user_id 
+        AND oi.product_id = :product_id 
+        AND o.status = 'completed'
+    ");
+    $stmtCheck->execute([
+        'user_id' => $user_id,
+        'product_id' => $product_id
+    ]);
+    if ($stmtCheck->fetchColumn() == 0) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Chỉ khách hàng đã mua và thanh toán sản phẩm này mới có quyền đánh giá.'
+        ]);
+        exit;
+    }
+
     $stmt = $pdo->prepare("
         INSERT INTO product_reviews (
-            product_id, user_id, rating, comment
+            product_id, user_id, rating, comment, status
         ) 
         VALUES (
-            :product_id, :user_id, :rating, :comment
+            :product_id, :user_id, :rating, :comment, 'show'
         )
     ");
     $stmt->execute([
@@ -71,15 +95,17 @@ try {
         'rating' => $rating,
         'comment' => $comment
     ]);
+
     echo json_encode([
         'success' => true,
         'message' => 'Cảm ơn bạn đã gửi đánh giá!'
     ]);
     exit;
+
 } catch (PDOException $e) {
     echo json_encode([
         'success' => false,
-        'message' => 'Lỗi lưu trữ dữ liệu.'
+        'message' => 'Lỗi SQL: ' . $e->getMessage()
     ]);
     exit;
 }

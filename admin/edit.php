@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../config/database.php';
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '../../auth/check_admin.php';
 
 $id = $_GET['id'] ?? $_POST['id'] ?? 0;
 
@@ -14,21 +14,24 @@ if (!$product) {
     exit;
 }
 
-// --- XỬ LÝ XÓA ẢNH PHỤ KHI BẤM NÚT XÓA ---
+// XÓA ẢNH PHỤ
 if (isset($_POST['delete_gallery_image_id'])) {
     $del_img_id = (int)$_POST['delete_gallery_image_id'];
-    
+
     $stmt_find = $pdo->prepare("SELECT image_url FROM product_images WHERE id = ? AND product_id = ?");
     $stmt_find->execute([$del_img_id, $id]);
     $file_to_delete = $stmt_find->fetchColumn();
-    
+
     if ($file_to_delete) {
         $file_path = "../upload/product_gallery/" . $file_to_delete;
+
         if (file_exists($file_path)) {
             @unlink($file_path);
         }
+
         $pdo->prepare("DELETE FROM product_images WHERE id = ?")->execute([$del_img_id]);
     }
+
     header("Location: edit.php?id=" . $id . "&msg=Đã xóa ảnh phụ");
     exit;
 }
@@ -37,12 +40,10 @@ $stmt_tags = $pdo->prepare("SELECT tag_id FROM product_tags WHERE product_id = ?
 $stmt_tags->execute([$id]);
 $current_tags = $stmt_tags->fetchAll(PDO::FETCH_COLUMN);
 
-// Lấy toàn bộ album ảnh phụ hiện có
 $stmt_gallery = $pdo->prepare("SELECT * FROM product_images WHERE product_id = ?");
 $stmt_gallery->execute([$id]);
 $gallery_images = $stmt_gallery->fetchAll(PDO::FETCH_ASSOC);
 
-// LẤY TOÀN BỘ THÔNG SỐ KỸ THUẬT HIỆN TẠI CỦA SẢN PHẨM
 $stmt_get_specs = $pdo->prepare("SELECT * FROM product_specs WHERE product_id = ? ORDER BY sort_order ASC");
 $stmt_get_specs->execute([$id]);
 $current_specs = $stmt_get_specs->fetchAll(PDO::FETCH_ASSOC);
@@ -50,7 +51,6 @@ $current_specs = $stmt_get_specs->fetchAll(PDO::FETCH_ASSOC);
 $categories = $pdo->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_gallery_image_id'])) {
-
     $image_url = trim($_POST['image_url'] ?? '');
 
     if ($image_url === '') {
@@ -79,89 +79,134 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_gallery_image
         }
     }
 
-    // --- UPLOAD THÊM ẢNH PHỤ MỚI ---
-    if (isset($_FILES['product_gallery']) && !empty($_FILES['product_gallery']['name'][0])) {
-        $gallery_dir = "../upload/product_gallery/";
-        if (!is_dir($gallery_dir)) {
-            mkdir($gallery_dir, 0777, true);
-        }
+    $tags = $_POST['tags'] ?? [];
 
-        $stmt_gallery_ins = $pdo->prepare("INSERT INTO product_images (product_id, image_url) VALUES (?, ?)");
-        foreach ($_FILES['product_gallery']['name'] as $key => $name) {
-            if ($_FILES['product_gallery']['error'][$key] == 0) {
-                $g_ext = pathinfo($name, PATHINFO_EXTENSION);
-                $g_file_name = time() . "_gal_" . $key . "." . $g_ext;
-                if (move_uploaded_file($_FILES['product_gallery']['tmp_name'][$key], $gallery_dir . $g_file_name)) {
-                    $stmt_gallery_ins->execute([$id, $g_file_name]);
+    $discount_price = null;
+    if (in_array('2', $tags) && !empty($_POST['discount_price'])) {
+        $discount_price = (float)$_POST['discount_price'];
+    }
+
+    try {
+        $pdo->beginTransaction();
+
+        $stmt_update = $pdo->prepare("
+            UPDATE products
+            SET name = ?,
+                price = ?,
+                discount_price = ?,
+                stock_quantity = ?,
+                category_id = ?,
+                description = ?,
+                image_url = ?
+            WHERE id = ?
+        ");
+
+        $stmt_update->execute([
+            $_POST['name'],
+            $_POST['price'],
+            $discount_price,
+            $_POST['stock'],
+            $_POST['category_id'],
+            $_POST['description'],
+            $image_url,
+            $id
+        ]);
+
+        if (isset($_FILES['product_gallery']) && !empty($_FILES['product_gallery']['name'][0])) {
+            $gallery_dir = "../upload/product_gallery/";
+
+            if (!is_dir($gallery_dir)) {
+                mkdir($gallery_dir, 0777, true);
+            }
+
+            $stmt_gallery_ins = $pdo->prepare("
+                INSERT INTO product_images(product_id, image_url)
+                VALUES (?, ?)
+            ");
+
+            foreach ($_FILES['product_gallery']['name'] as $key => $name) {
+                if ($_FILES['product_gallery']['error'][$key] == 0) {
+                    $g_type = $_FILES['product_gallery']['type'][$key];
+
+                    if (in_array($g_type, ['image/jpeg', 'image/png', 'image/jpg'])) {
+                        $g_ext = pathinfo($name, PATHINFO_EXTENSION);
+                        $g_file_name = time() . "_gal_" . $key . "." . $g_ext;
+
+                        if (move_uploaded_file($_FILES['product_gallery']['tmp_name'][$key], $gallery_dir . $g_file_name)) {
+                            $stmt_gallery_ins->execute([$id, $g_file_name]);
+                        }
+                    }
                 }
             }
         }
-    }
 
-    $tags = $_POST['tags'] ?? [];
-    $discount_price = (in_array('2', $tags) && !empty($_POST['discount_price'])) ? $_POST['discount_price'] : null;
+        $pdo->prepare("DELETE FROM product_specs WHERE product_id = ?")->execute([$id]);
 
-    $stmt_update = $pdo->prepare("
-        UPDATE products 
-        SET name=?, price=?, discount_price=?, stock_quantity=?, category_id=?, description=?, image_url=? 
-        WHERE id=?
-    ");
+        if (!empty($_POST['spec_names']) && !empty($_POST['spec_values'])) {
+            $spec_names = $_POST['spec_names'];
+            $spec_values = $_POST['spec_values'];
 
-    $stmt_update->execute([
-        $_POST['name'],
-        $_POST['price'],
-        $discount_price,
-        $_POST['stock'],
-        $_POST['category_id'],
-        $_POST['description'],
-        $image_url,
-        $id
-    ]);
+            $stmt_spec_ins = $pdo->prepare("
+                INSERT INTO product_specs(product_id, spec_name, spec_value, sort_order)
+                VALUES (?, ?, ?, ?)
+            ");
 
-    // --- XỬ LÝ ĐÈ LẠI THÔNG SỐ KỸ THUẬT MỚI KHI EDIT ---
-    $pdo->prepare("DELETE FROM product_specs WHERE product_id = ?")->execute([$id]);
-    if (!empty($_POST['spec_names']) && !empty($_POST['spec_values'])) {
-        $spec_names = $_POST['spec_names'];
-        $spec_values = $_POST['spec_values'];
-        
-        $stmt_spec_ins = $pdo->prepare("INSERT INTO product_specs (product_id, spec_name, spec_value, sort_order) VALUES (?, ?, ?, ?)");
-        $sort_order = 1;
-        
-        foreach ($spec_names as $index => $name) {
-            $name = trim($name);
-            $value = trim($spec_values[$index] ?? '');
-            if (!empty($name)) {
-                $stmt_spec_ins->execute([$id, $name, $value, $sort_order]);
-                $sort_order++;
+            $sort_order = 1;
+
+            foreach ($spec_names as $index => $name) {
+                $name = trim($name);
+                $value = trim($spec_values[$index] ?? '');
+
+                if (!empty($name)) {
+                    $stmt_spec_ins->execute([
+                        $id,
+                        $name,
+                        $value,
+                        $sort_order
+                    ]);
+
+                    $sort_order++;
+                }
             }
         }
-    }
 
-    $pdo->prepare("DELETE FROM product_tags WHERE product_id = ?")->execute([$id]);
+        $pdo->prepare("DELETE FROM product_tags WHERE product_id = ?")->execute([$id]);
 
-    if (!empty($_POST['tags'])) {
-        $stmt_ins_tag = $pdo->prepare("INSERT INTO product_tags (product_id, tag_id) VALUES (?, ?)");
-        foreach ($_POST['tags'] as $tag_id) {
-            $stmt_ins_tag->execute([$id, $tag_id]);
+        if (!empty($tags)) {
+            $stmt_ins_tag = $pdo->prepare("
+                INSERT INTO product_tags(product_id, tag_id)
+                VALUES (?, ?)
+            ");
+
+            foreach ($tags as $tag_id) {
+                $tag_id = (int)$tag_id;
+
+                if (in_array($tag_id, [1, 2])) {
+                    $stmt_ins_tag->execute([$id, $tag_id]);
+                }
+            }
         }
-    }
 
-    header("Location: list_products.php?msg=Sửa thành công");
-    exit;
+        $pdo->commit();
+
+        header("Location: list_products.php?msg=Sửa thành công");
+        exit;
+
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        die("Lỗi hệ thống: " . $e->getMessage());
+    }
 }
 
 $img = $product['image_url'];
-$src = (filter_var($img, FILTER_VALIDATE_URL)) ? $img : "../upload/product_image/" . $img;
+$src = filter_var($img, FILTER_VALIDATE_URL) ? $img : "../upload/product_image/" . $img;
 
 if (empty($img)) {
     $src = "../assets/images/logo-fd.jpg";
 }
-?>
 
-<?php
 $page_title = 'Sửa sản phẩm';
 $page_icon = 'fa-solid fa-pen-to-square';
-// Nhúng tệp CSS được tách biệt riêng cho trang chỉnh sửa sản phẩm
 $custom_css = '<link rel="stylesheet" href="/FD-Tech/assets/css/edit.css">';
 
 include 'includes/header.php';
@@ -179,12 +224,7 @@ include 'includes/header.php';
 
             <div class="form-group">
                 <label class="form-label">Tên sản phẩm</label>
-                <input
-                    name="name"
-                    value="<?= htmlspecialchars($product['name']) ?>"
-                    class="form-control"
-                    required
-                >
+                <input name="name" value="<?= htmlspecialchars($product['name']) ?>" class="form-control" required>
             </div>
 
             <div class="form-group">
@@ -222,13 +262,13 @@ include 'includes/header.php';
 
             <div class="form-group" id="flash-sale-price-group" style="display: <?= in_array(2, $current_tags) ? 'block' : 'none' ?>;">
                 <label class="form-label" style="color: #dc2626; font-weight: bold;">Giá Flash Sale (₫)</label>
-                <input 
-                    name="discount_price" 
-                    type="number" 
-                    step="any" 
-                    min="0" 
-                    value="<?= htmlspecialchars($product['discount_price'] ?? '') ?>" 
-                    class="form-control" 
+                <input
+                    name="discount_price"
+                    type="number"
+                    step="any"
+                    min="0"
+                    value="<?= htmlspecialchars($product['discount_price'] ?? '') ?>"
+                    class="form-control"
                     placeholder="Nhập giá bán riêng cho Flash Sale..."
                 >
             </div>
@@ -263,15 +303,23 @@ include 'includes/header.php';
 
             <div class="gallery-section">
                 <label class="form-label gallery-title-main">📸 Album ảnh phụ hiện tại</label>
-                
+
                 <?php if (empty($gallery_images)): ?>
                     <p class="empty-gallery-text">Sản phẩm chưa có ảnh phụ.</p>
                 <?php else: ?>
                     <div class="gallery-container-box">
                         <?php foreach ($gallery_images as $g_img): ?>
                             <div class="gallery-image-wrapper">
-                                <img src="../upload/product_gallery/<?= $g_img['image_url'] ?>" class="gallery-img-item">
-                                <button type="submit" name="delete_gallery_image_id" value="<?= $g_img['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa ảnh phụ này?')" class="btn-delete-gallery-img">✕</button>
+                                <img src="../upload/product_gallery/<?= htmlspecialchars($g_img['image_url']) ?>" class="gallery-img-item">
+                                <button
+                                    type="submit"
+                                    name="delete_gallery_image_id"
+                                    value="<?= $g_img['id'] ?>"
+                                    onclick="return confirm('Bạn có chắc muốn xóa ảnh phụ này?')"
+                                    class="btn-delete-gallery-img"
+                                >
+                                    ✕
+                                </button>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -288,7 +336,7 @@ include 'includes/header.php';
                     type="number"
                     step="any"
                     min="0"
-                    value="<?= $product['price'] ?>"
+                    value="<?= htmlspecialchars($product['price']) ?>"
                     class="form-control"
                     required
                 >
@@ -299,7 +347,7 @@ include 'includes/header.php';
                 <input
                     name="stock"
                     type="number"
-                    value="<?= $product['stock_quantity'] ?>"
+                    value="<?= htmlspecialchars($product['stock_quantity']) ?>"
                     class="form-control"
                     required
                 >
@@ -323,13 +371,27 @@ include 'includes/header.php';
 
             <div class="specs-section">
                 <label class="form-label specs-title-main">⚙️ Thông số kỹ thuật sản phẩm</label>
-                
+
                 <div id="specs-wrapper">
                     <?php if (!empty($current_specs)): ?>
                         <?php foreach ($current_specs as $spec): ?>
                             <div class="spec-item">
-                                <input type="text" name="spec_names[]" value="<?= htmlspecialchars($spec['spec_name']) ?>" class="form-control" placeholder="Tên thông số" style="flex: 1;">
-                                <input type="text" name="spec_values[]" value="<?= htmlspecialchars($spec['spec_value']) ?>" class="form-control" placeholder="Giá trị" style="flex: 2;">
+                                <input
+                                    type="text"
+                                    name="spec_names[]"
+                                    value="<?= htmlspecialchars($spec['spec_name']) ?>"
+                                    class="form-control"
+                                    placeholder="Tên thông số"
+                                    style="flex: 1;"
+                                >
+                                <input
+                                    type="text"
+                                    name="spec_values[]"
+                                    value="<?= htmlspecialchars($spec['spec_value']) ?>"
+                                    class="form-control"
+                                    placeholder="Giá trị"
+                                    style="flex: 2;"
+                                >
                                 <button type="button" class="btn btn-danger remove-spec-btn">Xóa</button>
                             </div>
                         <?php endforeach; ?>
@@ -341,7 +403,7 @@ include 'includes/header.php';
                         </div>
                     <?php endif; ?>
                 </div>
-                
+
                 <button type="button" id="add-spec-btn" class="btn btn-add-spec-row">
                     <i class="fa-solid fa-plus"></i> Thêm dòng thông số
                 </button>
@@ -359,6 +421,7 @@ include 'includes/header.php';
 
 </main>
 </div>
+
 <script src="../assets/js/script_dashboard.js"></script>
 <script src="../assets/js/edit.js"></script>
 </body>

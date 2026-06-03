@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include '../config/database.php';
-require_once __DIR__ . '/check_admin.php';
+require_once __DIR__ . '../../auth/check_admin.php';
 
 $import_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 

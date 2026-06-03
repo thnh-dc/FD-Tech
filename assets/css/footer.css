@@ -1,4 +1,6 @@
-/* TOP */
+/* ==========================================================================
+   1. PHẦN ĐẦU FOOTER (FOOTER TOP) - Thường dùng làm thanh đăng ký nhận tin/mạng xã hội
+   ========================================================================== */
 .footer-top {
     background: var(--primary);
     color: #fff;
@@ -7,37 +9,41 @@
     display: flex;
     align-items: center;
 }
-
+/* Khung bọc căn chỉnh cho phần Top */
 .top-flex {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* MAIN */
+/* ==========================================================================
+   2. PHẦN THÂN CHÍNH FOOTER (FOOTER MAIN) - Nơi chứa thông tin công ty và các liên kết
+   ========================================================================== */
 .footer-main {
     display: flex;
     padding: var(--space-xl) 0;
     gap: 50px;
 }
-
+/* Khối bên trái (Thường chứa logo, giới thiệu ngắn hoặc thông tin bản quyền) */
 .footer-left {
     flex: 1;
 }
-
+/* Khối bên phải (Thường chứa các cột liên kết nhanh) */
 .footer-right {
     flex: 2;
     display: flex;
     justify-content: space-between;
 }
 
-/* Columns */
+/* ==========================================================================
+   3. ĐỊNH DẠNG CÁC CỘT LIÊN KẾT (COLUMNS)
+   ========================================================================== */
 .footer-right .col h4 {
     margin-bottom: var(--space-md);
     color: var(--primary);
     text-transform: uppercase;
 }
-
+/* Các đường link liên kết trong cột */
 .footer-right .col a {
     display: block;
     text-decoration: none;
@@ -50,21 +56,23 @@
 .footer-right .col a:hover {
     color: var(--secondary);
 }
-
-/* Support */
+/* ==========================================================================
+   4. KHU VỰC HỖ TRỢ / HOTLINE (SUPPORT)
+   ========================================================================== */
 .support {
     display: flex;
     align-items: center;
     gap: var(--space-md);
     margin: var(--space-md) 0;
 }
-
+/* Định dạng biểu tượng trong phần hỗ trợ */
 .support .icon {
     font-size: 30px;
     color: var(--secondary);
 }
-
-/* Bottom */
+/* ==========================================================================
+   5. PHẦN ĐÁY FOOTER (FOOTER BOTTOM) - Thường chứa dòng chữ Copyright
+   ========================================================================== */
 .footer-bottom {
     text-align: center;
     padding: var(--space-md) 0;

@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS `group_images` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` VARCHAR(255) NOT NULL,
+  `type` ENUM('banner', 'popup') NOT NULL,
+  `image_url` VARCHAR(255) NOT NULL,
+  `link_to` VARCHAR(255) DEFAULT NULL,
+  `status` TINYINT(1) DEFAULT 1 COMMENT '1: Hiện, 0: Ẩn',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

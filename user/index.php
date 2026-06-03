@@ -3,23 +3,27 @@
     require_once '../auth/user_only.php';
     require_once '../config/database.php';
     $custom_css='
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
         <link rel="stylesheet" href="../assets/css/index.css">';
     include '../includes/header.php'; 
     
 ?>
+<div id="advPopup" class="adv-popup-overlay">
+    <div class="adv-popup-content">
+        <span class="adv-popup-close" onclick="closePopup(event)"><i class="fa-solid fa-xmark"></i></span>
+        <img src="" alt="FD_Tech Siêu Sale Công Nghệ" class="adv-popup-img" style="cursor: pointer;">
+    </div>
+</div>
 
 <div class="banner-container">
-    <div class="banner-track" id="bannerTrack">
-        <div class="banner-slide"><img src="../assets/images/banner1.jpg"></div>
-        <div class="banner-slide"><img src="../assets/images/banner.jpg"></div>
-    </div>
+    <div class="banner-track" id="bannerTrack"></div>
 </div>
 <div class="container"> 
     
-    <h2 id="san-pham-noi-bat" class="section-title">⭐ Sản phẩm nổi bật</h2>
+    <h2 id="san-pham-noi-bat" class="section-title"><i class="fa-solid fa-star" style="color: #ffca08;"></i> Sản phẩm nổi bật</h2>
         <div class="product-grid">
             <?php
-            $tag_id_noi_bat = 1; // ID của tag "Nổi bật" trong bảng tags của bạn
+            $tag_id_noi_bat = 1; 
 
             $sql = "SELECT p.* FROM products p 
                     INNER JOIN product_tags pt ON p.id = pt.product_id 
@@ -29,7 +33,6 @@
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$tag_id_noi_bat]);
 
-            // Chạy vòng lặp từ kết quả đã prepare ở trên
             $base_url = "/FD-Tech/";
 
             while($row = $stmt->fetch()) {
@@ -50,12 +53,11 @@
         echo '<p class="price">'.number_format($row['price']).' ₫</p>';
         echo '</div>';
     }
-        // Hiển thị tồn kho ra trang index
         echo '<div class="stock-container">';
         if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
-            echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
+            echo '<span class="status-in-stock"><i class="fa-solid fa-check"></i> Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
         } else {
-            echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
+            echo '<span class="status-out-of-stock"><i class="fa-solid fa-xmark"></i> Hết hàng</span>';
         }
         echo '</div>';
 
@@ -64,10 +66,10 @@
             ?>
         </div>  
 
-    <h2 id="khuyen-mai" class="section-title">🔥 Flash Sale - Giá Sốc</h2>
+    <h2 id="khuyen-mai" class="section-title"><i class="fa-solid fa-fire" style="color: #ff3838;"></i> Flash Sale - Giá Sốc</h2>
         <div class="product-grid">
             <?php
-            $tag_id_flash_sale = 2; // ID của tag "Flash Sale" trong database
+            $tag_id_flash_sale = 2; 
 
             $sql_sale = "SELECT p.* FROM products p 
                         INNER JOIN product_tags pt ON p.id = pt.product_id 
@@ -96,13 +98,12 @@
                 echo '<p class="price">'.number_format($row['price']).' ₫</p>';
                 echo '</div>';
             }
-            
-                // Hiển thị tồn kho ra trang index
+
                 echo '<div class="stock-container">';
                 if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
-                    echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
+                    echo '<span class="status-in-stock"><i class="fa-solid fa-check"></i> Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
                 } else {
-                    echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
+                    echo '<span class="status-out-of-stock"><i class="fa-solid fa-xmark"></i> Hết hàng</span>';
                 }
                 echo '</div>';
 
@@ -110,7 +111,8 @@
             }
             ?>
             </div>
-            <h2 id="san-pham-dang-ban" class="section-title">🛒 Sản phẩm đang bán</h2>
+            
+            <h2 id="san-pham-dang-ban" class="section-title"><i class="fa-solid fa-cart-shopping" style="color: #007bff;"></i> Sản phẩm đang bán</h2>
         <div class="product-grid">
             <?php
             $sql_random = "SELECT * FROM products 
@@ -136,13 +138,12 @@
                         echo '<p class="price">'.number_format($row['price']).' ₫</p>';
                         echo '</div>';
                     }
-                    
-                    // Hiển thị tồn kho ra trang index
+
                     echo '<div class="stock-container">';
                     if (isset($row['stock_quantity']) && $row['stock_quantity'] > 0) {
-                        echo '<span class="status-in-stock">✔ Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
+                        echo '<span class="status-in-stock"><i class="fa-solid fa-check"></i> Còn hàng</span> <span class="stock-count">(Số lượng: '.$row['stock_quantity'].')</span>';
                     } else {
-                        echo '<span class="status-out-of-stock">❌ Hết hàng</span>';
+                        echo '<span class="status-out-of-stock"><i class="fa-solid fa-xmark"></i> Hết hàng</span>';
                     }
                     echo '</div>';
 
@@ -151,5 +152,8 @@
             ?>
         </div>
 </div>
+
+<script src="../assets/js/index.js"></script>
+
 <?php include '../includes/ai_assistant_widget.php'; ?>
 <?php include '../includes/footer.php'; ?>
