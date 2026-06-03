@@ -22,9 +22,14 @@ try {
             u.full_name,
             u.email,
             u.phone AS user_phone,
-            u.address AS user_address
+            u.address AS user_address,
+            os.shipping_status,
+            os.delivered_at,
+            os.carrier_name,
+            os.tracking_number
         FROM orders o
         JOIN users u ON o.user_id = u.id
+        LEFT JOIN order_shipping os ON o.id = os.order_id
         WHERE o.id = ?
         LIMIT 1
     ");
@@ -54,7 +59,7 @@ function statusBadge($status) {
 
     if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ thanh toán'; }
     elseif ($status == 'processing') { $badge_class = 'badge-warning'; $status_vi = 'Đang xử lí'; }
-    elseif ($status == 'shipped') { $badge_class = 'badge-depending'; $status_vi = 'Đang vận chuyển'; }
+    elseif ($status == 'shipped') { $badge_class = 'badge-depending'; $status_vi = 'Giao cho ĐVVC'; }
     elseif ($status == 'completed') { $badge_class = 'badge-success'; $status_vi = 'Hoàn thành'; }
     elseif ($status == 'cancelled') { $badge_class = 'badge-danger'; $status_vi = 'Đã hủy'; }
 
@@ -87,6 +92,7 @@ $point_discount = $used_points * $point_value;
 $total_amount = (float)$order['total_amount'];
 $total_discount = max($subtotal - $total_amount, 0);
 $member_discount = max($total_discount - $point_discount, 0);
+$is_waiting_admin_confirm = ($order['status'] === 'shipped' && ($order['shipping_status'] ?? '') === 'delivered');
 
 $page_title = 'Chi tiết đơn hàng ';
 $page_icon = 'fa-solid fa-file-invoice';
@@ -114,6 +120,34 @@ include '../includes/header.php';
                             <?= statusBadge($order['status']) ?>
                         </div>
                     </div>
+
+                    <?php if ($is_waiting_admin_confirm): ?>
+                        <div class="order-detail-card delivery-confirm-detail-box">
+                            <h3>
+                                <i class="fa-solid fa-truck-fast"></i>
+                                Đơn vị vận chuyển đã giao hàng thành công
+                            </h3>
+
+                            <p>
+                                Đơn hàng này đã được đơn vị vận chuyển cập nhật là 
+                                <strong>đã giao hàng</strong>. Bạn có muốn xác nhận hoàn thành đơn hàng không?
+                            </p>
+
+                            <div class="delivery-confirm-meta">
+                                <?php if (!empty($order['carrier_name'])): ?>
+                                    <span>Đơn vị vận chuyển: <b><?= htmlspecialchars($order['carrier_name']) ?></b></span>
+                                <?php endif; ?>
+
+                                <?php if (!empty($order['tracking_number'])): ?>
+                                    <span>Mã vận đơn: <b><?= htmlspecialchars($order['tracking_number']) ?></b></span>
+                                <?php endif; ?>
+
+                                <?php if (!empty($order['delivered_at'])): ?>
+                                    <span>Thời gian giao: <b><?= date('d/m/Y H:i', strtotime($order['delivered_at'])) ?></b></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="order-detail-grid">
 
@@ -271,26 +305,32 @@ include '../includes/header.php';
                                 </div>
                             </div>
 
-                            <div class="order-detail-card">
-                                <h3><i class="fa-solid fa-rotate"></i> Cập nhật trạng thái</h3>
+                            <?php if (!$is_waiting_admin_confirm): ?>
+                                <div class="order-detail-card">
+                                    <h3><i class="fa-solid fa-rotate"></i> Cập nhật trạng thái</h3>
 
-                                <select id="orderStatusSelect" class="order-status-select">
-                                    <option value="pending" <?= $order['status'] == 'pending' ? 'selected' : '' ?>>Chờ thanh toán</option>
-                                    <option value="processing" <?= $order['status'] == 'processing' ? 'selected' : '' ?>>Đang xử lý</option>
-                                    <option value="shipped" <?= $order['status'] == 'shipped' ? 'selected' : '' ?>>Đang giao</option>
-                                    <option value="completed" <?= $order['status'] == 'completed' ? 'selected' : '' ?>>Hoàn thành</option>
-                                    <option value="cancelled" <?= $order['status'] == 'cancelled' ? 'selected' : '' ?>>Hủy</option>
-                                </select>
-                            </div>
+                                    <select id="orderStatusSelect" class="order-status-select">
+                                        <option value="processing" <?= $order['status'] == 'processing' ? 'selected' : '' ?>>Đang xử lý</option>
+                                        <option value="shipped" <?= $order['status'] == 'shipped' ? 'selected' : '' ?>>Giao cho ĐVVC</option>
+                                        <option value="cancelled" <?= $order['status'] == 'cancelled' ? 'selected' : '' ?>>Hủy</option>
+                                    </select>
+                                </div>
+                            <?php endif; ?>
 
                             <div class="order-detail-actions">
                                 <button type="button" onclick="window.print()" class="btn btn-secondary">
                                     <i class="fa-solid fa-file-invoice"></i> In chi tiết đơn hàng
                                 </button>
 
-                                <button type="button" id="btnUpdateOrderStatus" data-id="<?= $order_id ?>" class="btn btn-primary">
-                                    <i class="fa-solid fa-rotate"></i> Cập nhật
-                                </button>
+                                <?php if ($is_waiting_admin_confirm): ?>
+                                    <button type="button" id="btnConfirmCompleteOrder" data-id="<?= $order_id ?>" class="btn btn-success">
+                                        <i class="fa-solid fa-circle-check"></i> Xác nhận hoàn thành
+                                    </button>
+                                <?php else: ?>
+                                    <button type="button" id="btnUpdateOrderStatus" data-id="<?= $order_id ?>" class="btn btn-primary">
+                                        <i class="fa-solid fa-rotate"></i> Cập nhật
+                                    </button>
+                                <?php endif; ?>
 
                                 <button type="button" onclick="window.location.href='../list_order.php'" class="btn btn-danger">
                                     <i class="fa-solid fa-arrow-left"></i> Quay lại

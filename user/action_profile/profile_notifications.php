@@ -18,7 +18,7 @@ function getNotificationText($order) {
             return "Đơn hàng <strong>#FD{$order_id}</strong> đang được được xử lý. <em>($time)</em>";
         case 'shipped':
         case 'shipping':
-            return "Đơn hàng <strong>#FD{$order_id}</strong> đang trên đường giao đến bạn. Chú ý điện thoại nhé! <em>($time)</em>";
+            return "Đơn hàng <strong>#FD{$order_id}</strong> đã được giao cho đơn vị vận chuyển để giao hàng đến bạn ! <em>($time)</em>";
         case 'completed':
             return "Đơn hàng <strong>#FD{$order_id}</strong> đã giao thành công. Cảm ơn bạn! <em>($time)</em>";
         case 'cancelled':
