@@ -29,11 +29,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setTimeout(function () {
             container.classList.add('noti-fade-out');
-
             setTimeout(function () {
                 container.remove();
             }, 500);
-        }, 10000);
+        }, 4000);
     }
 
     function closeActionMenus() {
@@ -45,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.btn-action').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
-
             closeActionMenus();
 
             const menu = this.nextElementSibling;
@@ -100,6 +98,39 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(function () {
                 showNotification('Lỗi kết nối, không thể cập nhật đơn hàng.', 'error');
+            });
+        });
+    });
+
+    document.querySelectorAll('.btn-confirm-complete').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+
+            const orderId = this.dataset.id;
+
+            fetch('/FD-Tech/admin/action_list_order/update_order_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'id=' + encodeURIComponent(orderId) + '&status=completed'
+            })
+            .then(function (res) {
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success) {
+                    showNotification(data.message || 'Đã xác nhận hoàn thành đơn hàng.', 'success');
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1200);
+                } else {
+                    showNotification(data.message || 'Không thể hoàn thành đơn hàng.', 'error');
+                }
+            })
+            .catch(function () {
+                showNotification('Lỗi kết nối, không thể xác nhận hoàn thành đơn hàng.', 'error');
             });
         });
     });
