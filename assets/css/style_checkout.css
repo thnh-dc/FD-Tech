@@ -388,3 +388,32 @@
     font-weight: 700;
     letter-spacing: 0.5px;
 }
+.shipping-preview-section h3 i {
+    color: var(--secondary);
+}
+
+.shipping-preview-box {
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.shipping-preview-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    font-size: var(--text-sm);
+}
+
+.shipping-preview-line span {
+    color: var(--text-muted);
+}
+
+.shipping-preview-line strong {
+    color: var(--primary);
+    text-align: right;
+}

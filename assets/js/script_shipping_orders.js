@@ -4,39 +4,25 @@ document.addEventListener('DOMContentLoaded', function () {
     forms.forEach(function (form) {
         form.addEventListener('submit', function (e) {
             const formId = form.getAttribute('id');
-
             const status = document.querySelector(`select[name="order_status"][form="${formId}"]`);
-            const carrier = document.querySelector(`select[name="carrier_name"][form="${formId}"]`);
-            const tracking = document.querySelector(`input[name="tracking_number"][form="${formId}"]`);
 
-            if (status && status.value === 'completed') {
-                const okComplete = confirm('Bạn chắc chắn muốn chuyển đơn này sang Hoàn thành? Sau khi hoàn thành, thông tin vận chuyển sẽ bị khóa.');
-
-                if (!okComplete) {
-                    e.preventDefault();
-                    return;
-                }
-            }
-
-            if (!carrier || !carrier.value.trim()) {
+            if (!status || !status.value.trim()) {
                 e.preventDefault();
-                alert('Vui lòng chọn đơn vị vận chuyển.');
-                if (carrier) {
-                    carrier.focus();
-                }
+                alert('Vui lòng chọn trạng thái vận chuyển.');
                 return;
             }
 
-            if (!tracking || !tracking.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập mã vận đơn.');
-                if (tracking) {
-                    tracking.focus();
-                }
-                return;
+            let message = 'Cập nhật trạng thái vận chuyển cho đơn hàng này?';
+
+            if (status.value === 'preparing') {
+                message = 'Xác nhận chuyển đơn hàng về trạng thái Đang chuẩn bị?';
+            } else if (status.value === 'shipped') {
+                message = 'Xác nhận chuyển đơn hàng sang trạng thái Đang giao hàng?';
+            } else if (status.value === 'delivered') {
+                message = 'Xác nhận đơn vị vận chuyển đã giao hàng thành công? Đơn hàng sẽ chờ admin xác nhận hoàn thành ở trang quản lí đơn hàng.';
             }
 
-            const ok = confirm('Cập nhật thông tin vận chuyển cho đơn hàng này?');
+            const ok = confirm(message);
 
             if (!ok) {
                 e.preventDefault();
