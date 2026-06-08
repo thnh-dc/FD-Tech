@@ -20,9 +20,10 @@ try {
         $stmtCount->execute([$user_filter]);
         $total_orders = (int)$stmtCount->fetchColumn();
 
-        $sql = "SELECT o.*, u.username
+        $sql = "SELECT o.*, u.username, os.shipping_status, os.delivered_at
                 FROM orders o
                 JOIN users u ON o.user_id = u.id
+                LEFT JOIN order_shipping os ON o.id = os.order_id
                 WHERE o.user_id = ?
                 ORDER BY o.created_at DESC
                 LIMIT $limit OFFSET $offset";
@@ -33,9 +34,10 @@ try {
         $stmtCount = $pdo->query("SELECT COUNT(*) FROM orders");
         $total_orders = (int)$stmtCount->fetchColumn();
 
-        $sql = "SELECT o.*, u.username
+        $sql = "SELECT o.*, u.username, os.shipping_status, os.delivered_at
                 FROM orders o
                 JOIN users u ON o.user_id = u.id
+                LEFT JOIN order_shipping os ON o.id = os.order_id
                 ORDER BY o.created_at DESC
                 LIMIT $limit OFFSET $offset";
 
@@ -106,17 +108,33 @@ include 'includes/header.php';
                                             <td>
                                                 <?php 
                                                     $status = $row['status'];
+                                                    $shipping_status = $row['shipping_status'] ?? '';
                                                     $badge_class = 'badge-info';
                                                     $status_vi = $status;
 
                                                     if ($status == 'pending') { $badge_class = 'badge-warning'; $status_vi = 'Chờ thanh toán'; }
                                                     elseif ($status == 'processing') { $badge_class = 'badge-warning'; $status_vi = 'Đang xử lí'; }
-                                                    elseif ($status == 'shipped') { $badge_class = 'badge-depending'; $status_vi = 'Đang vận chuyển'; }
+                                                    elseif ($status == 'shipped') { $badge_class = 'badge-depending'; $status_vi = 'Giao cho ĐVVC'; }
                                                     elseif ($status == 'completed') { $badge_class = 'badge-success'; $status_vi = 'Hoàn thành'; }
                                                     elseif ($status == 'cancelled') { $badge_class = 'badge-danger'; $status_vi = 'Đã hủy'; }
                                                 ?>
+
                                                 <span class="badge <?= $badge_class ?>"><?= $status_vi ?></span>
+
+                                                <?php if ($status === 'shipped' && $shipping_status === 'delivered'): ?>
+                                                    <div class="delivery-confirm-box">
+                                                        <div>
+                                                            <i class="fa-solid fa-truck-fast"></i>
+                                                            <span>Đơn vị vận chuyển đã giao hàng thành công.</span>
+                                                        </div>
+                                                        <small>Bạn có muốn hoàn thành đơn hàng?</small>
+                                                        <?php if (!empty($row['delivered_at'])): ?>
+                                                            <small>Thời gian giao: <?= date('d/m/Y H:i', strtotime($row['delivered_at'])) ?></small>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
                                             </td>
+
                                             <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
 
                                             <td style="position: relative;">
@@ -125,16 +143,21 @@ include 'includes/header.php';
                                                         <i class="fa-solid fa-eye"></i>
                                                     </a>
 
-                                                    <button class="btn btn-primary btn-action" data-id="<?= $row['id'] ?>">
-                                                        <i class="fa-solid fa-rotate"></i> Cập nhật
-                                                    </button>
+                                                    <?php if (($row['status'] ?? '') === 'shipped' && ($row['shipping_status'] ?? '') === 'delivered'): ?>
+                                                        <button type="button" class="btn btn-success btn-confirm-complete" data-id="<?= $row['id'] ?>">
+                                                            <i class="fa-solid fa-circle-check"></i> Xác nhận
+                                                        </button>
+                                                    <?php else: ?>
+                                                        <button class="btn btn-primary btn-action" data-id="<?= $row['id'] ?>">
+                                                            <i class="fa-solid fa-rotate"></i> Cập nhật
+                                                        </button>
 
-                                                    <div class="action-menu">
-                                                        <button data-status="processing">Đang xử lý</button>
-                                                        <button data-status="shipped">Đang giao</button>
-                                                        <button data-status="completed">Hoàn thành</button>
-                                                        <button data-status="cancelled">Hủy</button>
-                                                    </div>
+                                                        <div class="action-menu">
+                                                            <button data-status="processing">Đang xử lý</button>
+                                                            <button data-status="shipped">Giao cho ĐVVC</button>
+                                                            <button data-status="cancelled">Hủy</button>
+                                                        </div>
+                                                    <?php endif; ?>
                                                 </div>
                                             </td>
                                         </tr>
@@ -205,7 +228,7 @@ include 'includes/header.php';
         </main>
     </div>
 
-    <script src="../assets/js/script_dashboard.js"></script>
-    <script src="../assets/js/script_list_order_admin.js"></script>
+    <script src="/FD-Tech/assets/js/script_dashboard.js"></script>
+    <script src="/FD-Tech/assets/js/script_list_order_admin.js"></script>
 </body>
 </html>

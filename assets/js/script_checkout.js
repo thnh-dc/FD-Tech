@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const pointValue = Number(usePointsInput.dataset.pointValue || 100);
     const maxUsablePoints = Number(usePointsInput.dataset.maxPoints || 0);
     const memberDiscountPercent = Number(usePointsInput.dataset.memberDiscountPercent || 0);
+    const shippingCost = Number(usePointsInput.dataset.shippingCost || 0);
 
     function formatMoney(value) {
         return Number(value).toLocaleString('vi-VN') + '₫';
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateCheckoutTotal() {
         let points = parseInt(usePointsInput.value || '0', 10);
+
         if (isNaN(points) || points < 0) points = 0;
         if (points > maxUsablePoints) points = maxUsablePoints;
 
@@ -26,12 +28,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const pointDiscount = points * pointValue;
         const afterPointTotal = Math.max(total - pointDiscount, 0);
         const memberDiscount = Math.floor(afterPointTotal * memberDiscountPercent / 100);
-        const finalTotal = Math.max(afterPointTotal - memberDiscount, 0);
+        const finalTotal = Math.max(afterPointTotal - memberDiscount + shippingCost, 0);
 
         pointDiscountText.textContent = '-' + formatMoney(pointDiscount);
-        if (memberDiscountText) memberDiscountText.textContent = '-' + formatMoney(memberDiscount);
+
+        if (memberDiscountText) {
+            memberDiscountText.textContent = '-' + formatMoney(memberDiscount);
+        }
+
         finalTotalText.textContent = formatMoney(finalTotal);
+
         const earnedPointsText = document.getElementById('earnedPointsText');
+
         if (earnedPointsText) {
             const earnedPoints = Math.floor(finalTotal / 10000);
             earnedPointsText.textContent = earnedPoints.toLocaleString('vi-VN') + ' FDp';
