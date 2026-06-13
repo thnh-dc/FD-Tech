@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $order_id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 $new_status = $_POST['status'] ?? '';
 $allowed = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
-$statusText = ['pending' => 'Chờ xác nhận', 'processing' => 'Đang xử lý', 'shipped' => 'Đang giao hàng', 'completed' => 'Hoàn thành', 'cancelled' => 'Đã hủy'];
+$statusText = ['pending' => 'Chờ xác nhận', 'processing' => 'Đang xử lý', 'shipped' => 'Giao cho ĐVVC', 'completed' => 'Hoàn thành', 'cancelled' => 'Đã hủy'];
 
 if ($order_id <= 0 || !in_array($new_status, $allowed)) {
     echo json_encode(['success' => false, 'message' => 'Dữ liệu cập nhật không hợp lệ.']);

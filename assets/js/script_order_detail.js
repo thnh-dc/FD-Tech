@@ -24,35 +24,87 @@ function showAdminNotification(message, type = 'error') {
 
     setTimeout(function () {
         container.classList.add('noti-fade-out');
+
         setTimeout(function () {
             container.remove();
         }, 500);
     }, 4000);
 }
 
-document.getElementById('btnUpdateOrderStatus').addEventListener('click', function () {
-    const orderId = this.dataset.id;
-    const status = document.getElementById('orderStatusSelect').value;
+document.addEventListener('DOMContentLoaded', function () {
+    const btnUpdateOrderStatus = document.getElementById('btnUpdateOrderStatus');
 
-    fetch('update_order_status.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'id=' + encodeURIComponent(orderId) + '&status=' + encodeURIComponent(status)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            showAdminNotification(data.message, 'success');
+    if (btnUpdateOrderStatus) {
+        btnUpdateOrderStatus.addEventListener('click', function () {
+            const orderId = this.dataset.id;
+            const statusSelect = document.getElementById('orderStatusSelect');
 
-            setTimeout(function () {
-                location.reload();
-            }, 1200);
-        } else {
-            showAdminNotification(data.message || 'Lỗi cập nhật trạng thái đơn hàng.', 'error');
-        }
-    })
-    .catch(err => {
-        showAdminNotification('Có lỗi xảy ra khi cập nhật đơn hàng.', 'error');
-        console.error(err);
-    });
-});
+            if (!statusSelect) {
+                showAdminNotification('Không tìm thấy ô chọn trạng thái đơn hàng.', 'error');
+                return;
+            }
+
+            const status = statusSelect.value;
+
+            fetch('update_order_status.php', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded' 
+                },
+                body: 'id=' + encodeURIComponent(orderId) + '&status=' + encodeURIComponent(status)
+            })
+            .then(function (res) {
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success) {
+                    showAdminNotification(data.message, 'success');
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1200);
+                } else {
+                    showAdminNotification(data.message || 'Lỗi cập nhật trạng thái đơn hàng.', 'error');
+                }
+            })
+            .catch(function (err) {
+                showAdminNotification('Có lỗi xảy ra khi cập nhật đơn hàng.', 'error');
+                console.error(err);
+            });
+        });
+    }
+
+    const btnConfirmCompleteOrder = document.getElementById('btnConfirmCompleteOrder');
+
+    if (btnConfirmCompleteOrder) {
+        btnConfirmCompleteOrder.addEventListener('click', function () {
+            const orderId = this.dataset.id;
+
+            fetch('update_order_status.php', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded' 
+                },
+                body: 'id=' + encodeURIComponent(orderId) + '&status=completed'
+            })
+            .then(function (res) {
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success) {
+                    showAdminNotification(data.message || 'Đã xác nhận hoàn thành đơn hàng.', 'success');
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1200);
+                } else {
+                    showAdminNotification(data.message || 'Không thể xác nhận hoàn thành đơn hàng.', 'error');
+                }
+            })
+            .catch(function (err) {
+                showAdminNotification('Có lỗi xảy ra khi xác nhận hoàn thành đơn hàng.', 'error');
+                console.error(err);
+            });
+        });
+    }
+}); 

@@ -174,7 +174,7 @@
 
                                 case 'shipped':
                                 case 'shipping':
-                                    return "Đơn hàng <strong>#FD{$noti_order_id}</strong> đang trên đường giao đến bạn. Chú ý điện thoại nhé! <em>($noti_time)</em>";
+                                    return "Đơn hàng <strong>#FD{$noti_order_id}</strong> đã được giao cho đơn vị vận chuyển để giao hàng đến bạn ! <em>($noti_time)</em>";
 
                                 case 'completed':
                                     return "Đơn hàng <strong>#FD{$noti_order_id}</strong> đã giao thành công. Cảm ơn bạn! <em>($noti_time)</em>";

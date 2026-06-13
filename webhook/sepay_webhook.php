@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
+require_once '../config/database.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -113,38 +113,20 @@ try {
         WHERE id = ?
     ");
     $stmtUpdate->execute([$order_id]);
-
-    $pdo->commit();
-
-    $email_log_status = "Không có thông tin email hợp lệ.";
-
     if (!empty($order['email'])) {
-        $bill_file_path = dirname(__DIR__) . '/user/action_checkout/bill.php'; 
+        $bill_file_path = __DIR__ . '/FD-Tech/user/action_checkout/bill.php'; 
 
         if (file_exists($bill_file_path)) {
             require_once $bill_file_path;
-            
-            try {
-                if (function_exists('send_order_bill_email')) {
-                    send_order_bill_email($order['email'], $order_id, $pdo);
-                    $email_log_status = "Đã kích hoạt hàm gửi mail hóa đơn thành công.";
-                } else {
-                    $email_log_status = "Tìm thấy file bill.php nhưng không thấy hàm send_order_bill_email().";
-                }
-            } catch (Exception $mailEx) {
-                $email_log_status = "Lỗi phát sinh từ hàm gửi thư: " . $mailEx->getMessage();
-                file_put_contents(__DIR__ . '/sepay_log.txt', date('Y-m-d H:i:s') . " - Mail Error: " . $mailEx->getMessage() . PHP_EOL, FILE_APPEND);
-            }
-        } else {
-            $email_log_status = "Không tìm thấy file bill.php tại đường dẫn: " . $bill_file_path;
-            file_put_contents(__DIR__ . '/sepay_log.txt', date('Y-m-d H:i:s') . " - File Error: " . $email_log_status . PHP_EOL, FILE_APPEND);
+            send_order_bill_email($order['email'], $order_id, $pdo);
         }
     }
 
+    $pdo->commit();
+
     echo json_encode([
         'success' => true,
-        'message' => 'Xác nhận thanh toán thành công.',
-        'email_status' => $email_log_status
+        'message' => 'Xác nhận thanh toán thành công và đã gửi mail hóa đơn.'
     ]);
     exit;
 
