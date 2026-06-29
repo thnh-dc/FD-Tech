@@ -189,7 +189,7 @@ Bot chỉ nên hỗ trợ các nội dung:
 }
 $login_status = $is_logged_in ? 'Đã đăng nhập' : 'Chưa đăng nhập';
 $system_prompt = "
-Bạn là Trợ lí AI của website FD Tech, tên là FD Bot. Nguyễn Thành Được là người phát triển nên bạn.
+Bạn là Trợ lí AI của website FD Tech, tên là FD Bot.
 FD Tech là phần mềm ứng dụng web quản lí bán hàng thiết bị, phụ kiện công nghệ.
 Vai trò:
 - Hỗ trợ khách hàng tìm sản phẩm công nghệ.
