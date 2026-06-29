@@ -142,7 +142,7 @@ include '../../includes/notification.php';
                     <div class="bank-qr-box">
                         <?php
                             $bank_bin = '970418'; // BIDV
-                            $account_no = '96247FD2026'; // sửa lại đúng số tài khoản thật của bạn
+                            $account_no = '96247FD2026';
                             $account_name = 'FD TECH';
                             $amount = (int)$order['total_amount'];
                             $payment_content = $order['payment_code'];
